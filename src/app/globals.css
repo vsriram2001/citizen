@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+/*
+  Design tokens — civic accountability platform.
+
+  Palette values are taken from civic_platform_design_system_palette.html,
+  which is the source of truth. Don't introduce new hexes in components;
+  add them here first so the system stays enumerable.
+
+  Deliberate omission: no dark mode. The product reads as a paper record,
+  and a dark variant is a design decision we haven't made rather than a
+  default we get for free.
+*/
+
+@theme {
+  /* Base surfaces */
+  --color-ink: #1a1a18;
+  --color-paper: #fafaf7;
+  --color-card: #ffffff;
+  --color-border: #d9d7cf;
+  --color-accent: #2f4858;
+  --color-muted: #8a8a82;
+
+  /* Text — derived from the sample copy in the palette file */
+  --color-text: #1a1a18;
+  --color-text-secondary: #5a5a54;
+  --color-text-muted: #8a8a82;
+
+  /* Status — solid tones, for swatches and indicators */
+  --color-support: #2e7d46;
+  --color-against: #b23a2e;
+  --color-defected: #c9861d;
+  --color-noresponse: #afafa6;
+
+  /* Status — badge fills and their paired text colors.
+     Paired intentionally: each fill has exactly one legible text tone. */
+  --color-support-bg: #e3efe6;
+  --color-support-fg: #1e5a31;
+  --color-against-bg: #f5e1de;
+  --color-against-fg: #8a2c22;
+  --color-defected-bg: #f3e6cc;
+  --color-defected-fg: #8a5f14;
+  --color-noresponse-bg: #edede9;
+  --color-noresponse-fg: #6b6b64;
+  --color-unverified-bg: #edede9;
+  --color-unverified-fg: #8a8a82;
+
+  /* Type. Currently one family in both slots — display and body resolve to
+     the same face, so hierarchy comes from weight and size. The two tokens
+     exist so a display/body pairing can be swapped in without touching
+     component markup. */
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-display: var(--font-sans);
+
+  /* Radius — spec says 2–6px. Two steps only: small elements vs cards.
+     Anything larger reads as consumer-app and breaks the register. */
+  --radius-sm: 3px;
+  --radius-card: 6px;
+}
+
+html {
+  background: var(--color-paper);
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Headings use the display token, which resolves to the body face unless a
+   pairing overrides it. Tracking is tightened for the display sizes heavy
+   sans faces need. */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-ink);
+  letter-spacing: -0.025em;
+}
+
+h1 {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
