@@ -51,6 +51,15 @@ const PinIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+/** The site's location permission, or null where the browser can't say (older Safari). */
+async function geolocationPermission(): Promise<PermissionState | null> {
+  try {
+    return (await navigator.permissions.query({ name: "geolocation" })).state;
+  } catch {
+    return null;
+  }
+}
+
 export function LocationField({ value, onChange }: LocationFieldProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<CitySearchResult[]>([]);
@@ -117,6 +126,9 @@ export function LocationField({ value, onChange }: LocationFieldProps) {
       return;
     }
     setLoading(true);
+    // Read the site's permission first: a "denied" that arrives without the
+    // browser ever showing its prompt has two very different fixes.
+    const before = await geolocationPermission();
     let position: GeolocationPosition;
     try {
       position = await getBrowserLocation();
@@ -124,7 +136,12 @@ export function LocationField({ value, onChange }: LocationFieldProps) {
       const code = (err as GeolocationPositionError).code;
       setError(
         code === 1
-          ? "Location permission is off for this site. Allow it in your browser settings, or type your city or pincode."
+          ? before === "denied"
+            ? // Blocked for this site earlier — browsers never re-ask.
+              "Location is blocked for this site. Click the icon left of the web address, allow Location, then try again — or type your city or pincode."
+            : // The site was allowed to ask, yet was refused with no prompt:
+              // the device has location switched off for this browser.
+              "Your device has location turned off for this browser (on a Mac: System Settings → Privacy & Security → Location Services). Or just type your city or pincode."
           : code === 3
             ? "Finding your location took too long. Try again, or type your city or pincode."
             : "Couldn't get your location. Type your city or pincode instead.",
