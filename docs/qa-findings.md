@@ -23,7 +23,7 @@ Status: ✅ fixed · 🟡 needs your decision · ⏳ open
 | B2 | **Home and `/share` show a fake "500 votes cast"** (`TOTAL_VOTES_CAST` mock constant) while `/search` shows the real total (~195). For an accountability platform a made-up number is the worst kind of bug. | ✅ real total everywhere |
 | B3 | **`NODE_TLS_REJECT_UNAUTHORIZED=0` in `.env.local`** — disables HTTPS certificate checks for every server request. Fine as a local workaround for the office proxy, must never be set on the host. | 🟡 don't copy to the host |
 | B4 | **Placeholder party labels shown publicly** — the share page card shows "Party A: no response". Real visitors can't read that; it looks like broken data. Hide party responses until they carry real sourced data (product rule: no party positions without `source_url`). | ✅ hidden on share card |
-| B5 | **Vote-cap trigger not applied** — verified: 4 direct inserts for one person all succeeded. The API still caps at 3, but two simultaneous taps can slip a 4th through. Run `supabase/migrations/202610241500_vote_cap_trigger.sql` in the SQL editor. (`ask_thoughts` and `votes.submitted_at` are applied.) | 🟡 run the SQL |
+| B5 | **Vote-cap trigger** (`202610241500_vote_cap_trigger.sql`) was not applied. | ✅ applied 2026-10-25, verified: 4th direct insert rejected with `vote_cap_reached` |
 | B6 | **Officeholder names** in `lib/mock/asks.ts` must be re-verified before launch (CLAUDE.md rule). | 🟡 |
 
 ## Major (confusing or broken for real users)
