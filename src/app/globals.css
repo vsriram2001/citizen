@@ -3,7 +3,7 @@
 /*
   Design tokens — civic accountability platform.
 
-  Palette values are taken from civic_platform_design_system_palette.html,
+  Palette values are taken from docs/design-palette.html,
   which is the source of truth. Don't introduce new hexes in components;
   add them here first so the system stays enumerable.
 
@@ -20,11 +20,15 @@
   --color-border: #d9d7cf;
   --color-accent: #2f4858;
   --color-muted: #8a8a82;
+  --color-navy: #0f1e2c;
 
   /* Text — derived from the sample copy in the palette file */
   --color-text: #1a1a18;
   --color-text-secondary: #5a5a54;
-  --color-text-muted: #8a8a82;
+  /* #8a8a82 was 3.3:1 on paper — below WCAG AA (4.5:1) for the small labels it
+     sets. #6f6f68 is 4.8:1 on paper, 5.1:1 on card, and still reads as quiet. */
+  --color-text-muted: #6f6f68;
+  --color-headline: #33322e;
 
   /* Status — solid tones, for swatches and indicators */
   --color-support: #2e7d46;
@@ -45,12 +49,10 @@
   --color-unverified-bg: #edede9;
   --color-unverified-fg: #8a8a82;
 
-  /* Type. Currently one family in both slots — display and body resolve to
-     the same face, so hierarchy comes from weight and size. The two tokens
-     exist so a display/body pairing can be swapped in without touching
-     component markup. */
-  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
-  --font-display: var(--font-sans);
+  /* Type. Playfair Display for headings, Public Sans for body/UI — set in
+     src/app/layout.tsx via next/font. */
+  --font-sans: var(--font-public-sans), system-ui, sans-serif;
+  --font-display: var(--font-playfair-display), Georgia, serif;
 
   /* Radius — spec says 2–6px. Two steps only: small elements vs cards.
      Anything larger reads as consumer-app and breaks the register. */
@@ -58,31 +60,380 @@
   --radius-card: 6px;
 }
 
-html {
-  background: var(--color-paper);
+/* @layer base sits below Tailwind's utilities layer by design, so a plain
+   className="font-sans" on any h1–h4 correctly overrides the defaults
+   below. Without this layer, these were unlayered rules — unlayered CSS
+   beats layered utility classes regardless of specificity, which is why
+   "font-sans" on headings (AskCard, etc.) was silently losing to Playfair
+   sitewide. */
+@layer base {
+  html {
+    background: var(--color-paper);
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Headings default to the display token (Playfair Display, weight 900 —
+     see layout.tsx). Color is a step lighter than --color-ink: pure black
+     read too stark against the serif's thin hairlines. Playfair's default
+     spacing runs loose at heavy weights and large sizes, so tracking is
+     pulled in noticeably more than a typical serif needs. Any component
+     that needs a different face on an h1–h4 (e.g. AskCard's ask text,
+     which is Public Sans) overrides this with a normal Tailwind class. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 900;
+    color: var(--color-headline);
+    letter-spacing: -0.045em;
+  }
 }
 
-body {
-  background: var(--color-paper);
-  color: var(--color-text);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
+/* Shimmer sweep for the primary hero CTA (Button size="xl"). A bright
+   diagonal band drifts across the button on a slow loop — picked as
+   "option C" from a set of shimmer/glow comparisons: thicker band, longer
+   pause between passes, reads as an occasional glint rather than
+   constant motion. */
+@keyframes button-shimmer-sweep {
+  0% {
+    left: -160%;
+  }
+  35% {
+    left: 160%;
+  }
+  100% {
+    left: 160%;
+  }
 }
 
-/* Headings use the display token, which resolves to the body face unless a
-   pairing overrides it. Tracking is tightened for the display sizes heavy
-   sans faces need. */
-h1,
-h2,
-h3,
-h4 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  color: var(--color-ink);
-  letter-spacing: -0.025em;
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
 }
 
-h1 {
-  font-weight: 700;
-  letter-spacing: -0.03em;
+.btn-shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -160%;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent 10%,
+    rgb(255 255 255 / 0.4) 50%,
+    transparent 90%
+  );
+  transform: skewX(-20deg);
+  animation: button-shimmer-sweep 4.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-shimmer::after {
+    animation: none;
+    display: none;
+  }
+}
+
+/* Suggestion-thinking indicator — a cluster of six blocks orbiting a
+   shared center, each on its own radius/speed/rotation, like pieces of a
+   document circling into place. Bigger and more energetic than a spinner
+   or dot-wave, but still flat geometric blocks in the existing palette —
+   no gradients, glow, or bounce easing, so it still reads as "paper record"
+   rather than generic consumer-app chrome. */
+@keyframes suggest-orbit {
+  0% {
+    transform: rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg)
+      scale(0.8);
+  }
+  50% {
+    transform: rotate(180deg) translateX(var(--orbit-radius)) rotate(-180deg)
+      scale(1.15);
+  }
+  100% {
+    transform: rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg)
+      scale(0.8);
+  }
+}
+
+@keyframes suggest-orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.suggest-orbit-block {
+  animation: suggest-orbit var(--orbit-duration, 3.2s) linear infinite;
+  animation-delay: var(--orbit-delay, 0s);
+}
+
+.suggest-orbit-block > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  animation: suggest-orbit-spin var(--orbit-duration, 3.2s) linear infinite
+    reverse;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .suggest-orbit-block,
+  .suggest-orbit-block > span {
+    animation: none;
+    transform: translateX(var(--orbit-radius));
+  }
+}
+
+/* Ballot celebration (components/vote/BallotAnimation.tsx). Restrained on
+   purpose — the linework carries the expression, so no bounce or spin.
+
+   The three layers (box, card, hand) are each the size of the stage, so
+   every move is a transform in % of the layer's own box: x is % of the stage
+   width, y is % of its height (1.127 × width). No container-query units, so
+   it behaves the same on any browser that can animate a transform. Hand and
+   card move straight up and down (x stays 0): the card stays tilted, but a
+   released card falls under gravity, so nothing drifts sideways.
+     enter  (0, -24.6%)  above the box, where each cycle begins
+     start  (0, -15.6%)  held up, card between the fingers
+     push   (0,   5.0%)  card half in the slot, hand lets go
+     deep   (0,  37.0%)  card all the way inside (hidden by the clip)
+   One cycle = one vote (1.8s). These % marks are the clock the component's
+   checklist delays come from (card gone at 74%). */
+.ballot-stage {
+  /* Width is capped by the viewport's width and height so the stage and the
+     checklist under it fit a short laptop screen. The second declaration is
+     dropped by browsers without dvh, leaving the vh one. */
+  width: min(64vw, 360px, 40vh);
+  width: min(64vw, 360px, 40dvh);
+}
+
+.ballot-layer {
+  will-change: transform, opacity;
+}
+
+/* The hand arrives carrying the card, pushes it in, lets go and rises clear
+   of the box — and only then fades. Fading while still over the box shows
+   its lines through the hand, so the empty hand (whose fingers only make
+   sense around a card) is never seen half-transparent on top of it. */
+@keyframes ballot-hand-cycle {
+  0% {
+    opacity: 0;
+    transform: translate(0, -24.6%);
+    animation-timing-function: cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+  16% {
+    opacity: 1;
+    transform: translate(0, -15.6%);
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  }
+  52%,
+  56% {
+    opacity: 1;
+    transform: translate(0, 5%);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1);
+  }
+  72% {
+    opacity: 1;
+    transform: translate(0, -24.6%);
+    animation-timing-function: ease-out;
+  }
+  84%,
+  100% {
+    opacity: 0;
+    transform: translate(0, -24.6%);
+  }
+}
+
+/* Arrives with the hand, rides with it until it lets go, then keeps
+   falling into the slot. */
+@keyframes ballot-card-cycle {
+  0% {
+    opacity: 0;
+    transform: translate(0, -24.6%);
+    animation-timing-function: cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+  16% {
+    opacity: 1;
+    transform: translate(0, -15.6%);
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  }
+  52%,
+  56% {
+    opacity: 1;
+    transform: translate(0, 5%);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.6);
+  }
+  74% {
+    opacity: 1;
+    transform: translate(0, 37%);
+  }
+  75%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 37%);
+  }
+}
+
+@keyframes ballot-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* both: after the last cycle the hand stays at its final keyframe (gone). */
+.ballot-hand-cycle {
+  animation: ballot-hand-cycle 1.8s linear both;
+}
+
+/* both: likewise the card stays gone instead of snapping back to visible. */
+.ballot-card-cycle {
+  animation: ballot-card-cycle 1.8s linear both;
+}
+
+/* The arm's far end (top right) is an open stroke; fade it out. */
+.ballot-hand-fade {
+  -webkit-mask-image: linear-gradient(to bottom left, transparent 13%, #000 30%);
+  mask-image: linear-gradient(to bottom left, transparent 13%, #000 30%);
+}
+
+/* both: hidden until its delay elapses, then fades in and stays. */
+.ballot-checklist-item {
+  animation: ballot-item-in 0.45s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ballot-checklist-item {
+    animation: none;
+  }
+  /* No motion: skip the drop and show the finished checklist. */
+  .ballot-hand-cycle,
+  .ballot-card-cycle {
+    display: none;
+  }
+}
+
+/* ─── Mobile foundation ───────────────────────────────────────────────────
+   Most people will meet this on a phone, so these rules carry the
+   behaviours a phone needs everywhere rather than per component. See
+   docs/features/mobile.md for the full set of rules. */
+
+@layer base {
+  html {
+    /* The grey flash on tap reads as a glitch; pressed states come from
+       :active styles instead. */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* No double-tap-to-zoom delay on controls. Pinch zoom still works. */
+  a,
+  button,
+  input,
+  label,
+  select,
+  textarea,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+}
+
+/* iOS zooms the whole page into any field under 16px the moment it's
+   focused, and doesn't zoom back out. Unlayered on purpose so it beats
+   text-sm / text-[13px] utilities on touch screens; desktop keeps the
+   design sizes. */
+@media (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* Set by components/mobile/ViewportVars.tsx while the on-screen keyboard is
+   up. Page-level bars pinned to the bottom (vote tray, onboarding's
+   Continue) step aside instead of riding on top of the keyboard and
+   covering the field being typed in. Sheets don't use this: they shrink to
+   the visible area instead, so their actions stay reachable. */
+html[data-keyboard="open"] .hide-on-keyboard {
+  display: none !important;
+}
+
+/* Extra scroll room below a form while the keyboard is up, so the last
+   field (and the suggestion list that opens under it) can be scrolled
+   clear of the keyboard rather than pinned behind it. */
+html[data-keyboard="open"] .keyboard-room {
+  padding-bottom: 60vh;
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Sheet (components/ui/Sheet.tsx): slides up from the bottom on phones,
+   fades in as a centred dialog from sm. Short and eased out, so it feels
+   like it was always there rather than a performance. */
+@keyframes sheet-backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes sheet-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+}
+
+@keyframes menu-down {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+.sheet-backdrop {
+  animation: sheet-backdrop-in 0.2s ease-out;
+}
+
+.sheet-panel {
+  animation: sheet-up 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@media (min-width: 40rem) {
+  .sheet-panel[data-placement="responsive"] {
+    animation: sheet-pop 0.18s ease-out;
+  }
+}
+
+.menu-panel {
+  animation: menu-down 0.16s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet-backdrop,
+  .sheet-panel,
+  .menu-panel {
+    animation: none !important;
+  }
 }

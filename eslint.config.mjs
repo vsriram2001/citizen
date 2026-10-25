@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Other checkouts (parallel worktrees) and non-app folders.
+    ".claude/**",
+    "GMAT/**",
+    "docs/**",
   ]),
 ]);
 

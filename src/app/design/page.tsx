@@ -1,12 +1,26 @@
 "use client";
 
 import { useState } from "react";
+import { SiteHeader } from "@/components/nav/SiteHeader";
+import { SignInModal } from "@/components/auth/SignInModal";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Sheet, SheetActions } from "@/components/ui/Sheet";
 import { Field, Input, Select, Textarea } from "@/components/ui/Input";
 import { PartyBadge, VerificationBadge } from "@/components/ui/Badge";
-import { VoteMeter } from "@/components/ui/VoteMeter";
-import { AskCard, type Ask } from "@/components/AskCard";
+import { BallotAnimation } from "@/components/vote/BallotAnimation";
+import { ReplaceVoteModal } from "@/components/vote/ReplaceVoteModal";
+import { ReviewVotesModal } from "@/components/vote/ReviewVotesModal";
+import { VotesSubmittedNotice } from "@/components/vote/VotesSubmittedNotice";
+import { VoteMeter } from "@/components/vote/VoteMeter";
+import { VoteTray } from "@/components/vote/VoteTray";
+import { AskCard } from "@/components/ask/AskCard";
+import type { Ask } from "@/lib/types";
+import { AskList } from "@/components/ask/AskList";
+import { AskInfoButton } from "@/components/ask/AskInfoButton";
+import { FilterSidebar } from "@/components/search/SearchFilters";
+import { useAskFilters } from "@/components/search/useAskFilters";
+import { SEED_ASKS } from "@/lib/mock/asks";
 import { PARTY_STATUS_LABEL, type PartyStatus } from "@/lib/status";
 
 const SWATCHES = [
@@ -86,6 +100,12 @@ function Section({
 export default function DesignGallery() {
   const [used, setUsed] = useState(1);
   const [voted, setVoted] = useState(false);
+  const [signInOpen, setSignInOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [replaceOpen, setReplaceOpen] = useState(false);
+  const [ballotPlaying, setBallotPlaying] = useState(false);
+  const filterDemo = useAskFilters(SEED_ASKS);
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-14 flex flex-col gap-10">
@@ -103,7 +123,7 @@ export default function DesignGallery() {
 
       <Section
         title="Typography"
-        note="Geist Sans everywhere — headline, body and UI. One family, self-hosted. Hierarchy comes from weight, size and tracking rather than a second face, which keeps the system consistent as the product grows."
+        note="Playfair Display (weight 700) for headlines, Public Sans for body and UI. Serif headline over a neutral sans body — the Guardian/Vox register, picked after a type-specimen review."
       >
         <div className="flex flex-col gap-5">
           <div>
@@ -111,7 +131,7 @@ export default function DesignGallery() {
               What do you want changed?
             </h1>
             <p className="text-xs text-text-muted mt-1.5">
-              700 · 40px · -0.03em · page headline
+              Playfair Display · 700 · 40px · page headline
             </p>
           </div>
           <div>
@@ -119,7 +139,7 @@ export default function DesignGallery() {
               Raise public education spending from 2.9% to 6% of GDP
             </h2>
             <p className="text-xs text-text-muted mt-1.5">
-              600 · 24px · -0.025em · ask headline
+              Playfair Display · 700 · 24px · ask headline
             </p>
           </div>
           <div>
@@ -127,23 +147,27 @@ export default function DesignGallery() {
               Publish police complaint resolution times monthly
             </h3>
             <p className="text-xs text-text-muted mt-1.5">
-              600 · 17px · card title
+              Playfair Display · 700 · 17px · card title
             </p>
           </div>
           <div>
             <p className="text-sm text-text-secondary leading-relaxed max-w-2xl">
-              Body text in Geist Sans — a contemporary neo-grotesque built for
-              screens. Stays legible from display sizes down to the 12–13px
-              where most of this product actually lives.
+              Body text in Public Sans — a neutral, highly legible grotesque
+              built for civic and government interfaces. Stays legible from
+              display sizes down to the 12–13px where most of this product
+              actually lives.
             </p>
-            <p className="text-xs text-text-muted mt-1.5">400 · 14px · body</p>
+            <p className="text-xs text-text-muted mt-1.5">
+              Public Sans · 400 · 14px · body
+            </p>
           </div>
           <div>
             <p className="text-[13px] text-text-secondary">
               12,408 votes · 2 of 3 remaining · Karnataka
             </p>
             <p className="text-xs text-text-muted mt-1.5">
-              400 · 13px · dense UI metadata — the size that matters most here
+              Public Sans · 400 · 13px · dense UI metadata — the size that
+              matters most here
             </p>
           </div>
         </div>
@@ -275,6 +299,13 @@ export default function DesignGallery() {
       </Section>
 
       <Section
+        title="Votes submitted notice"
+        note="Top of /search once all 3 votes are submitted. Vote buttons on other asks are disabled and the add-ask prompts are hidden."
+      >
+        <VotesSubmittedNotice />
+      </Section>
+
+      <Section
         title="Vote meter"
         note="Discrete segments, not a continuous bar. Three votes a year is the core mechanism — spending one should read as a token spent, not a task completed."
       >
@@ -293,6 +324,61 @@ export default function DesignGallery() {
             ))}
           </div>
         </Card>
+      </Section>
+
+      <Section
+        title="Vote tray and review"
+        note="Pinned to the bottom of /search after the first vote: three pips for the budget and one action. Review lists the asks like a ballot slip, each removable, then Finish plays the ballot animation and lands on the share page."
+      >
+        <div className="flex flex-col gap-4">
+          {/* transform makes the fixed tray position inside this box instead of the viewport */}
+          <div className="relative h-24 max-w-xl [transform:translateZ(0)] overflow-hidden">
+            <VoteTray used={used} onReview={() => setReviewOpen(true)} />
+          </div>
+          <p className="text-xs text-text-muted">Uses the &ldquo;used&rdquo; buttons above.</p>
+          <div>
+            <Button variant="secondary" onClick={() => setBallotPlaying(true)}>
+              Play ballot animation
+            </Button>
+          </div>
+        </div>
+        {ballotPlaying && (
+          <BallotAnimation
+            asks={SEED_ASKS.slice(0, Math.max(used, 1))}
+            onComplete={() => setBallotPlaying(false)}
+          />
+        )}
+        {reviewOpen && (
+          <ReviewVotesModal
+            asks={SEED_ASKS.slice(0, Math.max(used, 1))}
+            busyId={null}
+            submittedIds={new Set()}
+            onRemove={() => setUsed((u) => Math.max(u - 1, 0))}
+            onFinish={() => setReviewOpen(false)}
+            onClose={() => setReviewOpen(false)}
+          />
+        )}
+      </Section>
+
+      <Section
+        title="Replace a vote"
+        note="Tapping Vote at 3/3 opens this card: the ask they wanted, their current votes, and Replace on each. Submitted votes (after Finish) are locked and have no button."
+      >
+        <div>
+          <Button variant="secondary" onClick={() => setReplaceOpen(true)}>
+            Open replace card
+          </Button>
+        </div>
+        {replaceOpen && (
+          <ReplaceVoteModal
+            wanted={SEED_ASKS[3]}
+            current={SEED_ASKS.slice(0, 3)}
+            submittedIds={new Set([SEED_ASKS[0].id])}
+            busy={false}
+            onReplace={() => setReplaceOpen(false)}
+            onClose={() => setReplaceOpen(false)}
+          />
+        )}
       </Section>
 
       <Section
@@ -315,7 +401,96 @@ export default function DesignGallery() {
               compact
               onVote={() => {}}
             />
+            <p className="text-xs uppercase tracking-wide text-text-muted pt-2">
+              Search hit — matched words underlined (`highlight`, from lib/match.ts)
+            </p>
+            <AskCard
+              ask={COMPACT_ASK}
+              compact
+              highlight={COMPACT_ASK.askText.toLowerCase().split(/[^a-z0-9]+/).slice(1, 3)}
+              onVote={() => {}}
+            />
           </div>
+        </div>
+      </Section>
+
+      <Section
+        title="Ask info"
+        note="The info icon beside the accountability icon. Opens the full brief: overview, a plea written as a letter, the reasoning, the downsides, and an add-your-thoughts form that only queues (a nightly job reviews). Drafted on first open, so this needs the LLM keys; it renders a 404 message for the sample ask here."
+      >
+        <div className="flex items-center gap-3">
+          <AskInfoButton ask={SAMPLE_ASK} />
+          <span className="text-xs text-text-muted">Click to open</span>
+        </div>
+      </Section>
+
+      <Section
+        title="Ask list"
+        note="A ranked group of more than five. Shows the top five, then reveals five more per click. The thin bar on each card is its vote share relative to the leading ask."
+      >
+        <AskList asks={SEED_ASKS} />
+      </Section>
+
+      <Section
+        title="Filter panel"
+        note="Category rail on the left, that category's options on the right. Options within a category are OR-ed, categories are AND-ed; each count is how many asks you'd see after ticking it. On /search it sits in the sidebar on desktop and opens as a bottom sheet below lg."
+      >
+        <div className="max-w-[360px]">
+          <FilterSidebar state={filterDemo} />
+        </div>
+        <p className="text-xs text-text-muted tabular-nums">
+          {filterDemo.results.length} of {SEED_ASKS.length} seed asks match
+        </p>
+      </Section>
+
+      <Section
+        title="Sign-in prompt"
+        note="Shown when a signed-out person taps Vote or adds an ask. Google sign-in exists only to keep votes one-per-person, and the copy says so."
+      >
+        <Button variant="secondary" onClick={() => setSignInOpen(true)}>
+          Preview sign-in prompt
+        </Button>
+        {signInOpen && (
+          <SignInModal onSignIn={async () => setSignInOpen(false)} onClose={() => setSignInOpen(false)} />
+        )}
+      </Section>
+
+      <Section
+        title="Sheet"
+        note="Every dialog is built on this. Phones: a bottom sheet, dragged down by its top edge to close, padded clear of the home bar, and pinned to the visible viewport — when a field inside opens the keyboard the sheet shrinks above it instead of being covered. From sm: a centred dialog. It never focuses a field on open, so no keyboard appears uninvited."
+      >
+        <Button variant="secondary" onClick={() => setSheetOpen(true)}>
+          Preview sheet with a field
+        </Button>
+        {sheetOpen && (
+          <Sheet
+            title="A sheet with a field"
+            description="Tap the field on a phone: the keyboard comes up and the sheet sits above it, actions still in reach."
+            onClose={() => setSheetOpen(false)}
+            footer={
+              <SheetActions>
+                <Button variant="ghost" size="sm" onClick={() => setSheetOpen(false)}>
+                  Cancel
+                </Button>
+                <Button size="sm" onClick={() => setSheetOpen(false)}>
+                  Save
+                </Button>
+              </SheetActions>
+            }
+          >
+            <Field label="Your thought" htmlFor="sheet-demo">
+              <Textarea id="sheet-demo" rows={3} placeholder="Type here" />
+            </Field>
+          </Sheet>
+        )}
+      </Section>
+
+      <Section
+        title="Site header"
+        note="One header on every page: wordmark home, Browse asks, My votes, Share, Sign out once signed in. Pages pass extras (the search screen's vote total) as children. Below sm the links fold into a Menu button (components/nav/MobileNav.tsx)."
+      >
+        <div className="border border-border rounded-card overflow-hidden">
+          <SiteHeader />
         </div>
       </Section>
 

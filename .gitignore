@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.local.example
 
 # vercel
 .vercel
@@ -39,3 +40,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# parallel worktrees (claude --worktree / scripts/new-worktree.sh)
+/.claude/worktrees/
+
+# local-only: stale snapshots + throwaway scripts, personal files
+/docs/archive/
+/GMAT/
+
+# QA sweep screenshots (scripts/qa)
+/qa-output

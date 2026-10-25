@@ -1,0 +1,731 @@
+{
+  "edu-budget": {
+    "overview": "This ask calls on the Union Ministry of Education to double public spending on education, from what the ask puts at 2.7% of GDP for FY26 to 5.4% by March 2029. It proposes a phased increase, with matching grants to states tied to enrolment and learning outcomes. The Union budget is rising: the Ministry's 2026-27 allocation of Rs 1,39,289 crore is 14% above the previous year's revised estimate. That is still far short of doubling the national share, and much of the total depends on state spending, which the Union can only steer through grants.",
+    "plea": "To the Ministry of Education, Union Government,\n\nWe are asking you to treat education spending as the foundation of the country's future, not a line to be trimmed. Countries that spend the least per child tend to have more children who leave school without basic reading and arithmetic. We do not want our children counted among them.\n\nWe welcome this year's 14% increase in the Ministry's allocation, and we ask you to go further. Set out a clear, year-by-year path toward doubling public education spending as a share of GDP. Tie new money to states that show children are actually learning, not just enrolled.\n\nWe also ask for honesty along the way. Publish how much of what is budgeted is actually spent, and what it changes in classrooms. More money will only earn public trust if it reaches schools and shows results.",
+    "reasoning": [
+      "The World Bank finds that learning poverty and learning-adjusted years of schooling are, on average, worse in countries that spend the least per child of school age. Low spending is linked to weaker learning.",
+      "The Ministry's 2026-27 allocation of Rs 1,39,289 crore is 14% higher than the 2025-26 revised estimates. Spending is already moving in this direction, and a firm target would give that growth a clear destination.",
+      "Tying state matching grants to learning outcomes, not just inputs, follows OECD findings that accountability and quality teaching are among the drivers of better results.",
+      "Research summarised by Our World in Data suggests that rewarding attendance and effort, through tools like conditional cash transfers and merit scholarships, raises both time in school and learning. Extra funds could pay for such proven measures.",
+      "School education already takes 60% of the Ministry's budget. A larger envelope could reach the foundational years where gaps in learning begin."
+    ],
+    "downsides": [
+      "The timeline does not match the plan. With the 2026-27 budget already passed, only about two Union budgets remain before March 2029, not five. Doubling the share of GDP that fast would require a very large jump in spending, paid for by cuts elsewhere, higher taxes or more borrowing, with states also needing to find their matching share.",
+      "More money does not reliably mean more learning, and money budgeted is not always money spent. The World Bank notes that increases in education spending over the last decade were associated with relatively small improvements in outcomes. Studies of Indian school finance point to a persistent gap between what is budgeted and what is actually spent, so a rapid increase risks unspent or poorly used funds.",
+      "Grants tied to enrolment and learning scores create incentives to inflate enrolment figures or teach narrowly to tests, especially where outcomes are not independently measured. The headline figure itself is citizen-supplied and depends on combining Union and state spending, so even tracking progress toward 5.4% may be contested."
+    ],
+    "sources": [
+      {
+        "title": "THE GAP BETWEEN BUDGET AND EXPENDITURE IN INDIAN SCHOOL EDUCATION SYSTEM - IISPPR",
+        "url": "https://iisppr.org.in/the-gap-between-budget-and-expenditure-in-indian-school-education-system"
+      },
+      {
+        "title": "Education Spending | Our World in Data",
+        "url": "https://ourworldindata.org/financing-education"
+      },
+      {
+        "title": "Demand for Grants 2026-27 Analysis : Education",
+        "url": "https://prsindia.org/budgets/parliament/demand-for-grants-2026-27-analysis-education"
+      },
+      {
+        "title": "The False Dichotomy between More & More Effective Public Spending on Education: Lessons from Country Experiences",
+        "url": "https://www.worldbank.org/en/news/feature/2023/04/24/the-false-dichotomy-between-more-more-effective-public-spending-on-education-lessons-from-country-experiences"
+      },
+      {
+        "title": "Education: Restoring Public Finances | OECD",
+        "url": "https://www.oecd.org/en/publications/2026/05/restoring-public-finances_0c1f7ce5/full-report/education_bebe2f3e.html"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:13:35.312Z"
+  },
+  "govt-kids-govt-schools": {
+    "overview": "The ask is for a service-rule change requiring the children of government employees to be enrolled in government schools, with an exemption only where no government school exists nearby. Today there is no such requirement, and the ask sets a target of 100% of such children by June 2027. The Department of Personnel and Training is accountable for Union employees, and State governments are accountable for their own staff.",
+    "plea": "To the Department of Personnel and Training and the State governments,\n\nWe are asking you to bring the families of those who run public services into the public schools they oversee. Roughly four in ten Indian children now attend private schools, and many parents pay heavily for that choice. Meanwhile, government schools serve the children whose families have the least ability to complain or to leave.\n\nWe believe a school improves faster when the people with power to fix it have a personal stake in it. If an official's own child sat in a classroom without a teacher or a working toilet, we think that problem would be noticed and acted on sooner.\n\nWe ask you to consider this seriously, and to do it in a way that is fair to employees. That means honest exemptions, enough time and capacity for schools to absorb new students, and a commitment that the change is matched by investment rather than imposed on schools that are already stretched.",
+    "reasoning": [
+      "The idea links the people who manage public schooling to its results. Government employees whose own children attend these schools would have a direct reason to press for better teachers, facilities and accountability.",
+      "Public spending on education is low. The National Education Policy 2020 puts it at around 4.43% of GDP and about 10% of total government spending, below most developed and developing countries. Bringing influential families into the system could build pressure for that spending to rise.",
+      "Families would save a large amount. Reported average annual education spending is Rs 28,693 per student in private schools, compared with Rs 2,863 in government schools.",
+      "The private-school advantage is less clear-cut than it looks. Studies in India that control for children's family background find mixed results that depend on subject and medium of instruction. The learning cost to employees' children may therefore be smaller than many parents assume.",
+      "Mixing children from different backgrounds in the same schools could weaken the link between private schooling and social status. Researchers note that this status link drives much of the shift to private schools."
+    ],
+    "downsides": [
+      "Employees' children could lose out in specific ways. Evidence from India shows that moving to an English-medium private school produced much better English scores than staying in a government school. A blanket rule removes that option for families who value it, and it is likely to face legal challenge as a restriction on parental choice.",
+      "Government schools may not have the seats, teachers or funding to absorb a large group of new students by June 2027, which is about eight months away. Without extra money, existing students could see more crowded classrooms. The RTE also currently reimburses private schools for the 25% of seats reserved for poorer children, and that arrangement shows how stretched public provision already is.",
+      "The rule is easy to game and hard to track. The 'no school nearby' exemption, enrolment on paper without real attendance, and paid private tuition alongside nominal enrolment could all hollow it out. Nepal has reportedly announced a similar ban from April 2026, but its results are not yet known."
+    ],
+    "sources": [
+      {
+        "title": "The Private Schooling Phenomenon in India: A Review",
+        "url": "https://docs.iza.org/dp10612.pdf"
+      },
+      {
+        "title": "Understanding the relative effectiveness of government and private schools in India",
+        "url": "https://www.ideasforindia.in/topics/human-development/understanding-the-relative-effectiveness-of-government-and-private-schools-in-india"
+      },
+      {
+        "title": "National Education Policy 2020",
+        "url": "https://static.pib.gov.in/WriteReadData/userfiles/NEP_Final_English_0.pdf"
+      },
+      {
+        "title": "According to reports, from April 2026, children of government ...",
+        "url": "https://www.facebook.com/KarnatakaTimesMedia/posts/according-to-reports-from-april-2026-children-of-government-employees-and-minist/1373591174810998"
+      },
+      {
+        "title": "Why 4 in 10 Indian children go to private schools",
+        "url": "https://www.newslaundry.com/2026/08/17/why-4-in-10-indian-children-go-to-private-schools"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:13:39.589Z"
+  },
+  "bengaluru-metro": {
+    "overview": "The ask is for Bengaluru's Namma Metro to grow by about 50 km, from roughly 96 km today to about 146 km, by October 2028. It proposes fast-tracking pending corridors through a dedicated funding line and monthly public progress reports. BMRCL builds and runs the metro, with the Karnataka Urban Development Department overseeing it, so the two share responsibility for delivery.",
+    "plea": "To BMRCL and the Karnataka Urban Development Department,\n\nWe write as people who sit in Bengaluru's traffic every day. Namma Metro is now the second-largest metro network in India, yet at about 96 km it still leaves much of a very large city without a train within reach. We are asking you to bring the pending corridors into service, about 50 more km, by October 2028.\n\nWe are not asking for promises alone. We ask for a funding line that cannot be quietly diverted, and a progress report every month that shows plainly which stretches are on schedule and which are slipping. You have already spoken publicly of large expansion goals. Regular, honest reporting would let the city see them being met.\n\nWe also ask that the new lines be built for the people who will use them. That means fares people can afford, safe walkways to stations, and good connections to buses. A line that ordinary commuters cannot reach or pay for does not take cars off the road. A line they can use will.",
+    "reasoning": [
+      "Namma Metro had about 96.1 km in operation as of April 2026. That makes it India's second-largest network, but it is still small next to Delhi and next to the size of Bengaluru's travel demand.",
+      "Bengaluru's road congestion is severe and widely documented. Commuters and civic groups warn that without good public transport, people will lean further on private vehicles.",
+      "India's total metro network grew from about 248 km in 2014 to over 1,000 km by 2025-26, which shows that large additions in a few years are possible. Projections cited in the search results speak of Bengaluru crossing about 170 km by the end of 2027, so a 146 km target by late 2028 is within the range already being discussed.",
+      "Metro projects pass through many slow stages: feasibility study, detailed project report, land acquisition, environmental approval and financing. A protected funding line plus monthly public reports would show where corridors stall, instead of delays surfacing only at the deadline."
+    ],
+    "downsides": [
+      "More kilometres do not guarantee more riders. After the February 2025 fare hike, which raised some fares by up to 71% after an initial jump of over 100%, Bengaluru became India's costliest metro and ridership fell. Mumbai's new 33.5 km underground corridor carries only about a tenth of its projected 1.5 million daily passengers, partly because riders find it too expensive.",
+      "A dedicated funding line has to come from somewhere. It could crowd out bus services, footpaths and last-mile links that make stations reachable, and the BBC reports that poor walkways, safety concerns and weak bus-metro integration already hold back metro use in Indian cities. If construction costs are later recovered through fares, commuters could face further increases, as they did in 2025.",
+      "The target counts kilometres opened, which can be met without improving how well the network serves people. Because projections already point to around 170 km by the end of 2027, much of the 50 km may come from corridors that are already well advanced, which makes the target easy to claim. A rush to open stretches by a deadline could also mean stations open before access roads, feeder buses or integration are ready."
+    ],
+    "sources": [
+      {
+        "title": "Namma Metro - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Namma_Metro"
+      },
+      {
+        "title": "Bangalore Namma Metro: Route Map, Timings, Extensions, & More",
+        "url": "https://www.magicbricks.com/blog/bangalore-metro/127962.html"
+      },
+      {
+        "title": "Namma Metro - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Namma_Metro"
+      },
+      {
+        "title": "Instagram",
+        "url": "https://www.instagram.com/reel/DdoFObUBi4T"
+      },
+      {
+        "title": "India has splurged billions on metro trains. But where are the commuters?",
+        "url": "https://www.bbc.com/news/articles/c4g833128vlo"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:13:40.471Z"
+  },
+  "health-spend": {
+    "overview": "The ask is for public health spending to rise to 3% of GDP by April 2030, through yearly budget increases earmarked for primary care and district hospitals. The ask puts current spending at 1.8% of GDP for FY26, but the latest official figure in the search results is lower, about 1.43% to 1.48% of GDP for 2022-23. The Ministry of Health and Family Welfare is accountable, with the Finance Ministry and state governments also controlling much of the money.",
+    "plea": "To the Ministry of Health and Family Welfare,\n\nWe are writing because too many families in India still pay for illness out of their own pockets. When public spending on health is low, a hospital stay or a course of medicines can push a household into debt. India's own Economic Survey has estimated that raising public health spending to 3% of GDP could roughly halve the share of health costs that families pay directly.\n\nWe ask that you commit to steady yearly increases in the health budget, and that the new money be earmarked for primary health centres and district hospitals. These are the places most people reach first, and the places where gaps in staff, equipment and medicines are felt most.\n\nWe know this cannot happen without the Finance Ministry and the states, and that the deadline is demanding. We ask for a clear yearly path toward the target, published so that citizens can see whether each budget moves closer to it.",
+    "reasoning": [
+      "The 2021 Economic Survey estimated that raising public health spending to 3% of GDP could cut out-of-pocket spending from about 60% of total health spending to about 30%, which would directly lower the money families pay when they fall ill.",
+      "Government health spending has risen only slowly, from 1.15% of GDP in 2013-14 to 1.43% in 2022-23 by official figures, which leaves India well short of the 2.5% goal set in the National Health Policy 2017.",
+      "Experts quoted in the press put health cost inflation in India at 12% to 15% a year, and private care is beyond the reach of many middle-class households. Stronger public services are the main protection against these costs.",
+      "Research on lower-income countries, including decentralised systems such as India's, finds that more public health spending does tend to improve health outcomes when starting spending is low. The weak link between spending and outcomes seen in rich countries does not carry over to settings like India.",
+      "Earmarking money for primary care and district hospitals targets a known weak point. Studies of out-of-pocket spending find poor infrastructure at the primary level and specialist services concentrated in cities, which pushes people toward costly private care."
+    ],
+    "downsides": [
+      "The pace required is far faster than anything India has achieved. Official figures show a rise of about 0.3 percentage points of GDP over nine years, and reaching 3% by April 2030 would mean roughly doubling the share in about four budgets. The extra money would have to come from higher taxes, more borrowing or cuts to other programmes, and the search results do not show what that would cost or what it would crowd out.",
+      "A share-of-GDP target is hard to pin down and easy to meet on paper. The ask's 1.8% does not match the official 1.43% to 1.48%, and a change of GDP base year alone shifted the official figure. Because states pay for much of public health, the Union ministry cannot hit the target alone, and progress could be claimed through reclassifying spending rather than through better care.",
+      "More money may not reach patients unless the public system can absorb it. Studies find that people using public facilities still pay heavily for drugs and diagnostics, and that weak primary-level infrastructure drives them to private providers. Without staff, medicine supply and oversight, larger budgets could go unspent or leave families' bills largely unchanged."
+    ],
+    "sources": [
+      {
+        "title": "Five Years of National Health Policy in India: Critical Analysis of the Public Health Expenditure from 2017 to 2022 and Way Forward",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11633271"
+      },
+      {
+        "title": "echap05_vol1.pdf",
+        "url": "https://www.indiabudget.gov.in/budget2021-22/economicsurvey/doc/vol1chapter/echap05_vol1.pdf"
+      },
+      {
+        "title": "India’s public health spending remains below 2% of GDP as medical costs rise. With the Union Budget in focus, all eyes are on whether healthcare will finally get a big boost this… | Mint",
+        "url": "https://www.linkedin.com/posts/livemint_indias-public-health-spending-remains-below-activity-7419306242893930496-E8bH"
+      },
+      {
+        "title": "Press Release Page | Press Information Bureau",
+        "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2265816&lang=1&reg=3"
+      },
+      {
+        "title": "Five Years of National Health Policy in India: Critical Analysis of the Public Health Expenditure from 2017 to 2022 and Way Forward",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11633271"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:14:01.317Z"
+  },
+  "abolish-income-tax": {
+    "overview": "This ask calls for personal income tax to be abolished entirely by April 2029, phasing out the slabs over two budgets and covering the lost revenue through reform of consumption taxes. Today income tax is in place, and the ask's target is nil, a complete shift in how individuals are taxed. The Ministry of Finance of the Union Government is accountable, as it designs the budget and tax law.",
+    "plea": "To the Ministry of Finance, Union Government,\n\nWe are writing to ask that you consider phasing out personal income tax over the next two budgets and raising the revenue it brings in through a reformed system of consumption taxes. Many of us experience the income tax as complex and costly to comply with. Taxing what people spend, rather than what they earn and save, is a model much of the world already leans on.\n\nWe also ask that this be done with care. Any replacement must be shown to raise enough to protect public services. It must also be designed so that families with modest incomes, who spend almost all of what they earn, do not end up carrying a heavier load than they do today.\n\nWe ask you to publish a clear plan, with the revenue figures and the effect on households at different income levels, so that citizens can judge it openly before April 2029.",
+    "reasoning": [
+      "Consumption taxes are already a mainstream way to fund governments. They made up 32.1 percent of tax revenue on average across OECD countries in 2021, and the number of countries with a VAT grew from 3 in 1965 to 166 by 2016, partly because VATs are seen as efficient.",
+      "In developing countries, consumption taxes such as excise and general sales taxes already dominate the tax structure. Research on these countries describes the personal income tax as playing a limited role, so the ask would build on an existing strength rather than invent a new system.",
+      "Analysts proposing similar overhauls elsewhere argue that replacing the income tax could cut the administrative and compliance costs it imposes on households and the tax authority.",
+      "Taxing consumption rather than income does not tax saving and investment. Some designs, such as a progressive consumption tax, try to keep higher burdens on bigger spenders."
+    ],
+    "downsides": [
+      "The shift would likely move the tax burden toward lower-income households. People with lower incomes spend a larger share of what they earn, and that share falls sharply as income rises. Research on India also describes personal income tax as the main redistributive tool in the tax system, so removing it takes away the part that asks more of those who earn more.",
+      "Consumption-tax rates would have to rise substantially, which risks a revenue shortfall or sharply higher prices. Consumption is only part of income, roughly 80 percent in one estimate, so rates on spending must be higher than today's income-tax rates to raise the same money. The ask gives no figure for the gap to be filled in two budgets, and high consumption taxes can also suppress spending during downturns.",
+      "The economic gains may be smaller than hoped. Studies of major income-tax cuts and reforms in the United States since 1980 found little evidence that they significantly changed the long-term growth rate, so abolition may not pay for itself through faster growth."
+    ],
+    "sources": [
+      {
+        "title": "Progressivity and redistributive effects of income taxes: evidence from India",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8536922"
+      },
+      {
+        "title": "[PDF] The Limited Role of the Personal Income Tax in Developing Countries",
+        "url": "https://www.uclalawreview.org/wp-content/uploads/2019/09/39_52UCLALRev16272004-2005.pdf"
+      },
+      {
+        "title": "US Consumption Tax vs Income Tax Reform: Details & Analysis",
+        "url": "https://taxfoundation.org/research/all/federal/us-consumption-tax-vs-income-tax"
+      },
+      {
+        "title": "Effects of Income Tax Changes on Economic Growth | Brookings",
+        "url": "https://www.brookings.edu/articles/effects-of-income-tax-changes-on-economic-growth"
+      },
+      {
+        "title": "Replacing the Income Tax with a Progressive Consumption Tax - Weiss Asset Management",
+        "url": "https://www.weissasset.com/replacing-the-income-tax-with-a-progressive-consumption-tax"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:14:04.843Z"
+  },
+  "police-resolution": {
+    "overview": "The ask is for Karnataka Police to publish, every month and for each district, how many complaints were received, resolved and still pending, in a machine-readable format on a public dashboard. The ask states that these figures are not published today and sets a deadline of January 2027. Responsibility lies with the Karnataka Home Department and Karnataka Police.",
+    "plea": "To the Karnataka Home Department and Karnataka Police,\n\nWhen a person walks into a police station with a complaint, they often have no way of knowing whether it will be acted on in days, months or never. We ask you to change that by publishing, every month and for every district, how many complaints came in, how many were resolved and how many are still waiting.\n\nThis is not a request to expose individual cases or to shame officers. It is a request for simple counts, released regularly in a format anyone can download, so that delays become visible and can be fixed. Systems elsewhere that publish deadlines and measure against them each month have used that discipline to find and fix recurring problems.\n\nWe also ask that the dashboard define clearly what counts as resolved, so that the numbers reflect real outcomes and not just closed files. Done carefully, this would let people judge the service they receive by evidence rather than rumour.",
+    "reasoning": [
+      "According to the ask, Karnataka does not currently publish complaint resolution figures, so citizens, journalists and oversight bodies cannot see where complaints pile up or how long people wait.",
+      "Complaint systems profiled in other countries found a simple pattern effective: publish a deadline, measure against it monthly, and rank departments in public. In one of those systems, regular review of unresolved complaints surfaced 52 systemic policy issues by November 2025.",
+      "Complaints involving the police can concern serious abuses such as unwarranted arrests, unlawful searches and torture. Regular public figures give oversight bodies and the public a way to check how such matters are handled.",
+      "Karnataka already has a Police Complaints Authority with separate channels for lower-ranked and senior officers. District-level data would give that body and the public a shared baseline for spotting districts where complaints are stalling.",
+      "A machine-readable format lets independent analysts track trends across months and districts, instead of relying on occasional official summaries."
+    ],
+    "downsides": [
+      "If districts are ranked on resolution speed, stations may close complaints quickly without real resolution, or avoid recording them at all, which would make the numbers look better while harming complainants. One way systems elsewhere have tried to guard against this is by letting citizens appeal a resolution they rate as poor, using the same registration number.",
+      "Because these figures are not published today, there is no tested common definition of a complaint received or resolved across districts. Differences in how districts record and categorise complaints could make comparisons between them misleading, a problem international crime statisticians already flag when comparing places with different recording rules.",
+      "The January 2027 deadline is about three months from today, which leaves little time to agree on definitions, check data quality and build a reliable dashboard. The ask also does not say whether it covers complaints made to the police, complaints against the police, or both. A rushed or vaguely scoped dashboard could miss the misconduct cases that matter most."
+    ],
+    "sources": [
+      {
+        "title": "Police Complaints Authority (India) - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Police_Complaints_Authority_(India)"
+      },
+      {
+        "title": "Analytical Reports",
+        "url": "https://prsindia.org/policy/analytical-reports/police-reforms-india"
+      },
+      {
+        "title": "Citizen Complaint System: How 6 Countries Cut Delays By 90%",
+        "url": "https://grievance.app/citizen-complaint-system-6-countries"
+      },
+      {
+        "title": "Compiling and Comparing International Crime Statistics",
+        "url": "https://www.unodc.org/unodc/en/data-and-analysis/Compiling-and-comparing-International-Crime-Statistics.html"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:14:08.648Z"
+  },
+  "pothole-sla": {
+    "overview": "The ask is for Bengaluru's municipal body to guarantee that any reported pothole is repaired within 30 days, where today there is no fixed deadline. It proposes a public complaint tracker, automatic escalation when the 30 days pass, and penalties for contractors who fail repeatedly, all in place by June 2027. Responsibility sits with the Greater Bengaluru Authority, headed by its Chief Commissioner, and with the state's minister in charge of Bengaluru development.",
+    "plea": "To the Greater Bengaluru Authority,\n\nWe report potholes and then we wait, often without knowing whether anyone has looked at the complaint, who is responsible, or when the road will be fixed. Meanwhile we ride over the same hole every day, on two-wheelers, in autos, with our children on the back seat. We are asking for a clear promise: a reported pothole is repaired within 30 days, and everyone can see whether that promise was kept.\n\nWe are not asking for miracles. We are asking for a public tracker that shows each complaint and its status, an automatic escalation to senior officers when the 30 days run out, and real consequences for contractors who fail again and again. Cities elsewhere publish repair targets of their own, and New York aims for 15 days. A visible clock would turn a vague hope into something we can hold you to.\n\nWe also ask that the repairs be done properly, not rushed to beat a deadline. A patch that washes out in the next rain does not help us, and it does not help your budget. Please commit to a deadline and to the quality that makes a deadline worth having.",
+    "reasoning": [
+      "Potholes that are left alone get bigger. Industry sources claim that delaying repair until the damage spreads can raise repair costs by up to 70 percent and increase accident risk, so a fixed deadline may save money as well as harm.",
+      "Today a citizen can file a complaint and then has to chase it with follow-ups using a reference number, with no promised timeline. A public tracker with automatic escalation removes the need to chase and shows where each complaint is stuck.",
+      "Fixed repair targets are an established practice in other large cities. New York City aims to repair reported potholes within 15 days, so a 30-day target is a moderate goal, not an extreme one.",
+      "An international review of pothole practice lists penalties for poor repairs and inspection of repair work among best practices. The ask's contractor penalties for repeat failures follow that model."
+    ],
+    "downsides": [
+      "A 30-day clock rewards fast patches over durable ones, especially in the monsoon, when hot mix asphalt is often unavailable in India and holes get filled with soil or loose aggregate. US research found patches placed in wet months lasted only 10 to 25 days, against 60 to 100 days in other months. Bengaluru could hit the target on paper while the same holes reopen and get reported again.",
+      "A complaint-driven guarantee pulls crews and money toward reactive patching. An international study found that the most important lesson from other countries is to maintain roads before they fail, because waiting for potholes to appear is inefficient and expensive. If the budget does not grow, the 30-day promise could crowd out the resurfacing that prevents potholes in the first place.",
+      "Not every road in the city belongs to the municipal body, since some come under state or national highway agencies, and current repair times are not well tracked. A tracker may misroute complaints or count them unfairly. The June 2027 deadline also falls just as the monsoon begins, which is the hardest moment to prove the guarantee works."
+    ],
+    "sources": [
+      {
+        "title": "Pothole Repair Techniques in India | PDF | Road Surface | Road",
+        "url": "https://www.scribd.com/document/516713716/Study-on-Repairing-of-Potholes"
+      },
+      {
+        "title": "Pothole Complaint: Who Fixes Your Road | NetaSampark Blog",
+        "url": "https://blogs.netasampark.com/post/pothole-broken-road-complaint-municipality-pwd-pmgsy-nhai-1033"
+      },
+      {
+        "title": "Pothole Repair Delays Increase Costs and Risks in India",
+        "url": "https://www.linkedin.com/posts/potholeraja_every-year-potholes-cause-over-4000-accidents-activity-7452589528688533504-QBzv"
+      },
+      {
+        "title": "Pothole Repair Techniques in India | PDF | Road Surface | Road",
+        "url": "https://www.scribd.com/document/516713716/Study-on-Repairing-of-Potholes"
+      },
+      {
+        "title": "International Study Showing Best Pothole Practices – Improve Corstorphine",
+        "url": "https://improvecorstorphine.wordpress.com/2026/03/12/international-study-showing-best-pothole-practices"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:14:26.306Z"
+  },
+  "bus-fleet": {
+    "overview": "The ask calls on BMTC to roughly double Bengaluru's city bus fleet, from what it puts at about 6,950 buses to about 13,900 by December 2028, through phased purchases that favour electric buses and come with dedicated bus lanes. Published counts of the current fleet vary: 6,577 buses in November 2022, and 6,340 buses with more than 1,100 electric in 2024. BMTC, the city's only public bus agency, is accountable, along with the Karnataka Transport Minister who oversees it.",
+    "plea": "To the Bengaluru Metropolitan Transport Corporation,\n\nWe write as people who wait at your stops every day. You already run one of India's largest city bus fleets, yet the city has grown far faster than the buses serving it. Each year more of us give up and buy a scooter or a car, and the roads fill a little more.\n\nWe ask you to publish a phased, year-by-year plan to double the fleet by the end of 2028. Prioritise electric buses where depots and power supply can support them, and work with the city to give buses their own lanes so they are not stuck in the traffic they are meant to relieve.\n\nWe know this is a large commitment, and that buses bought without drivers, depots or chargers help no one. So we ask for honesty as well as ambition: report how many buses are actually on the road each month, so the city can judge progress for itself.",
+    "reasoning": [
+      "Bengaluru has been shifting heavily toward private vehicles. Registered vehicles rose from 2.8 million in 2006 to 6.7 million in 2016, and about 90% of them were personal vehicles, mostly two-wheelers.",
+      "BMTC is the sole public bus agency in the city. In 2024 it ran about 57,667 daily trips on 5,766 routes with 6,340 buses, so each added bus directly expands the only public road service most residents can use.",
+      "The cost of electric buses is partly offset by central support. One industry estimate puts an electric bus at about Rs 1.35 crore, with a central subsidy of about Rs 35 lakh per bus.",
+      "India has built a payment security fund so that private operators can buy electric buses with confidence even when city agencies pay late. This lowers one known barrier to expanding the fleet quickly.",
+      "Large electric fleets have been introduced elsewhere. Santiago in Chile added 400 battery electric buses, and Bogota in Colombia ordered almost 600 for its bus rapid transit system, which shows the technology works at scale in middle-income cities."
+    ],
+    "downsides": [
+      "The money involved is large and ongoing. At the reported price of about Rs 1.35 crore per electric bus, adding nearly 7,000 buses would run to thousands of crores before subsidy, and operator contracts carry running costs for years. Delayed payments to private operators by cash-strapped agencies are already a known problem in India, and that money cannot go to other transport needs.",
+      "Depots and the power grid may not keep pace. BMTC works from about 50 depots, and an electric bus market study warns that charging creates peak-demand and grid problems that require depot power upgrades planned for future fleet size. A comparison with Dutch cities found Indian cities held back by fragmented governance and infrastructure gaps.",
+      "The deadline is about two years away, and the target is easy to meet on paper without better service. Published fleet counts already differ between sources, so buses that are ordered or delivered but not yet running, for lack of drivers, chargers or depot space, could be counted toward the goal."
+    ],
+    "sources": [
+      {
+        "title": "Bengaluru - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Bengaluru"
+      },
+      {
+        "title": "FLEET WIDE TRANSITION TO ZERO EMISSION BUSES",
+        "url": "https://www.uitp.org/wp-content/uploads/sites/7/2025/04/Working-Paper_Fleet-Wide-Transition.pdf"
+      },
+      {
+        "title": "[PDF] Bengaluru - Asian Transport Observatory",
+        "url": "https://asiantransportobservatory.org/documents/337/Bangalore_urban_state_of_play.pdf"
+      },
+      {
+        "title": "FLEET WIDE TRANSITION TO ZERO EMISSION BUSES",
+        "url": "https://www.uitp.org/wp-content/uploads/sites/7/2025/04/Working-Paper_Fleet-Wide-Transition.pdf"
+      },
+      {
+        "title": "Bengaluru's EV Bus Fleet Expansion: 4500 New Buses ...",
+        "url": "https://www.linkedin.com/posts/l-k-atheeq-11512015_karantaka-governments-ev-push-for-bengaluru-activity-7501675711850655744-CgAT"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:14:32.020Z"
+  },
+  "water-24x7": {
+    "overview": "The ask is for piped water to run 24 hours a day, every day, in every Bengaluru ward by December 2029, through a ward-by-ward rollout with fixed milestones and leakage reduction to stretch existing supply. The ask describes supply today as intermittent in most wards. The Bangalore Water Supply and Sewerage Board (BWSSB) is accountable, with the state government's Bengaluru Development portfolio overseeing it.",
+    "plea": "To the Bangalore Water Supply and Sewerage Board,\n\nWe are asking that water in our taps stop being something we wait for. Many of us plan our days around a few hours of supply, fill drums and sumps, and pay for tankers or borewells when the pipes run dry. Families on the city's edges are hit hardest, because they pay the most for water from other sources.\n\nThis has been done before in Karnataka. Demonstration zones in Hubli-Dharwad, Belagavi and Kalaburagi showed that continuous supply is possible here. We ask that the Board publish a ward-by-ward timetable to 2029, state the leakage it will recover in each zone, and report progress openly so we can see which wards are on track.\n\nWe also ask that the poorest households not pay for this progress through bills or connection charges they cannot afford. Water that is continuous but unaffordable would not solve the problem. We believe the Board can deliver both.",
+    "reasoning": [
+      "Intermittent supply harms health. A study in an urban Indian setting with piped water found lower risk of waterborne disease as supply became more continuous, and research across 15 global South cities found that intermittent supply worsens water quality.",
+      "Bengaluru households already pay heavily for the gaps. A World Resources Institute study found tanker water in Bengaluru costs about 12 times as much as piped water, and survey data show a significant share of households rely on private tankers, shared borewells or bottled water alongside BWSSB supply.",
+      "Intermittent supply is costly for the utility itself. The World Bank notes that it raises costs, shortens pipe life and makes it hard to know how the network is performing, while continuous supply with lower leakage let a Karnataka city recover its costs from user fees and state grants.",
+      "The approach has a track record in Karnataka. About 200,000 people in five demonstration zones in Hubli-Dharwad, Belagavi and Kalaburagi have received 24x7 water under a World Bank-supported project begun in 2005. Karnataka is now using contracts that pay operators based on continuity, leakage and quality milestones."
+    ],
+    "downsides": [
+      "The timeline may be too short. Karnataka's demonstration zones served about 200,000 people, and scaling to every ward of a far larger city in roughly three years is a much bigger step than anything shown so far. Without reliable public data on current hours of supply per ward, it will also be hard to check whether wards truly reach round-the-clock supply or are only declared to.",
+      "Poorer households may bear more of the cost. The Karnataka model recovers costs partly through user fees, and research on Bengaluru's periphery found that even a few hundred rupees in charges is high relative to residents' incomes. Higher tariffs or connection costs could push the poorest off the network they were meant to benefit.",
+      "Leakage reduction may not free up enough water. The search results do not show how much of Bengaluru's water is currently lost or how much bulk supply the city has. If recovered leakage falls short of what continuous supply needs, early wards could get 24x7 water while others see shorter hours. Researchers also caution that relying on private operators to deliver such targets has a mixed record for universal access."
+    ],
+    "sources": [
+      {
+        "title": "24x7 Water Supply: FAQs",
+        "url": "https://www.worldbank.org/en/country/india/brief/faqs-24x7-water-supply"
+      },
+      {
+        "title": "Water Supply Continuity, Frequency, and Health Gains",
+        "url": "https://www.medrxiv.org/content/10.64898/2026.07.23.26358804v1.full-text"
+      },
+      {
+        "title": "Urban Water Supply: Contestations and Sustainability ...",
+        "url": "https://pure.au.dk/ws/files/136222613/Urban_Water_Supply.pdf"
+      },
+      {
+        "title": "Unaffordable and Undrinkable: Rethinking Urban Water ...",
+        "url": "https://wri.org.cn/sites/default/files/2022-08/unaffordable-and-undrinkable_0.pdf"
+      },
+      {
+        "title": "24x7 Water Supply: FAQs",
+        "url": "https://www.worldbank.org/en/country/india/brief/faqs-24x7-water-supply"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:14:38.912Z"
+  },
+  "fee-cap": {
+    "overview": "The ask wants the Karnataka School Education Department to limit yearly private school fee increases to 8%, with a state fee-regulation authority approving anything higher, by June 2027. The ask describes fees today as uncapped, but a BBC report says Karnataka already permits a 10% annual increase with audit justification, and that enforcement is weak. The accountable body is the School Education Department under Minister Madhu Bangarappa.",
+    "plea": "To the Karnataka School Education Department,\n\nWe are parents and citizens who watch school fees rise faster than our incomes each year. In Bengaluru, parents have objected to schools announcing increases of 10% to 30% for a single academic year, often with little explanation. Many families already budget carefully, and a sudden jump can force hard choices about where a child studies.\n\nWe ask for a clear limit of 8% a year. Schools that need more could apply to a state fee-regulation authority and show their accounts. We accept that schools face real costs, including teacher salaries, and this design lets genuine needs be heard rather than ignored.\n\nReports say the rules on paper have not protected families, because enforcement is weak and disputes drag on for years. We ask you to set up an authority that can decide quickly and fairly before the 2027-28 academic year, so parents know what they will pay.",
+    "reasoning": [
+      "Parents report large increases. In a LocalCircles survey of more than 18,000 parents across 301 districts, 81% said their child's school raised fees by more than 10% for 2025-26 and 50% reported a rise above 20%, though this reflects respondents rather than all schools.",
+      "Bengaluru parents have objected to several schools announcing 10% to 30% increases for 2025-26, and private schools in Karnataka were reported to be proposing a 15% hike. Both are above the 10% that Karnataka reportedly already allows with audit justification.",
+      "Yearly increases compound over a school career, so a few points of difference each year add up to a much larger total cost by the time a child finishes school.",
+      "Requiring approval for anything above the cap moves the burden of proof to the school. A school with real cost pressures can still raise fees, but it must justify the increase in advance instead of parents fighting it later.",
+      "The BBC reports that legal disputes over fees often take years and give families little timely relief. A dedicated authority with a clear threshold could settle cases faster than the courts."
+    ],
+    "downsides": [
+      "The underlying problem may be enforcement, not the size of the cap. Karnataka reportedly already limits increases to 10% with audit justification, yet schools have announced much larger hikes. A lower 8% cap run by an under-resourced authority could repeat the same weak enforcement.",
+      "Schools say they must raise teacher pay every year to stop competitors poaching staff, and that teaching costs are rising. A cap set below real cost growth could push lower-fee schools to hold down teacher salaries or cut spending. The approval process could also create paperwork and delays that small schools find hard to manage.",
+      "The deadline is tight. To affect the June 2027 academic year, the authority would need rules, staff and an approval process in place months earlier, because many schools announce fees and collect first-term payments well before the year begins. Karnataka's past fee regulation efforts, including an attempt to apply 1984-era fixed fee limits, were described as arbitrary, which shows how hard it is to draft rules that hold up."
+    ],
+    "sources": [
+      {
+        "title": "Private schools in Karnataka propose 15% fee hike for ...",
+        "url": "https://www.reddit.com/r/bangalore/comments/1rpudkm/private_schools_in_karnataka_propose_15_fee_hike"
+      },
+      {
+        "title": "Private School Fee Hikes: Laws and Parent Options (2026)",
+        "url": "https://sylphcorpsmedia.com/news/education/private-school-fee-hike-india-2025-up-delhi-haryana-rte-regulation"
+      },
+      {
+        "title": "Analysis of School Fee Regulation in India",
+        "url": "https://ccs.in/sites/default/files/2022-08/research_school-fee-regulation-india.pdf"
+      },
+      {
+        "title": "Delhi: Rising school fees push Indian families to the brink",
+        "url": "https://www.bbc.com/news/articles/c2le1l0pv95o"
+      },
+      {
+        "title": "Private School Fee Hikes: Laws and Parent Options (2026)",
+        "url": "https://sylphcorpsmedia.com/news/education/private-school-fee-hike-india-2025-up-delhi-haryana-rte-regulation"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:14:55.691Z"
+  },
+  "teacher-vacancies": {
+    "overview": "The ask is for the Union and State Education Departments to fill every vacant government teacher post by March 2028, using annual recruitment calendars with fixed exam and result dates and a public vacancy tracker. The ask puts current vacancies at about 10 lakh. Official-linked data show the national vacancy rate at 15.17% in 2023-24, down from 19.69% in 2021-22. Reaching zero in about 17 months would be a large jump from that path.",
+    "plea": "To the Union and State Education Departments,\n\nWe are writing about the classrooms that open each morning without enough teachers. Your own data show that roughly one in seven teacher posts stood empty in 2023-24. Behind that number are children who share one teacher across several grades, or who wait years for a subject teacher who never arrives.\n\nWe are not asking for a single hiring drive. We are asking for something steadier: a recruitment calendar every year, with exam and result dates fixed in advance and kept. We also ask for a public tracker, so that anyone can see where posts are empty and how long they have stayed that way. Vacancies have already fallen when recruitment happened. Predictability can make that progress reliable instead of occasional.\n\nWe ask that hiring go first to the schools that need it most, and that new teachers are trained properly. We would rather see a real teacher in every rural classroom than a number reported as zero.",
+    "reasoning": [
+      "The vacancy rate fell from 19.69% in 2021-22 to 15.17% in 2023-24, which shows recruitment can move the number. It also shows that a large share of posts remains unfilled.",
+      "Progress has been uneven. Elementary vacancies dropped by nearly 5 percentage points while secondary vacancies barely moved, so a fixed calendar that also covers secondary posts targets a real gap.",
+      "Irregular hiring lets posts sit empty for years. The national teacher-education regulator, NCTE, has 54–89% of its own staff posts vacant and has made no permanent recruitment since 2019. Fixed exam and result dates are aimed at exactly this pattern.",
+      "A public tracker can build on data the government already collects. School and teacher figures are compiled through UDISE+ and were reported to Parliament in a July 2026 reply on teacher vacancies.",
+      "A review of evidence from low- and middle-income countries finds that hard-to-staff rural and poor schools can be filled through financial incentives, mandatory rotations and local recruitment. Some low-cost informational measures were cost-effective at reducing vacancies, so there are tested tools to pair with a calendar."
+    ],
+    "downsides": [
+      "The cost is large and may not buy what it promises. One analysis estimated that filling about 10.35 lakh claimed vacancies would cost around Rs 63,674 crore a year. The same analysis argued that much of the shortage is misallocation, with surplus teachers in some schools and gaps in others, so blanket hiring could add cost without fixing distribution.",
+      "A zero-vacancy target is easy to game and hard to sustain. Retirements create new vacancies every year. The quickest way to report zero is to cut sanctioned posts or merge schools rather than hire, and the total number of schools has already been falling slightly.",
+      "Rushed mass hiring may sacrifice quality and miss the hardest posts. District teacher-training institutes (DIETs) face 30–50% faculty vacancies and NCTE is badly understaffed, so training for new recruits is thin. Evidence from low- and middle-income countries shows rural and high-poverty schools stay hard to fill unless targeted incentives are added."
+    ],
+    "sources": [
+      {
+        "title": "Teachers for Universal Education by 2030: Supply, Quality, and the Training Gap | Education for All in India",
+        "url": "https://educationforallinindia.com/teachers-for-universal-education-by-2030-supply-quality-and-the-training-gap"
+      },
+      {
+        "title": "Teacher Vacancies by State: India's 2024-25 Data",
+        "url": "https://www.idreameducation.org/blog/teacher-vacancies-state-wise-data"
+      },
+      {
+        "title": "Teacher Vacancies",
+        "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2291272&reg=48&lang=1"
+      },
+      {
+        "title": "The Myth and Reality of Teacher Shortage in India",
+        "url": "https://riseprogramme.org/sites/default/files/2021-05/Myth_of_Teacher_Shortage_in_India.pdf"
+      },
+      {
+        "title": "Teachers for Universal Education by 2030: Supply, Quality, and the Training Gap | Education for All in India",
+        "url": "https://educationforallinindia.com/teachers-for-universal-education-by-2030-supply-quality-and-the-training-gap"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:14:57.894Z"
+  },
+  "msp-law": {
+    "overview": "The ask is for a central law that turns the minimum support price (MSP) for major crops into a legal right, with obligations to procure at that price, by March 2028. Today MSP is announced each year for about 22 to 23 crops on the advice of the Commission for Agricultural Costs and Prices, but it has no legal backing and no law requires anyone to pay it. The Ministry of Agriculture and Farmers' Welfare is the body accountable for drafting and moving such a law.",
+    "plea": "To the Ministry of Agriculture and Farmers' Welfare,\n\nEvery season, farmers plant on the strength of a price you announce. For most of them that price stays on paper. It is a policy, not a promise the law will keep, and those with the least land, the least information and the least ability to wait for a buyer are the ones most likely to miss out.\n\nWe ask you to bring a central law that makes the minimum support price enforceable for major crops and sets out who must buy, and when, if the market will not pay it. We also ask you to be open about the cost and the design choices: which crops, how much of the harvest, and how private trade will be handled. Farmers deserve a guarantee that is honest about its limits, not a slogan.\n\nA price set before sowing only protects people if it holds at harvest. We ask you to give that certainty the force of law by March 2028.",
+    "reasoning": [
+      "MSP is revised and announced every year, yet there is no legislation mandating its use, so a farmer who is offered less has no legal remedy.",
+      "The government states that MSP is already set at a return of at least 50 per cent over the all-India weighted average cost of production for the mandated crops. A legal guarantee would make that stated return something farmers can actually count on, not only an announced figure.",
+      "Benefits today go mostly to larger farmers with better awareness and money to hold out. A binding price that applies to every sale could reach small farmers who now sell below MSP to local traders.",
+      "Procurement today is concentrated on water-hungry paddy and wheat, which has contributed to groundwater depletion and soil degradation in Punjab and Haryana. A credible guarantee across all notified crops, including pulses and oilseeds, could make it less risky for farmers to switch crops. One source links this to lower spending on imports of these crops, which it puts at Rs 2 lakh crore."
+    ],
+    "downsides": [
+      "The fiscal cost could be very large. One estimate puts a legal MSP on the marketed surplus of 23 crops at Rs 10 to 17 lakh crore a year, roughly 40 to 50 per cent of the Union Budget. The Food Corporation of India already struggles with procurement costs, storage shortages and wastage, and a larger bill would crowd out other spending.",
+      "If buying below MSP becomes punishable, private traders may stop buying whenever market prices fall below the support level. That would push more of the crop onto the government, or leave farmers with no buyer at all. Some researchers suggest alternatives such as requiring private buyers to pay at or above MSP, but how that would be enforced is not settled.",
+      "Higher guaranteed prices can make Indian farm exports less competitive. India has already faced challenges at the World Trade Organization over rice subsidies, partly because of the high MSP for paddy, and a statutory guarantee could deepen those trade disputes."
+    ],
+    "sources": [
+      {
+        "title": "[PDF] Legal Guarantee of Minimum Support Price (MSP) and Indian ...",
+        "url": "https://mpra.ub.uni-muenchen.de/122389/1/MPRA_paper_122389.pdf"
+      },
+      {
+        "title": "Minimum Support Price (MSP): Effectiveness & Its Legal Guarantee",
+        "url": "https://www.pmfias.com/msp"
+      },
+      {
+        "title": "Agricultural Research Communication Centre | ARCC Journals | Since 1967",
+        "url": "https://arccjournals.com/journal/bhartiya-krishi-anusandhan-patrika/BKAP640"
+      },
+      {
+        "title": "MINIMUM-SUPPORT-PRICE-ACTS-AS-A-DEFACTO- ...",
+        "url": "https://ijirl.com/wp-content/uploads/2025/01/MINIMUM-SUPPORT-PRICE-ACTS-AS-A-DEFACTO-LAW-ON-FARM-INCOME.pdf"
+      },
+      {
+        "title": "MSP as a Legal Right: Benefits and Challenges",
+        "url": "https://www.cdpp.co.in/articles/msp-as-a-legal-right-benefits-and-challenges"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:15:04.587Z"
+  },
+  "ayushman-cover": {
+    "overview": "The ask is for the Ministry of Health and Family Welfare and the National Health Authority to double the Ayushman Bharat PM-JAY hospital cover from ₹5 lakh to ₹10 lakh per family per year by April 2027, with budget funding to match. The scheme today offers ₹5 lakh per family per year to about 12 crore socio-economically deprived families, roughly 40 per cent of the population. Its 2026-27 budget is listed at ₹17,588 crore.",
+    "plea": "To the Ministry of Health and Family Welfare and the National Health Authority,\n\nWe write on behalf of families who rely on PM-JAY as their only protection against a hospital bill they could never pay. The ₹5 lakh family cover has been the scheme's headline figure since its launch in 2018. Families share that single amount across all members. One cancer, one cardiac emergency or one long stay in intensive care can use it up, and the family is left to borrow or sell what it has.\n\nWe ask you to raise the cover to ₹10 lakh per family per year by April 2027, and to set aside the budget that this honestly requires, with no quiet cuts elsewhere in the scheme. The scheme was built to save poor households from catastrophic health costs. We ask that its ceiling keep pace with what serious illness now costs.\n\nWe also ask that you publish how many families exhaust their current cover each year, so that everyone can judge the need and the cost. A family facing a life-threatening diagnosis should not have to choose between finishing treatment and keeping its home.",
+    "reasoning": [
+      "The ₹5 lakh figure is the same one set when the scheme launched in 2018, and it is shared by the whole family for the year. Rising treatment costs and serious illnesses can push a household past the limit.",
+      "Families are using the scheme heavily. It has recorded over 116.9 million hospital admissions and sanctioned treatments worth ₹1.73 lakh crore since launch. That suggests a higher ceiling would be used, not left idle.",
+      "An analysis in the Economic and Political Weekly argues that the scheme's cover meets less than 30 per cent of hospital charges and that without substantial funding it is likely to fail. A higher cap would address one part of that gap.",
+      "The target is a single published number in the scheme's rules, so citizens can easily check whether it has been delivered by the deadline."
+    ],
+    "downsides": [
+      "Money spent raising the ceiling for families with very costly treatment cannot be spent on extending basic cover to people who have none. As of 2023, about 30 per cent of Indians were uninsured, and a higher cap does nothing for them.",
+      "A bigger limit does not by itself mean better financial protection. A four-year study of the scheme found that being covered did not guarantee protection from costs, and it recommended reducing reliance on private hospitals. A larger cap could raise private billing without cutting what families pay out of their own pockets.",
+      "The deadline is tight and the cost is shared. The scheme is financed by both central and state governments, and the 2026-27 allocation is already fixed. Meeting April 2027 depends on the next budget and on states finding matching funds, and poorer states may struggle to do so."
+    ],
+    "sources": [
+      {
+        "title": "NHA Annual Report 2022-23",
+        "url": "https://abdm.gov.in/strapicms/uploads/NHA_Annual_Report_2022_2023_4f3bc6e2a5.pdf"
+      },
+      {
+        "title": "Ayushman Bharat Yojana - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Ayushman_Bharat_Yojana"
+      },
+      {
+        "title": "Ayushman Bharat Yojana Explained: Benefits, Eligibility & Coverage",
+        "url": "https://www.manipalcigna.com/blog/ayushman-bharat-yojana"
+      },
+      {
+        "title": "Ayushman Bharat Yojana - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Ayushman_Bharat_Yojana"
+      },
+      {
+        "title": "Ayushman Bharat Yojana Explained: Benefits, Eligibility & Coverage",
+        "url": "https://www.manipalcigna.com/blog/ayushman-bharat-yojana"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:15:24.204Z"
+  },
+  "lake-sewage": {
+    "overview": "The ask wants every major point where sewage flows into Bengaluru's lakes to have a treatment plant by December 2028, with public water-quality readings for each lake. Today untreated sewage still enters many lakes, and one widely shared report says 184 of the city's 186 lakes are contaminated. The ask holds the Bangalore Water Supply and Sewerage Board (BWSSB) and the Karnataka State Pollution Control Board accountable.",
+    "plea": "To the Bangalore Water Supply and Sewerage Board and the Karnataka State Pollution Control Board,\n\nWe live beside lakes that once gave this city its name. Today many of them carry sewage instead of rainwater. Cleaning them every few years cannot hold while wastewater keeps flowing in.\n\nWe ask that you treat the sewage before it reaches the lakes, at every major inflow, by December 2028. We also ask that you publish regular water-quality readings for each lake, so residents can see what is changing. Please do not simply divert the sewage elsewhere, because the people downstream drink and farm with that water too.\n\nWe are not asking for a miracle. We are asking for a clear plan, honest numbers, and a lake our children can walk beside without covering their noses.",
+    "reasoning": [
+      "A widely shared report says 184 of Bengaluru's 186 lakes are contaminated, and it notes that periodic cleaning does not last if wastewater keeps flowing in. Fixing the inflow addresses the cause.",
+      "A recent study reported that Bengaluru's lakes are getting cleaner where sewage is dealt with. Lakes still receiving a mix of treated and untreated wastewater averaged only a 'Slightly Polluted' score, which suggests the untreated share still matters.",
+      "Polluted lake water feeds into the city's food chain, with reporting linking contaminated water bodies to toxins in fresh produce grown nearby.",
+      "Bengaluru's sewage has been reported as choking rivers and dams downstream in Tamil Nadu, so treating it at the source protects communities beyond the city.",
+      "Public readings for each lake give residents a way to check progress. In the UK, requiring water companies to collect spill data led regulators to open investigations into 15,000 incidents."
+    ],
+    "downsides": [
+      "Stopping sewage from entering a lake can mean diverting it rather than treating it, which pushes the pollution downstream. A recent study on Bengaluru flagged exactly this concern, and downstream rivers and dams in Tamil Nadu have already been reported as fouled by the city's sewage.",
+      "'100% treated' is easy to claim and hard to verify. The ask does not put a number on today's untreated inflow, and plants that exist on paper can bypass flows or underperform. In the UK, many spills went uncounted until regulators required companies to collect the data, after which thousands of incidents came under investigation.",
+      "The deadline is about 26 months away. Building and running treatment plants at every major inflow needs land, money and steady power and upkeep, and none of the cost appears in the available information. A rushed rollout could produce plants that are built but poorly run, while the money and attention could crowd out other lake problems that experts also list, such as encroachment and waste dumping."
+    ],
+    "sources": [
+      {
+        "title": "Bengaluru sewage chokes rivers and dams - Tamil Nadu",
+        "url": "https://thefederal.com/category/states/south/tamil-nadu/tamil-nadu-toxic-foam-bengaluru-sewage-krp-dam-palar-249118"
+      },
+      {
+        "title": "Bengaluru has 186 lakes. 184 are contaminated. Cleaning the ...",
+        "url": "https://www.facebook.com/cnbctv18india/posts/bengaluru-has-186-lakes-184-are-contaminatedcleaning-the-lakes-every-few-years-m/1554539843373442"
+      },
+      {
+        "title": "The city of lakes battles a deepening water crisis",
+        "url": "https://india.mongabay.com/2025/04/the-city-of-lakes-battles-a-deepening-water-crisis"
+      },
+      {
+        "title": "Bengaluru has 186 lakes. 184 are contaminated. Cleaning the ...",
+        "url": "https://www.facebook.com/cnbctv18india/posts/bengaluru-has-186-lakes-184-are-contaminatedcleaning-the-lakes-every-few-years-m/1554539843373442"
+      },
+      {
+        "title": "How Bengaluru's polluted lakes are affecting its food chain",
+        "url": "https://www.youtube.com/watch?v=5OYiQ72g9kc"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:15:26.855Z"
+  },
+  "court-backlog": {
+    "overview": "The ask is to cut India's pending court cases roughly in half by December 2030, from what it puts at about 5.4 crore to about 2.7 crore, through more fast-track courts, more judge appointments and yearly clearance targets. Research using National Judicial Data Grid figures counted about 5.03 crore pending cases in December 2023, up from about 3.23 crore in 2010, so the backlog has been growing, not shrinking. The ask names the Ministry of Law and Justice and the Supreme Court of India as accountable, since both have a role in judicial appointments and court administration.",
+    "plea": "To the Ministry of Law and Justice and the Supreme Court of India,\n\nWe are writing for the people whose lives are on hold while their cases wait: families in land disputes that outlast a generation, undertrials waiting for a hearing, small businesses waiting to be paid. Pending cases have grown from about 3.2 crore in 2010 to about 5 crore by the end of 2023. In 2016, when the count was far lower, a sitting Chief Justice publicly pleaded for more judges. The problem is not new, and it has not been allowed to wait for lack of warnings.\n\nWe ask you to commit to a clear, public goal: halve the backlog by December 2030, with yearly targets that anyone can check on the National Judicial Data Grid. That means filling judge vacancies and adding fast-track courts. It also means tackling why cases pile up in the first place, including the large share brought by government departments themselves.\n\nWe know a number alone does not deliver justice, and we do not want cases closed in haste just to meet a target. We are asking for a measurable promise and honest reporting on it, so that every citizen can see whether the wait for justice is finally getting shorter.",
+    "reasoning": [
+      "The backlog is growing at roughly 3.5 percent a year, from about 3.23 crore pending cases in 2010 to about 5.03 crore in December 2023. Without a deliberate target, the trend points to longer waits every year.",
+      "A 2018 NITI Aayog strategy paper estimated that, at the disposal rate of the time, clearing the backlog would take more than 324 years. Delays of that scale mean many litigants effectively never get a final decision.",
+      "The government is reported to be a party in about half of pending cases. That means the Ministry has a direct lever, such as cutting needless state appeals and litigation, that does not depend only on hiring.",
+      "Yearly clearance targets published against National Judicial Data Grid figures would make progress visible and let citizens hold both the executive and the judiciary to a shared, checkable goal.",
+      "The pressure is uneven across states. Subordinate-court pendency roughly doubled in Uttar Pradesh, from 55 lakh to 1.13 crore, and tripled in Delhi and Haryana over a decade. Targeted fast-track courts could concentrate resources where the backlog is worst."
+    ],
+    "downsides": [
+      "Yearly clearance targets can be gamed. Courts under pressure may prioritise quick, simple disposals or procedural dismissals over hard cases, so the headline number falls while the oldest and most complex disputes keep waiting. The litigants who lose out are those with weaker or more complicated cases.",
+      "Adding judges and fast-track courts costs money and may disappoint if productivity and case inflow are not addressed. Carnegie notes that one study found Delhi district court productivity at about half that of Australian courts, and calls more judges without productivity gains a half measure. Meanwhile, government litigation and land disputes, about a fifth of all pending cases, keep feeding new cases in.",
+      "The deadline is very ambitious. Halving the backlog in about four years means net disposals must exceed new filings by roughly 2.7 crore cases, reversing a trend that has run upward for more than a decade, and shocks such as the 2020 pandemic, when high court disposals fell by more than half, can wipe out gains. By comparison, a sustained push in US immigration courts cut that backlog from above 41.8 lakh to below 37.5 lakh during 2025, about a tenth, not a half."
+    ],
+    "sources": [
+      {
+        "title": "Judicial Overload: Analysing India's Case Backlog Crisis",
+        "url": "https://researchonline.lse.ac.uk/id/eprint/123485/1/psj_2024-4-18--judicial-overload-analysing-indias-case-backlog-crisis.pdf"
+      },
+      {
+        "title": "How to Start Resolving the Indian Judiciary’s Long-Running Case Backlog | Carnegie Endowment for International Peace",
+        "url": "https://carnegieendowment.org/research/2021/09/how-to-start-resolving-the-indian-judiciarys-long-running-case-backlog"
+      },
+      {
+        "title": "Pendency of court cases in India - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Pendency_of_court_cases_in_India"
+      },
+      {
+        "title": "Judicial pendency in India | Data For India",
+        "url": "https://www.dataforindia.com/pendency"
+      },
+      {
+        "title": "Judicial Overload: Analysing India's Case Backlog Crisis",
+        "url": "https://researchonline.lse.ac.uk/id/eprint/123485/1/psj_2024-4-18--judicial-overload-analysing-indias-case-backlog-crisis.pdf"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:15:36.866Z"
+  },
+  "asset-declarations": {
+    "overview": "The ask wants the Election Commission of India to publish the asset declarations of every MP and MLA once a year on a single searchable open-data portal, with penalties for late filing, by January 2027. Today, according to the ask, these declarations exist as scattered PDFs, mostly filed as election affidavits, which outside groups collect and rebuild into searchable databases. The Election Commission is named as accountable. Because penalties and yearly filing between elections may need legal backing, the Union Ministry of Law and Justice is also involved.",
+    "plea": "To the Election Commission of India,\n\nWe are citizens who want to know, plainly and without detective work, what the people we elect own and owe. Today the most complete picture comes from volunteers and civil society groups who gather affidavits filed with you and rebuild them into searchable lists. They do this work because the official record is hard to use.\n\nWe ask you to publish these declarations yourselves, every year, in one portal that anyone can search and download. A record that appears only at election time shows a snapshot every few years. A yearly record would show how a representative's wealth changes while they are in office, and that is when it matters most.\n\nWe know this raises real questions about accuracy, privacy and legal authority. We ask that you answer them openly and set a timeline you can keep. Members of the Union Council of Ministers already publish yearly declarations. We hope that standard can be extended to every MP and MLA.",
+    "reasoning": [
+      "The underlying data already exists. Third-party sites such as MyNeta and NetaWorth compile MPs' and MLAs' assets and liabilities from election affidavits filed with the Election Commission. That shows both public demand and that the data can be made searchable.",
+      "Election affidavits are filed only when a candidate contests, so the public sees wealth at election time but not during a term. A yearly declaration would make growth in assets while in office visible and comparable.",
+      "There is a working precedent. The Prime Minister's Office publishes yearly assets and liabilities of the Union Council of Ministers, most recently as on 31 March 2026. Extending a similar yearly cycle to all legislators builds on an existing practice.",
+      "An official, machine-readable source would reduce reliance on volunteer groups re-entering data from PDFs. That cuts the risk of transcription errors and gives citizens and journalists one authoritative record.",
+      "Penalties for late filing give the yearly requirement teeth. Without a consequence, a disclosure rule can turn into an optional courtesy."
+    ],
+    "downsides": [
+      "The deadline is very tight and the legal basis is uncertain. January 2027 is about three months away. The Election Commission's role centres on candidates at election time, so yearly filing by sitting members, and penalties for missing it, may need new rules or a change in law. That cannot easily be finished in time.",
+      "A searchable portal makes declarations easier to read but does not make them true, because the figures are self-declared. In Cyprus, published declarations of MPs had to be corrected and republished. In one, a party leader listed 22 inherited properties at zero value. Without checks on valuation, members can stay technically compliant while revealing little.",
+      "Publishing detailed personal financial data invites privacy disputes. In one reported case, an MP alleged that personal data from asset declarations had been published unlawfully. The portal would need clear limits on what is shown, such as addresses or account details, or it could face legal challenge and delay."
+    ],
+    "sources": [
+      {
+        "title": "NetaWorth — Declared assets of India's MLAs, Lok Sabha ...",
+        "url": "https://netaworth.vercel.app"
+      },
+      {
+        "title": "MyNeta | Candidate Affidavits for Elections in India | Criminal, Financial, Educational, Income, Professon Details of candidates MPs & MLAs | Information from ADR and National Election Watch ff",
+        "url": "https://www.myneta.info"
+      },
+      {
+        "title": "Assets and Liabilities of the Union Council of Ministers",
+        "url": "https://www.pmindia.gov.in/en/assets-and-liabilities-of-the-union-council-of-ministers"
+      },
+      {
+        "title": "NetaWorth — Declared assets of India's MLAs, Lok Sabha & Rajya ...",
+        "url": "https://netaworth.vercel.app"
+      },
+      {
+        "title": "MP alleges personal data from asset declarations were published ...",
+        "url": "https://www.facebook.com/politistothepoint/posts/mp-alleges-personal-data-from-asset-declarations-were-published-unlawfully-and-c/122183944754960857"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:15:53.758Z"
+  },
+  "exam-results": {
+    "overview": "The ask is for central recruitment and entrance exams run by the National Testing Agency (NTA), UPSC and SSC to declare results within six months, with no paper leaks, by January 2027. It describes today's process as often delayed and leak-prone, and this year's NEET-UG leak, now under a CBI case, and the re-exam that followed support that concern. Responsibility sits with the Ministry of Education, which oversees the NTA, and the Department of Personnel and Training (DoPT), which oversees UPSC and SSC.",
+    "plea": "To the Ministry of Education, the National Testing Agency and the Department of Personnel and Training,\n\nWe write on behalf of the millions of young people who give years of their lives to preparing for a single exam. This year a NEET-UG paper leak led to a CBI case and a re-examination for medical aspirants. Each leak and each delayed result costs families money, time and faith that effort will be fairly rewarded.\n\nWe ask for three things we believe are within your power. Publish fixed exam calendars and keep to them. Handle papers in a way that can be checked for tampering at every step. After any leak, publish an audit of what went wrong and what was changed. Together these would let candidates plan their lives, and declaring results within six months of an exam would let them move on.\n\nWe know that no system can promise perfection, and we are not asking for slogans. We are asking for commitments you can be measured against, so that the next generation of candidates can trust that the result they receive is the one they earned.",
+    "reasoning": [
+      "Leaks are causing harm now: the CBI registered a case over an alleged NEET-UG 2026 paper leak in May 2026, and a re-examination followed for India's roughly 2.2 million medical aspirants.",
+      "The government is already strengthening the law. An amendment bill in 2026 to the Public Examinations (Prevention of Unfair Means) Act raises penalties for leaks, so a fixed calendar and tamper-proof handling would add the prevention side to tougher punishment after the fact.",
+      "A public audit after each leak would add accountability that experts say is missing. Experts quoted by the BBC say the NTA's problems go beyond leaks to its accountability and capacity.",
+      "The NTA has run several exams without reported leaks, according to experts cited by the BBC. That suggests leak-free conduct is achievable when safeguards hold, and that a common national standard can be enforced.",
+      "Disputes over results can freeze hiring for months. In the 2023 Madhya Pradesh Patwari recruitment, appointments were stayed after results amid allegations and only resumed after a clean chit in February 2024. Faster, more transparent processes would shorten that limbo for selected candidates."
+    ],
+    "downsides": [
+      "'No paper leaks' is an absolute target that cannot be guaranteed and is hard to measure. Whether a leak happened is often disputed for months, as in Madhya Pradesh in 2023, where allegations led to stayed appointments before a committee found no leak. Pressure to hit a zero target could push officials to play down or dispute incidents rather than disclose them.",
+      "A six-month result deadline can collide with the investigations, court challenges and re-exams that leaks trigger. The Delhi High Court is currently hearing a challenge over a UGC-NET English re-exam. Rushing results to meet a deadline could mean rushing probes or ignoring legitimate disputes.",
+      "The January 2027 deadline is about three months away, which leaves little time to change paper handling across exams taken by millions. Experts cited by the BBC already flag capacity limits at the NTA. Building tamper-proof systems through new or split agencies could duplicate costs and leave safeguards uneven."
+    ],
+    "sources": [
+      {
+        "title": "List of paper leaks in India - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/List_of_paper_leaks_in_India"
+      },
+      {
+        "title": "NTA: India's high-stakes exam system faces a crisis of trust",
+        "url": "https://www.bbc.com/news/articles/cvgy1g7egy9o"
+      },
+      {
+        "title": "India's 2.2 million aspiring medical students sit a re- ...",
+        "url": "https://www.facebook.com/gulftimes/posts/indias-22-million-aspiring-medical-students-sit-a-re-examination-under-tight-sec/1471670341655320"
+      },
+      {
+        "title": "NTA: India's high-stakes exam system faces a crisis of trust",
+        "url": "https://www.bbc.com/news/articles/cvgy1g7egy9o"
+      },
+      {
+        "title": "The Public Examinations (Prevention of Unfair Means) Amendment Bill, 2026",
+        "url": "https://prsindia.org/billtrack/the-public-examinations-prevention-of-unfair-means-amendment-bill-2026"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:15:53.764Z"
+  },
+  "privatise-municipal": {
+    "overview": "The ask calls for Bengaluru's municipal services, which it describes as fully public today, to be delivered by private operators by April 2028. Delivery would run through competitive tenders and performance contracts with public audits. The Greater Bengaluru Authority and the Karnataka Urban Development Department would be accountable, since the city's governance is being reorganised into a three-tier structure.",
+    "plea": "To the Greater Bengaluru Authority and the Karnataka Urban Development Department,\n\nWe write as residents who live every day with the state of our roads, drains and public spaces. For years the city's municipal body has been criticised for failing to keep basic infrastructure in order. That includes a rebuke from the Karnataka High Court over road maintenance. We are asking you to consider whether some of these services could be delivered better by operators who are paid only when they perform.\n\nWe are not asking you to hand the city over and walk away. We are asking for open, competitive tenders, contracts with clear and measurable standards, and audits that any citizen can read. Responsibility for results must stay with you.\n\nThe city is already being restructured into a new governance system. That gives you a rare chance to decide how services are delivered, not only who governs. We ask that you use it carefully, test it honestly, and keep the public's voice at the centre.",
+    "reasoning": [
+      "The city's municipal body has faced repeated criticism for poor upkeep. In 2005 the Karnataka High Court castigated it for failing to maintain roads. Performance contracts would tie payment to outcomes such as road condition, rather than to effort or budget spent.",
+      "Responsibility for services in Bengaluru is spread across the municipal body and state-run parastatals. Analysts say this causes functional overlap, ambiguity and wasted resources. Written contracts with named operators could make clearer who is responsible for each service.",
+      "The municipal body has at times gone years without an elected council, which left citizens with few direct levers. The ask's requirement of public audits on service contracts could add a layer of scrutiny that does not depend on an elected body being in place.",
+      "The move to a Greater Bengaluru Authority with multiple corporations and ward committees means service delivery arrangements are already being redesigned. That lowers the cost of introducing new delivery models now rather than later."
+    ],
+    "downsides": [
+      "Outsourcing could push accountability further from residents in a city where it is already weak. Experts note that Indian municipal bodies lack autonomy from the state, and Bengaluru's has gone years without an elected council. If services also move to private contractors, citizens may struggle to find anyone they can hold answerable when a service fails.",
+      "Putting most services out to tender greatly increases the number of contracts that can be disputed, rigged or gamed. Tender-related cases are already one of the recurring categories of writ petitions filed against the municipal body. The target of 'outsourced to private operators' measures who delivers a service, not whether it improves. It could be met on paper while quality stays the same or gets worse.",
+      "The April 2028 deadline overlaps with a major restructuring into a Greater Bengaluru Authority and several new corporations. Designing, tendering and supervising contracts for every service while those bodies are still finding their feet risks gaps in service and weak contract oversight. Municipal staff whose work is moved to contractors would also bear the uncertainty."
+    ],
+    "sources": [
+      {
+        "title": "More Privatisation on the cards?",
+        "url": "https://prsindia.org/theprsblog/more-privatisation-cards?page=26&per-page=1"
+      },
+      {
+        "title": "Bruhat Bengaluru Mahanagara Palike - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Bruhat_Bengaluru_Mahanagara_Palike"
+      },
+      {
+        "title": "Importance of Public Participation in Local Government | B.PAC",
+        "url": "https://bpac.in/bruhat-bengaluru-mahanagara-palike-past-present-and-future"
+      },
+      {
+        "title": "Bruhat Bengaluru Mahanagara Palike (BBMP) in ...",
+        "url": "https://www.facebook.com/indianmasterminds/posts/bruhat-bengaluru-mahanagara-palike-bbmp-in-karnataka-is-indias-fourth-largest-mu/717406213737769"
+      },
+      {
+        "title": "Examining urban local governance in India through the case of Bengaluru",
+        "url": "https://prsindia.org/theprsblog/examining-urban-local-governance-in-india-through-the-case-of-bengalurua?page=98&per-page=1"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:16:03.136Z"
+  },
+  "cashless-accident-care": {
+    "overview": "The ask is for cashless emergency treatment for road accident victims at every hospital in India by March 2027. A national scheme already exists: launched in May 2025 and now called PM-RAHAT, it pays empanelled hospitals directly for up to ₹1.5 lakh per victim for the first seven days. The gap is that it works only at empanelled hospitals, and the ask wants that extended to all hospitals, with the Ministry of Road Transport and Highways accountable and the Ministry of Health and Family Welfare closely involved.",
+    "plea": "To the Ministry of Road Transport and Highways,\n\nWe welcome the cashless treatment scheme for road accident victims. It covers up to ₹1.5 lakh per victim for the first seven days, on any category of road, and it applies to every victim whatever their nationality. It already accepts in principle that no injured person should wait while someone argues about payment.\n\nA victim does not choose which hospital is nearest when they are hurt. If the closest hospital is not empanelled, the promise can fail at the moment it matters most. We ask that by March 2027 every hospital that receives an accident victim be able to treat them under the scheme and be paid directly, so that the golden hour is spent on care and not on paperwork.\n\nWe also ask that you publish how many hospitals are empanelled today, and in which districts, so that citizens can see the gap close.",
+    "reasoning": [
+      "Treatment in the first hours after a crash decides whether many victims live, and a scheme that removes upfront payment protects that window only at the hospitals where it can be used.",
+      "The basic system already exists. Direct payment to hospitals, digital registration, verification and claims, and a ₹1.5 lakh cover for seven days are all in place, so the ask is to extend a working mechanism rather than build a new one.",
+      "Hospitals in the Ayushman Bharat network are already empanelled, which gives the scheme a large base of hospitals that already know how to claim under it.",
+      "The scheme already covers every eligible victim on any category of road and of any nationality. Extending it to every hospital would make the place of treatment match the promise to the person."
+    ],
+    "downsides": [
+      "The search results give no public count of how many hospitals are empanelled today, so the starting point is described only as limited. That makes it hard to judge whether every hospital can be reached in the roughly five months left before March 2027, or to check whether the target was actually met.",
+      "Many small hospitals and clinics have no trauma care. Bringing them into the scheme could encourage them to admit seriously injured patients they cannot treat properly instead of stabilising and transferring them quickly, which could cost lives during the golden hour.",
+      "Private hospitals carry the cost if claims are paid slowly or rejected during verification. A mandate that covers every hospital, rather than voluntary empanelment, could lead to resistance or to costs being passed on to other patients. The results do not show how quickly claims are paid now."
+    ],
+    "sources": [
+      {
+        "title": "Saving Time, Saving Lives: The Golden Hour as a Constitutional Guarantee in India – HHR Journal",
+        "url": "https://www.hhrjournal.org/2025/09/30/saving-time-saving-lives-the-golden-hour-as-a-constitutional-guarantee-in-india"
+      },
+      {
+        "title": "Cashless Treatment of Road Accident Victims",
+        "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2233219"
+      },
+      {
+        "title": "GUIDELINES PILOT SCHEME FOR CASHLESS ...",
+        "url": "https://cdnbbsr.s3waas.gov.in/s3250413d2982f1f83aa62a3a323cd2a87/uploads/2025/05/202505151230594664.pdf"
+      },
+      {
+        "title": "GUIDELINES PILOT SCHEME FOR CASHLESS ...",
+        "url": "https://cdnbbsr.s3waas.gov.in/s3250413d2982f1f83aa62a3a323cd2a87/uploads/2025/05/202505151230594664.pdf"
+      },
+      {
+        "title": "PM RAHAT (2026): Pradhan Mantri – Road Accident ...",
+        "url": "https://www.impriindia.com/insights/policy-update/pm-rahat-2026"
+      }
+    ],
+    "updatedAt": "2026-10-24T09:16:14.635Z"
+  }
+}
