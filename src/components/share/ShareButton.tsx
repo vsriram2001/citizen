@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Button } from "@/components/ui/Button";
 
 /**
@@ -53,7 +53,41 @@ export function ShareButton({
     () => false,
   );
 
+  // Image mode: fetch the card as soon as the page opens. Phone browsers
+  // (Safari above all) only open the share sheet straight off a tap — fetching
+  // the image after the tap (a second or more on a cold serverless start)
+  // uses that window up, and navigator.share is then refused silently.
+  const fileRef = useRef<File | null>(null);
+  useEffect(() => {
+    if (!downloadName) return;
+    let cancelled = false;
+    fileRef.current = null;
+    fetch(url)
+      .then((r) => r.blob())
+      .then((blob) => {
+        if (!cancelled) fileRef.current = new File([blob], downloadName, { type: blob.type });
+      })
+      .catch(() => {
+        // Fetched on tap instead.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [url, downloadName]);
+
   async function shareImage() {
+    // Ready file + phone: share before anything else is awaited, so the tap
+    // still counts as the gesture that opened the sheet.
+    const ready = fileRef.current;
+    if (ready && isTouch && !forceCopy && navigator.canShare?.({ files: [ready] })) {
+      try {
+        await navigator.share({ files: [ready], text });
+      } catch {
+        // Cancelled the share sheet — not an error.
+      }
+      return;
+    }
+
     setStatus("busy");
     try {
       // Desktop browsers: the OS share sheet (macOS "Copy" in particular) puts
@@ -77,9 +111,12 @@ export function ShareButton({
         }
       }
 
-      const res = await fetch(url);
-      const blob = await res.blob();
-      const file = new File([blob], downloadName!, { type: blob.type });
+      let file = fileRef.current;
+      if (!file) {
+        const fetched = await (await fetch(url)).blob();
+        file = new File([fetched], downloadName!, { type: fetched.type });
+      }
+      const blob: Blob = file;
 
       if (isTouch && navigator.canShare?.({ files: [file] })) {
         try {
@@ -88,8 +125,13 @@ export function ShareButton({
           await navigator.share({ files: [file], text });
           setStatus("idle");
           return;
-        } catch {
-          // User cancelled the share sheet — fall through to download.
+        } catch (err) {
+          // Closing the sheet isn't a failure — don't follow it with a download.
+          if ((err as Error).name === "AbortError") {
+            setStatus("idle");
+            return;
+          }
+          // Refused (e.g. the tap's window expired while fetching) — download instead.
         }
       }
 
