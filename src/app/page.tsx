@@ -22,9 +22,9 @@ import { SEED_ASKS } from "@/lib/mock/asks";
   vague phrasing; the ballot uses whatever people are really voting on.
 
   Phones get a first-visit opener (MobileIntro), and a hero reordered around
-  what a narrow screen can hold: headline, one line, the example, with the CTA
-  pinned to the bottom until the hero scrolls away. Desktop keeps its two
-  columns. ?intro=1 replays the opener, for checking it.
+  what a narrow screen can hold: headline, one line, the example, and the CTA
+  along the bottom edge, all fitted to one visible screen whatever its height.
+  Desktop keeps its two columns. ?intro=1 replays the opener, for checking it.
 */
 
 const WISHES = [
@@ -109,17 +109,19 @@ export default async function Home({
       <main className="flex-1">
         {/* What it is */}
         <section
-          className={`${CONTAINER} flex flex-col gap-5 lg:grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-14 lg:items-center pt-8 sm:pt-16 sm:pb-20`}
+          className={`${CONTAINER} flex flex-col max-sm:min-h-[calc(100svh-3.5rem)] gap-3 sm:gap-5 lg:grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-14 lg:items-center pt-5 sm:pt-16 sm:pb-20`}
         >
           {/* contents: below lg the copy and the example are one column, so the
               example can sit between the copy and the buttons on a phone. */}
           <div className="contents lg:flex lg:flex-col lg:gap-5">
-            <span className={LABEL}>Three votes a year</span>
-            <h1 className="text-[clamp(40px,12.4vw,50px)] sm:text-[58px] xl:text-[68px] leading-[1.05]">
+            <span className={`${LABEL} max-sm:[@media(max-height:639px)]:hidden`}>Three votes a year</span>
+            {/* Phones: follows the visible height as well as the width, so a
+                short screen gets a smaller headline rather than a cut-off card. */}
+            <h1 className="text-[clamp(32px,min(12.4vw,6.5svh),50px)] sm:text-[58px] xl:text-[68px] leading-[1.05]">
               A wish is free. An ask has a <Key>number</Key>, a <Key>date</Key> and a{" "}
               <Key>name</Key>.
             </h1>
-            <p className="sm:hidden text-base text-text-secondary leading-relaxed">
+            <p className="sm:hidden [@media(max-height:519px)]:hidden text-[15px] text-text-secondary leading-snug">
               Tell the government what to change, in terms that can be checked.
               Three votes a year.
             </p>
@@ -131,21 +133,21 @@ export default async function Home({
             </p>
             {/* Phones: pinned under the thumb for as long as the hero is on
                 screen, then it scrolls away with it. */}
-            <div className="hide-on-keyboard order-3 lg:order-none sticky bottom-0 z-10 -mx-4 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-paper border-t border-border flex flex-col min-[360px]:flex-row items-stretch gap-2 sm:static sm:mx-0 sm:px-0 sm:py-0 sm:bg-transparent sm:border-t-0 sm:gap-3 sm:pt-1">
+            <div className="hide-on-keyboard order-3 lg:order-none mt-auto sm:mt-0 sticky max-sm:[@media(max-height:519px)]:static bottom-0 z-10 -mx-4 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-paper border-t border-border flex items-stretch gap-2 sm:static sm:mx-0 sm:px-0 sm:py-0 sm:bg-transparent sm:border-t-0 sm:gap-3 sm:pt-1">
               <Link
                 href="/onboarding"
-                className={buttonClass({ size: "xl", className: "flex-1 px-3 tracking-[0.06em] sm:flex-none sm:px-14 sm:tracking-[0.09em]" })}
+                className={buttonClass({ size: "xl", className: "flex-1 min-w-0 px-2 max-[359px]:text-[13px] tracking-[0.06em] sm:flex-none sm:px-14 sm:text-[15px] sm:tracking-[0.09em]" })}
               >
                 Cast your vote
               </Link>
               <Link
                 href="/search"
-                className={buttonClass({ variant: "secondary", size: "lg", className: "px-4 sm:px-6" })}
+                className={buttonClass({ variant: "secondary", size: "lg", className: "shrink-0 px-3 max-[359px]:text-[13px] min-[360px]:px-4 sm:px-6 sm:text-[15px]" })}
               >
                 Browse asks
               </Link>
             </div>
-            <span className="order-2 sm:order-3 lg:order-none text-sm text-text-secondary tabular-nums">
+            <span className="order-2 sm:order-3 lg:order-none text-sm text-text-secondary tabular-nums max-sm:[@media(max-height:699px)]:hidden">
               {totalVotesCast.toLocaleString("en-IN")} votes cast
             </span>
           </div>
