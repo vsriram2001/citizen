@@ -437,3 +437,150 @@ html[data-keyboard="open"] .keyboard-room {
     animation: none !important;
   }
 }
+
+/* Phone opener (components/home/MobileIntro.tsx). All CSS so it starts on first
+   paint and clears itself without scripts. Each piece takes its start time from
+   --at; the last rule here is the end of the timeline. */
+@keyframes intro-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes intro-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes intro-strike {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* A wish rises from behind its own line, then dims as it's struck out. */
+@keyframes intro-rise {
+  from {
+    transform: translateY(105%);
+  }
+}
+
+@keyframes intro-dim {
+  to {
+    opacity: 0.4;
+  }
+}
+
+/* The ballot paper rises, settles at a slight tilt, then shrinks away toward the
+   hand that's about to carry it in. */
+@keyframes intro-ballot-in {
+  from {
+    transform: translateY(120vh) rotate(5deg);
+  }
+  to {
+    transform: rotate(-1.5deg);
+  }
+}
+
+@keyframes intro-ballot-out {
+  from {
+    transform: rotate(-1.5deg);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(14%) scale(0.4) rotate(-14deg);
+  }
+}
+
+/* The slot glints as a hairline, then opens top and bottom at once. */
+@keyframes intro-slot {
+  from {
+    transform: scaleY(0);
+  }
+  35% {
+    transform: scaleY(0.002);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* By now the slot has filled the screen with paper, the page's own colour, so
+   this fade is the real page showing through. */
+@keyframes intro-leave {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.intro-in {
+  animation: intro-in 0.6s ease-out var(--at) both;
+}
+
+.intro-out {
+  animation: intro-out 0.4s ease-in var(--at) both;
+}
+
+.intro-strike {
+  transform-origin: left;
+  animation: intro-strike 0.4s ease-out var(--at) both;
+}
+
+.intro-fill {
+  transform-origin: left;
+  animation: intro-strike 0.35s ease-out var(--at) both;
+}
+
+.intro-wish {
+  animation:
+    intro-rise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) var(--at) both,
+    intro-dim 0.25s linear var(--dim) forwards;
+}
+
+.intro-rise {
+  animation: intro-rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) var(--at) both;
+}
+
+/* First animation is the real exit; the second only clears the overlay if
+   scripts never arrive to start it, so it alone keeps running while paused. */
+.intro-ballot {
+  animation:
+    intro-ballot-in 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) var(--at) both,
+    intro-ballot-out 0.5s ease-in var(--out) forwards;
+}
+
+.intro-slot {
+  animation: intro-slot 0.8s cubic-bezier(0.7, 0, 0.3, 1) var(--at) both;
+}
+
+.mobile-intro {
+  animation:
+    intro-leave 0.5s ease-out 13.6s both,
+    intro-leave 0.5s ease-out 24s forwards;
+  animation-play-state: paused, running;
+}
+
+.mobile-intro * {
+  animation-play-state: paused;
+}
+
+.mobile-intro.is-playing {
+  animation-play-state: running, running;
+}
+
+.mobile-intro.is-playing * {
+  animation-play-state: running;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-intro {
+    display: none;
+  }
+}

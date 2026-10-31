@@ -10,7 +10,7 @@ import type { Ask } from "@/lib/types";
 
 /** The accountability gap itself: where things are now → where the ask wants
  *  them. Hidden when either side is empty (e.g. a brand-new freeform ask). */
-function Delta({ ask, className }: { ask: Ask; className?: string }) {
+export function Delta({ ask, className }: { ask: Ask; className?: string }) {
   if (!ask.currentValue || !ask.targetValue) return null;
   return (
     <p
@@ -71,6 +71,7 @@ export function AskCard({
   barPct,
   highlight,
   showInfo = true,
+  showShare = true,
   className,
 }: {
   ask: Ask;
@@ -96,6 +97,9 @@ export function AskCard({
   /** Show the "i" button that opens the ask's full Info section. Off for
    *  not-yet-added suggestions, which have no stored ask to describe. */
   showInfo?: boolean;
+  /** Show "Share" once voted. Off for the home page's practice ballot, where
+   *  the vote isn't real and there's nothing to share yet. Compact-only. */
+  showShare?: boolean;
   className?: string;
 }) {
   if (compact) {
@@ -111,6 +115,7 @@ export function AskCard({
         barPct={barPct}
         highlight={highlight}
         showInfo={showInfo}
+        showShare={showShare}
         className={className}
       />
     );
@@ -219,6 +224,7 @@ function CompactAskCard({
   barPct,
   highlight,
   showInfo,
+  showShare,
   className,
 }: {
   ask: Ask;
@@ -231,6 +237,7 @@ function CompactAskCard({
   barPct?: number;
   highlight?: string[];
   showInfo: boolean;
+  showShare: boolean;
   className?: string;
 }) {
   const tags = ask.tags ?? [];
@@ -340,7 +347,7 @@ function CompactAskCard({
             {ask.voteCount === 1 ? "vote" : "votes"}
           </span>
         </div>
-        {voted && (
+        {voted && showShare && (
           <Link
             href={`/share/${ask.id}`}
             className="text-[13px] text-text-secondary hover:text-text transition-colors underline decoration-transparent hover:decoration-current underline-offset-4 max-sm:py-2"

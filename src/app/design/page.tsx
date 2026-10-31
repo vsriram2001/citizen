@@ -15,6 +15,9 @@ import { VotesSubmittedNotice } from "@/components/vote/VotesSubmittedNotice";
 import { VoteMeter } from "@/components/vote/VoteMeter";
 import { VoteTray } from "@/components/vote/VoteTray";
 import { AskCard } from "@/components/ask/AskCard";
+import { MobileIntro } from "@/components/home/MobileIntro";
+import { SampleBallot } from "@/components/home/SampleBallot";
+import { WishToAsk } from "@/components/home/WishToAsk";
 import type { Ask } from "@/lib/types";
 import { AskList } from "@/components/ask/AskList";
 import { AskInfoButton } from "@/components/ask/AskInfoButton";
@@ -100,6 +103,7 @@ function Section({
 export default function DesignGallery() {
   const [used, setUsed] = useState(1);
   const [voted, setVoted] = useState(false);
+  const [introRun, setIntroRun] = useState(0);
   const [signInOpen, setSignInOpen] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
@@ -324,6 +328,41 @@ export default function DesignGallery() {
             ))}
           </div>
         </Card>
+      </Section>
+
+      <Section
+        title="Phone opener"
+        note="Home page, first visit on a phone only. CSS-only timeline in globals.css, so it clears itself without scripts. Hidden from sm up, so this button does nothing on desktop; replay on a phone or at /?intro=1."
+      >
+        <div>
+          <Button size="sm" variant="secondary" onClick={() => setIntroRun((n) => n + 1)}>
+            Play opener
+          </Button>
+        </div>
+        {introRun > 0 && <MobileIntro key={introRun} ask={SEED_ASKS[6]} />}
+      </Section>
+
+      <Section
+        title="Wish to ask"
+        note="Home hero. A vague wish is typed, struck through, and replaced by a specific ask. All examples share one grid cell so the card never changes height. Reduced motion shows the first example, still."
+      >
+        <div className="max-w-xl">
+          <WishToAsk
+            examples={[
+              { wish: "Fix the roads", ask: SEED_ASKS[6] },
+              { wish: "Cleaner lakes", ask: SEED_ASKS[12] },
+            ]}
+          />
+        </div>
+      </Section>
+
+      <Section
+        title="Practice ballot"
+        note="Home page. Real compact AskCards and VoteMeter on local state only: nothing is saved and it never touches useVotes. Backing an ask reveals who answers for it."
+      >
+        <SampleBallot asks={SEED_ASKS.slice(0, 4)}>
+          <p className="text-[13px] text-text-secondary">Heading slot</p>
+        </SampleBallot>
       </Section>
 
       <Section

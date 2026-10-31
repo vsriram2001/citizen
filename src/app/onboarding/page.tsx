@@ -183,7 +183,7 @@ export default function Onboarding() {
           <Field
             label="Location"
             size="md-lg"
-            hint="City-level only — never shared publicly beyond a state or city breakdown."
+            hint="City level only, to show where support comes from. Your exact location is never saved."
           >
             <LocationField value={location} onChange={setLocation} />
           </Field>

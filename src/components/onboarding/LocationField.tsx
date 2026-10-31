@@ -64,6 +64,7 @@ export function LocationField({ value, onChange }: LocationFieldProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<CitySearchResult[]>([]);
   const [loading, setLoading] = useState(false);
+  const [locating, setLocating] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -125,7 +126,7 @@ export function LocationField({ value, onChange }: LocationFieldProps) {
       setError("Location only works on a secure (https) connection. Type your city or pincode instead.");
       return;
     }
-    setLoading(true);
+    setLocating(true);
     // Read the site's permission first: a "denied" that arrives without the
     // browser ever showing its prompt has two very different fixes.
     const before = await geolocationPermission();
@@ -146,7 +147,7 @@ export function LocationField({ value, onChange }: LocationFieldProps) {
             ? "Finding your location took too long. Try again, or type your city or pincode."
             : "Couldn't get your location. Type your city or pincode instead.",
       );
-      setLoading(false);
+      setLocating(false);
       return;
     }
     try {
@@ -164,7 +165,7 @@ export function LocationField({ value, onChange }: LocationFieldProps) {
     } catch {
       setError("Couldn't look up your city just now. Type your city or pincode instead.");
     } finally {
-      setLoading(false);
+      setLocating(false);
     }
   }
 
@@ -195,11 +196,36 @@ export function LocationField({ value, onChange }: LocationFieldProps) {
 
   return (
     <div className="flex flex-col gap-2">
+      {/* The quick way comes first and says what it does: an unlabelled pin icon
+          beside the field read as "why do you want this?", so people skipped
+          it. The label says city because city is all it's after. */}
+      <button
+        type="button"
+        onClick={handleFetchLocation}
+        disabled={locating}
+        className={cn(
+          "w-full min-h-11 sm:min-h-10 flex items-center justify-center gap-2 px-3",
+          "bg-card border border-border rounded-sm text-sm font-medium text-text",
+          "hover:border-accent hover:text-accent transition-colors cursor-pointer",
+          "disabled:opacity-50 disabled:cursor-not-allowed",
+        )}
+      >
+        <PinIcon className="w-[18px] h-[18px] shrink-0" />
+        {locating ? "Finding your city…" : "Find my city automatically"}
+      </button>
+
+      <div className="flex items-center gap-3 text-xs text-text-muted" aria-hidden>
+        <span className="h-px flex-1 bg-border" />
+        or type it
+        <span className="h-px flex-1 bg-border" />
+      </div>
+
       <div className="flex gap-2">
         <div className="relative flex-1">
           <input
             type="text"
-            placeholder="Search your city or 6-digit address pincode"
+            aria-label="City or pincode"
+            placeholder="City or 6-digit pincode"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             enterKeyHint="search"
@@ -233,36 +259,19 @@ export function LocationField({ value, onChange }: LocationFieldProps) {
           {notFound && !loading && (
             <div className="absolute z-10 mt-1 w-full bg-card border border-border rounded-sm shadow-lg px-3 py-2.5">
               <p className="text-[13px] text-text-muted leading-snug">
-                Couldn&apos;t find that. Try your 6-digit address pincode, or
-                use{" "}
+                Couldn&apos;t find that. Try your 6-digit pincode, or{" "}
                 <button
                   type="button"
                   onClick={handleFetchLocation}
                   className="underline decoration-text-muted/50 hover:decoration-text-muted cursor-pointer"
                 >
-                  your approximate location
-                </button>{" "}
-                instead.
+                  find your city automatically
+                </button>
+                .
               </p>
             </div>
           )}
         </div>
-
-        <button
-          type="button"
-          onClick={handleFetchLocation}
-          disabled={loading}
-          title="Use my current location"
-          aria-label="Use my current location"
-          className={cn(
-            "shrink-0 w-11 h-11 sm:w-10 sm:h-10 flex items-center justify-center",
-            "border border-border rounded-sm text-text-secondary",
-            "hover:border-accent hover:text-accent transition-colors cursor-pointer",
-            "disabled:opacity-50 disabled:cursor-not-allowed",
-          )}
-        >
-          <PinIcon className="w-[18px] h-[18px]" />
-        </button>
       </div>
 
       {loading && <p className="text-xs text-text-muted">Looking that up…</p>}
