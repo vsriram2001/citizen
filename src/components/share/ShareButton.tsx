@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
+import { useIsTouch } from "@/components/mobile/useMediaQuery";
 import { Button } from "@/components/ui/Button";
 
 /**
@@ -11,8 +12,9 @@ import { Button } from "@/components/ui/Button";
  * - Image share (`downloadName` set): fetches `url` as a file and shares it
  *   via navigator.share({ files }) — the actual image lands in the share
  *   sheet (WhatsApp, iMessage, Twitter all accept it directly), not just a
- *   link to it. Falls back to triggering a browser download when file
- *   sharing isn't supported.
+ *   link to it. If the image couldn't be loaded the sheet still opens, with
+ *   `text` alone. Falls back to triggering a browser download where there's
+ *   no share sheet at all (some in-app browsers).
  *
  * `url` should be absolute — share sheets and clipboard both need a link
  * that works outside the current tab.
@@ -46,46 +48,59 @@ export function ShareButton({
 }) {
   const [status, setStatus] = useState<"idle" | "done" | "busy">("idle");
   // Phones get the native share sheet; desktop always copies (see shareImage).
-  // Server snapshot is false so server and first client render match.
-  const isTouch = useSyncExternalStore(
-    () => () => {},
-    () => window.matchMedia("(pointer: coarse)").matches,
-    () => false,
-  );
+  const isTouch = useIsTouch();
 
   // Image mode: fetch the card as soon as the page opens. Phone browsers
   // (Safari above all) only open the share sheet straight off a tap — fetching
   // the image after the tap (a second or more on a cold serverless start)
   // uses that window up, and navigator.share is then refused silently.
-  const fileRef = useRef<File | null>(null);
+  // Copying fetches its own image, so it has nothing to wait for.
+  const prefetches = !!downloadName && !forceCopy;
+  const [prepared, setPrepared] = useState<{ url: string; file: File | null } | null>(null);
   useEffect(() => {
-    if (!downloadName) return;
+    if (!prefetches) return;
     let cancelled = false;
-    fileRef.current = null;
     fetch(url)
-      .then((r) => r.blob())
+      .then((r) => {
+        if (!r.ok) throw new Error(`Card image: ${r.status}`);
+        return r.blob();
+      })
       .then((blob) => {
-        if (!cancelled) fileRef.current = new File([blob], downloadName, { type: blob.type });
+        if (!cancelled) {
+          setPrepared({ url, file: new File([blob], downloadName!, { type: blob.type }) });
+        }
       })
       .catch(() => {
-        // Fetched on tap instead.
+        // Tapping shares the text alone rather than doing nothing.
+        if (!cancelled) setPrepared({ url, file: null });
       });
     return () => {
       cancelled = true;
     };
-  }, [url, downloadName]);
+  }, [url, downloadName, prefetches]);
+
+  const preparing = prefetches && prepared?.url !== url;
 
   async function shareImage() {
-    // Ready file + phone: share before anything else is awaited, so the tap
-    // still counts as the gesture that opened the sheet.
-    const ready = fileRef.current;
-    if (ready && isTouch && !forceCopy && navigator.canShare?.({ files: [ready] })) {
-      try {
-        await navigator.share({ files: [ready], text });
-      } catch {
-        // Cancelled the share sheet — not an error.
+    const ready = prepared?.url === url ? prepared.file : null;
+
+    // Phone: share before anything else is awaited, so the tap still counts as
+    // the gesture that opened the sheet.
+    if (isTouch && !forceCopy) {
+      const payload =
+        ready && navigator.canShare?.({ files: [ready] })
+          ? { files: [ready], text }
+          : "share" in navigator && { title, text };
+      if (payload) {
+        try {
+          // Text rides along as the caption where the target supports it
+          // (Android WhatsApp); some iOS targets send it as a second message.
+          await navigator.share(payload);
+        } catch {
+          // Cancelled the share sheet — not an error.
+        }
+        return;
       }
-      return;
     }
 
     setStatus("busy");
@@ -111,29 +126,7 @@ export function ShareButton({
         }
       }
 
-      let file = fileRef.current;
-      if (!file) {
-        const fetched = await (await fetch(url)).blob();
-        file = new File([fetched], downloadName!, { type: fetched.type });
-      }
-      const blob: Blob = file;
-
-      if (isTouch && navigator.canShare?.({ files: [file] })) {
-        try {
-          // Text rides along as the caption where the target supports it
-          // (Android WhatsApp); some iOS targets send it as a second message.
-          await navigator.share({ files: [file], text });
-          setStatus("idle");
-          return;
-        } catch (err) {
-          // Closing the sheet isn't a failure — don't follow it with a download.
-          if ((err as Error).name === "AbortError") {
-            setStatus("idle");
-            return;
-          }
-          // Refused (e.g. the tap's window expired while fetching) — download instead.
-        }
-      }
+      const blob: Blob = ready ?? (await (await fetch(url)).blob());
 
       const objectUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -175,11 +168,11 @@ export function ShareButton({
     <Button
       variant={variant}
       onClick={handleClick}
-      disabled={status === "busy"}
+      disabled={status === "busy" || preparing}
       className={className}
     >
-      {status !== "busy" && (downloadName ? <ShareIcon /> : <LinkIcon />)}
-      {status === "busy" ? "Preparing…" : status === "done"
+      {status !== "busy" && !preparing && (downloadName ? <ShareIcon /> : <LinkIcon />)}
+      {status === "busy" || preparing ? "Preparing…" : status === "done"
             ? doneLabel
             : !isTouch && desktopLabel
               ? desktopLabel

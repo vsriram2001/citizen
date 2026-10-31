@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button, buttonClass } from "@/components/ui/Button";
 import { useAuth } from "@/components/auth/useAuth";
+import { useIsTouch } from "@/components/mobile/useMediaQuery";
 import { ShareButton } from "@/components/share/ShareButton";
 import type { Ask } from "@/lib/types";
 import { getVotedAskIds } from "@/lib/vote-session";
@@ -22,6 +23,7 @@ import { getSiteUrl } from "@/lib/site-url";
  */
 export function VotesShareClient({ asks }: { asks: Ask[] }) {
   const auth = useAuth();
+  const isTouch = useIsTouch();
   const [votedAsks, setVotedAsks] = useState<Ask[]>(() => {
     const votedIds = new Set(getVotedAskIds());
     return asks.filter((ask) => votedIds.has(ask.id));
@@ -138,27 +140,29 @@ export function VotesShareClient({ asks }: { asks: Ask[] }) {
         </div>
       </div>
 
-      <div className="flex gap-2.5">
+      <div className="flex flex-col gap-2.5">
+        {/* Share sheet only exists in a useful form on phones, where it's the
+            main action; on desktop copying is. */}
+        {isTouch && (
+          <ShareButton
+            url={imageUrl}
+            title="Here's what I voted for"
+            text={`${inviteText}\n${siteUrl}`}
+            variant="primary"
+            label="Share card"
+            downloadName="citizen-poll-my-votes.png"
+            className="w-full justify-center"
+          />
+        )}
         <ShareButton
           url={imageUrl}
-          variant="primary"
+          variant={isTouch ? "secondary" : "primary"}
           label="Copy card"
           forceCopy
           caption={`${inviteText}\n${siteUrl}`}
           downloadName="citizen-poll-my-votes.png"
-          className="flex-1 justify-center"
+          className="w-full justify-center"
         />
-        {/* Share sheet only exists in a useful form on phones; hidden on desktop. */}
-        <div className="hidden pointer-coarse:flex flex-1">
-          <ShareButton
-            url={imageUrl}
-            text={`${inviteText}\n${siteUrl}`}
-            variant="secondary"
-            label="Share"
-            downloadName="citizen-poll-my-votes.png"
-            className="flex-1 justify-center"
-          />
-        </div>
       </div>
     </div>
   );
