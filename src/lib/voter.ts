@@ -1,4 +1,7 @@
+import { randomUUID } from "node:crypto";
+import { cookies } from "next/headers";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { GOOGLE_AUTH_ENABLED } from "@/lib/auth-flag";
 import { createClient } from "@/lib/supabase/server";
 import { VOTE_BUDGET } from "@/lib/vote-session";
 
@@ -10,10 +13,40 @@ import { VOTE_BUDGET } from "@/lib/vote-session";
   The votes table still keys on session_token, so each signed-in person gets
   a `sessions` row whose id *is* their auth user id. That needs no schema
   change; a dedicated votes.user_id can replace it later.
+
+  With sign-in switched off (lib/auth-flag.ts) the voter is a browser instead:
+  a random id in an httpOnly cookie, in the same `sessions` / session_token
+  slots. The cap is then per browser, so a private window gets fresh votes.
 */
 
-/** The signed-in person's id, read from the auth cookie — never from the request body. */
-export async function getVoterId(): Promise<string | null> {
+const ANON_VOTER_COOKIE = "citizen_voter";
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+async function getAnonymousVoterId(create: boolean): Promise<string | null> {
+  const jar = await cookies();
+  const existing = jar.get(ANON_VOTER_COOKIE)?.value;
+  if (existing && UUID.test(existing)) return existing;
+  if (!create) return null;
+
+  const id = randomUUID();
+  jar.set(ANON_VOTER_COOKIE, id, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    // Browsers cap cookies at 400 days; that outlives the 365-day vote window.
+    maxAge: 400 * 24 * 60 * 60,
+  });
+  return id;
+}
+
+/**
+ * The voter's id, read from a cookie — never from the request body. `create`
+ * mints an anonymous voter on their first vote; it only has an effect with
+ * sign-in off, and only in a route handler (the one place a cookie can be set).
+ */
+export async function getVoterId({ create = false } = {}): Promise<string | null> {
+  if (!GOOGLE_AUTH_ENABLED) return getAnonymousVoterId(create);
   const supabase = await createClient();
   // getClaims checks the JWT signature against the project's signing keys
   // locally — as trustworthy as getUser, without a round trip to the Auth

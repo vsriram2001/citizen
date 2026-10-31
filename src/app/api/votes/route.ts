@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "submissionId required" }, { status: 400 });
   }
 
-  const voterId = await getVoterId();
+  const voterId = await getVoterId({ create: true });
   if (!voterId) return NextResponse.json(SIGN_IN_REQUIRED, { status: 401 });
 
   const supabase = createAdminClient();

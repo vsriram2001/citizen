@@ -11,6 +11,7 @@ import { OCCUPATIONS } from "@/lib/occupations";
 import { cn } from "@/lib/cn";
 import { SignInModal } from "@/components/auth/SignInModal";
 import { useAuth } from "@/components/auth/useAuth";
+import { GOOGLE_AUTH_ENABLED } from "@/lib/auth-flag";
 import { isOnboarded, saveOnboarding, safeNext } from "@/lib/onboarding";
 import { takeResume } from "@/lib/vote-session";
 
@@ -95,6 +96,12 @@ export default function Onboarding() {
       education: education || undefined,
       occupation: occupation || undefined,
     });
+    if (!GOOGLE_AUTH_ENABLED) {
+      // No sign-in to offer. Any vote tap that sent them here stays pending,
+      // so search finishes it on return.
+      router.push(next());
+      return;
+    }
     setSignInOffered(true);
   }
 

@@ -35,7 +35,7 @@ interface SubmitBody {
 export async function POST(req: Request) {
   const body: SubmitBody = await req.json();
 
-  const voterId = await getVoterId();
+  const voterId = await getVoterId({ create: true });
   if (!voterId) {
     return NextResponse.json({ error: "Sign in with Google to add an ask" }, { status: 401 });
   }

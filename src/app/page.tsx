@@ -8,6 +8,7 @@ import { INTRO_SEEN_COOKIE } from "@/components/home/introCookie";
 import { MobileIntro } from "@/components/home/MobileIntro";
 import { SampleBallot } from "@/components/home/SampleBallot";
 import { WishToAsk } from "@/components/home/WishToAsk";
+import { GOOGLE_AUTH_ENABLED } from "@/lib/auth-flag";
 import { getSearchableAsks } from "@/lib/submissions";
 import { SEED_ASKS } from "@/lib/mock/asks";
 
@@ -64,10 +65,16 @@ const PROMISES = [
     title: "No party without a source",
     body: "We never attach a party name to a position unless we can link to where they said it.",
   },
-  {
-    title: "One person, one set of votes",
-    body: "A Google sign-in keeps it to one person, so nobody can stuff the box.",
-  },
+  // Only claim one-person-one-set when sign-in is actually enforcing it.
+  GOOGLE_AUTH_ENABLED
+    ? {
+        title: "One person, one set of votes",
+        body: "A Google sign-in keeps it to one person, so nobody can stuff the box.",
+      }
+    : {
+        title: "Your votes stay private",
+        body: "No account needed to vote. Only the totals are public.",
+      },
 ];
 
 const LABEL = "text-[11px] uppercase tracking-[0.16em] text-text-muted";

@@ -128,8 +128,10 @@ Full, maintained list: [docs/tech-debt.md](docs/tech-debt.md). Add new deferrals
 - Filters are tags only; no sort, no state/timeframe filters.
 - `StateBreakdown` shows mock data (`lib/mock/states.ts`).
 - Turnstile component exists (`components/vote/Turnstile.tsx`) but isn't wired into voting.
-- Votes need a Google sign-in (`components/auth/*`, `lib/voter.ts`, `src/proxy.ts`); the voter's
-  id is their Supabase auth user id, stored in `votes.session_token`. See tech-debt for the rest.
+- Google sign-in (`components/auth/*`, `lib/voter.ts`, `src/proxy.ts`) is off by default behind
+  `NEXT_PUBLIC_GOOGLE_AUTH_ENABLED` (`lib/auth-flag.ts`). Off: the voter is an anonymous browser
+  cookie, so the vote cap is per browser. On: the voter's id is their Supabase auth user id.
+  Either way it's stored in `votes.session_token`. See tech-debt for the rest.
 - `/share/votes` reads real votes only, so demo-mode votes don't appear there.
 - Ask info nightly job deferred past MVP: `api/cron/digest-thoughts` + `vercel.json` cron + `CRON_SECRET`
   exist but are untested and not scheduled/enabled. Until then, thoughts queue in `ask_thoughts` and

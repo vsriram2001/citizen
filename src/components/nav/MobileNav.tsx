@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/auth/useAuth";
+import { GOOGLE_AUTH_ENABLED } from "@/lib/auth-flag";
 import { cn } from "@/lib/cn";
 
 /**
@@ -89,7 +90,7 @@ export function MobileNav({ items }: { items: readonly { href: string; label: st
                 </li>
               );
             })}
-            {userId && (
+            {GOOGLE_AUTH_ENABLED && userId && (
               <li>
                 <button
                   type="button"

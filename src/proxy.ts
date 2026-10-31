@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { GOOGLE_AUTH_ENABLED } from "@/lib/auth-flag";
 
 // Keeps the Supabase auth cookie fresh on every page/API request. Without
 // this, access tokens expire quietly and server code (api/votes) would see a
@@ -9,7 +10,10 @@ export async function proxy(request: NextRequest) {
 
   // Signed-out visitors have no auth cookie, so there is nothing to refresh —
   // skip Supabase entirely rather than delay every page and prefetch.
-  if (!request.cookies.getAll().some((c) => c.name.startsWith("sb-"))) return response;
+  // Same with sign-in switched off: a leftover cookie has nothing to keep fresh.
+  if (!GOOGLE_AUTH_ENABLED || !request.cookies.getAll().some((c) => c.name.startsWith("sb-"))) {
+    return response;
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

@@ -44,6 +44,12 @@ this file is the cross-cutting list.
       (sticky tray after the first vote → review → ballot animation → `/share/votes`).
 - [x] ~~One person, one set of votes~~ — Google sign-in; cap is per Google account, rolling
       365 days, in `api/votes` (+ DB trigger once the migration above is applied).
+- [ ] **Google sign-in is switched off** (`NEXT_PUBLIC_GOOGLE_AUTH_ENABLED`, `lib/auth-flag.ts`).
+      Until it's back, voters are anonymous browsers (`citizen_voter` cookie, `lib/voter.ts`): the
+      3-vote cap is per browser, so a private window or cleared cookies gets fresh votes, and
+      ballots don't follow a person between devices. Votes cast under a Google account stay in
+      the DB but aren't linked to the browser voter. Wire Turnstile and a per-IP limit before
+      trusting the counts. `scripts/qa` signed-in flows need the flag on.
 - [ ] **Votes keyed on `session_token`.** Each Google user gets a `sessions` row whose id is
       their auth user id (`lib/voter.ts`). Add a real `votes.user_id` (+ profile row for
       onboarding fields) and drop the shim when convenient.

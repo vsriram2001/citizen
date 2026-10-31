@@ -1,8 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { GOOGLE_AUTH_ENABLED } from "@/lib/auth-flag";
 import { createClient } from "@/lib/supabase/client";
 import { saveResume, type Resume } from "@/lib/vote-session";
+
+// Sign-in off: everyone counts as "known" from the first render, so every
+// signed-out branch (prompts, "sign in to see your votes") simply never runs.
+// A placeholder, not an id — the real voter is the cookie in lib/voter.ts.
+const ANONYMOUS_USER = "anonymous";
 
 /**
  * Google sign-in state. Signing in exists only to make votes one-per-person,
@@ -12,12 +18,13 @@ import { saveResume, type Resume } from "@/lib/vote-session";
  * doing; `signInWithGoogle` hands off to Google and comes back to this page.
  */
 export function useAuth() {
-  const [userId, setUserId] = useState<string | null>(null);
-  const [ready, setReady] = useState(false);
+  const [userId, setUserId] = useState<string | null>(GOOGLE_AUTH_ENABLED ? null : ANONYMOUS_USER);
+  const [ready, setReady] = useState(!GOOGLE_AUTH_ENABLED);
   const [promptOpen, setPromptOpen] = useState(false);
   const [pending, setPending] = useState<Resume | null>(null);
 
   useEffect(() => {
+    if (!GOOGLE_AUTH_ENABLED) return;
     const supabase = createClient();
     // getSession reads the cookie locally — enough to decide what the screen
     // shows. getUser asked the Auth server first (~250ms before the ballot
@@ -33,6 +40,7 @@ export function useAuth() {
   }, []);
 
   const prompt = useCallback((resume: Resume) => {
+    if (!GOOGLE_AUTH_ENABLED) return;
     setPending(resume);
     setPromptOpen(true);
   }, []);
