@@ -8,7 +8,10 @@ const SIGN_IN_REQUIRED = { error: "Sign in with Google to vote" };
 // The signed-in person's votes — lets any device rebuild "what have I
 // voted for" instead of trusting one browser's localStorage.
 export async function GET() {
-  const voterId = await getVoterId();
+  // create: the page calls this on load, so an anonymous voter has their cookie
+  // before their first vote. Minted on the POST instead, two quick taps on
+  // different asks each got a new id, and one vote was silently lost.
+  const voterId = await getVoterId({ create: true });
   if (!voterId) return NextResponse.json({ votes: [] });
 
   const supabase = createAdminClient();
