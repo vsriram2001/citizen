@@ -23,7 +23,7 @@ import { cn } from "@/lib/cn";
 */
 
 type Width = "md" | "lg" | "xl";
-type Size = "auto" | "full";
+type Size = "auto" | "full" | "screen";
 
 const WIDTH: Record<Width, string> = {
   md: "sm:max-w-md",
@@ -87,7 +87,9 @@ export function Sheet({
   /** "responsive": bottom sheet on phones, centred dialog from sm.
    *  "bottom": bottom sheet at every width. */
   placement?: "responsive" | "bottom";
-  /** "full": a fixed tall sheet (long reads, two-pane panels). */
+  /** "full": a fixed tall sheet (long reads, two-pane panels).
+   *  "screen": every pixel of the visible viewport, at every width (voice mode).
+   *  It paints its own surface, so moving that off screen reveals the page. */
   size?: Size;
   width?: Width;
   /** False for a sheet holding unsaved edits: no backdrop tap, Escape or
@@ -171,14 +173,16 @@ export function Sheet({
       className={cn(
         "fixed inset-x-0 z-50 top-[var(--vv-top,0px)] h-[var(--vv-height,100dvh)]",
         "flex flex-col justify-end items-center",
-        responsive && "sm:justify-center sm:p-6",
+        responsive && size !== "screen" && "sm:justify-center sm:p-6",
       )}
     >
-      <div
-        aria-hidden
-        className="sheet-backdrop absolute inset-0 bg-ink/40"
-        onClick={dismissible ? onClose : undefined}
-      />
+      {size !== "screen" && (
+        <div
+          aria-hidden
+          className="sheet-backdrop absolute inset-0 bg-ink/40"
+          onClick={dismissible ? onClose : undefined}
+        />
+      )}
 
       <div
         ref={panelRef}
@@ -210,6 +214,8 @@ export function Sheet({
                 "sm:border-x sm:max-w-lg",
                 size === "full" && "sm:h-[min(82%,46rem)]",
               ),
+          size === "screen" &&
+            "h-full max-h-full sm:max-h-full sm:max-w-none border-0 sm:border-0 rounded-t-none sm:rounded-none bg-transparent shadow-none",
         )}
       >
         {/* Grabber: phones only, and the handle for dragging the sheet down. */}
@@ -219,6 +225,7 @@ export function Sheet({
             "shrink-0 flex justify-center pt-2 touch-none",
             title ? "pb-1" : "pb-2",
             responsive && "sm:hidden",
+            size === "screen" && "hidden",
           )}
         >
           <span aria-hidden className="h-1 w-10 rounded-sm bg-border" />

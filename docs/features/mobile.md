@@ -49,8 +49,7 @@ you need next.
 1. Not yet tried on real devices (only headless Chrome with a simulated keyboard). Test on
    iOS Safari and Android Chrome, especially onboarding with the keyboard up.
 2. Sheets have no exit animation (they unmount at once).
-3. Search: the sticky search + "Popular" row is ~110px; consider collapsing the heading on
-   scroll.
+3. Search: the pinned box + "Popular" row is ~110px; the intro above it already scrolls away.
 4. The ballot animation and share images were not reworked for phones beyond spacing.
 5. `/design` is still a desktop-first page.
 

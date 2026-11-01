@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AskCard } from "@/components/ask/AskCard";
 import { AskList } from "@/components/ask/AskList";
@@ -18,10 +18,40 @@ import { VotesSubmittedNotice } from "@/components/vote/VotesSubmittedNotice";
 import { VoteTray } from "@/components/vote/VoteTray";
 import { useVotes } from "@/components/vote/useVotes";
 import { cn } from "@/lib/cn";
+import { revealOnFocus } from "@/components/mobile/useMediaQuery";
+import { SearchOptions } from "@/components/search/SearchOptions";
+import { SearchPlaceholder } from "@/components/search/SearchPlaceholder";
+import { VoiceButton } from "@/components/search/VoiceButton";
+import { VoiceMode } from "@/components/search/VoiceMode";
+import { useVoiceInput } from "@/components/search/useVoiceInput";
 import { isOnboarded } from "@/lib/onboarding";
 import { rankAsks, type SemanticVerdict } from "@/lib/match";
+import { searchSuggestions } from "@/lib/search-suggestions";
 import type { Ask } from "@/lib/types";
 import { VOTE_BUDGET, saveResume, type Resume } from "@/lib/vote-session";
+
+/** A moment on "searching" even when the answer is cached, so it doesn't flash past. */
+const VOICE_RESULTS_BEAT_MS = 600;
+/** The meaning check can take 12s. Past this they get what's ready, and its
+ *  matches join the list when they land, with suggestions loading beneath. */
+const VOICE_RESULTS_LIMIT_MS = 4000;
+/** Matches .voice-lift in globals.css. */
+const VOICE_LIFT_MS = 520;
+/** Stacked mic and X: a narrow column so the text keeps most of each line,
+ *  with a tap area reaching 8px past it to stay 40px wide. */
+const STACKED_ICON =
+  "group-data-[stacked]/box:w-8 group-data-[stacked]/box:after:absolute group-data-[stacked]/box:after:inset-y-0 group-data-[stacked]/box:after:right-0 group-data-[stacked]/box:after:-left-2";
+/** Two 40px tap targets, stacked, without the mic's and X's overlapping. */
+const STACKED_BOX_MIN_PX = 82;
+/** How many of the most-backed asks to offer under the empty box. */
+const OPTION_ASKS = 1;
+/** How many topics to offer under the empty box. */
+const OPTION_TOPICS = 8;
+/** Desktop list scrolled this far: the intro steps aside. */
+const INTRO_HIDE_AFTER_PX = 24;
+/** Hiding the intro makes the list taller; with less overflow than this, that
+ *  would undo the scroll and bring the intro straight back. */
+const INTRO_HIDE_MIN_OVERFLOW_PX = 200;
 
 /*
   Client half of the search/vote screen — a thin composition layer. Each
@@ -68,14 +98,22 @@ export function SearchClient({
   // Nav bar (h-14), search, heading and chips stay pinned while only the asks scroll. Their
   // height changes (chips wrap, filters toggle), so the desktop sidebar
   // reads it from a CSS variable to sit just below instead of underneath.
+  const introRef = useRef<HTMLDivElement>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
-  const searchRef = useRef<HTMLInputElement>(null);
+  const boxRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLTextAreaElement>(null);
   const [controlsH, setControlsH] = useState(0);
+  const [listScrolled, setListScrolled] = useState(false);
+  const [boxFocused, setBoxFocused] = useState(false);
+  // "Clear suggestions" — the empty box stops offering them for this visit.
+  const [optionsCleared, setOptionsCleared] = useState(false);
   useEffect(() => {
-    const el = controlsRef.current;
-    if (!el) return;
-    const ro = new ResizeObserver(() => setControlsH(el.offsetHeight));
-    ro.observe(el);
+    const intro = introRef.current;
+    const controls = controlsRef.current;
+    if (!intro || !controls) return;
+    const ro = new ResizeObserver(() => setControlsH(intro.offsetHeight + controls.offsetHeight));
+    ro.observe(intro);
+    ro.observe(controls);
     return () => ro.disconnect();
   }, []);
 
@@ -108,11 +146,62 @@ export function SearchClient({
   // inviting votes (and new asks, which carry a founding vote).
   const allSubmitted = submittedIds.size >= VOTE_BUDGET;
 
+  const [voiceMode, setVoiceMode] = useState<"speaking" | "searching" | "leaving" | null>(null);
+  // Results reached by voice land card by card; typing shouldn't animate.
+  const [voiceArrival, setVoiceArrival] = useState(false);
+  const voice = useVoiceInput((text) => {
+    setQuery(text);
+    setJustAdded(null);
+    setVoiceMode("searching");
+  });
+
+  // The box grows with what's in it, so a spoken sentence can be read and
+  // edited in full. CSS caps it at four lines, past which it scrolls. As
+  // soon as the text no longer fits beside both icons, the X moves under the
+  // mic and hands its column to the text. That's always measured with the
+  // icons side by side, or the extra room could flip the X back and forth.
+  useLayoutEffect(() => {
+    const el = searchRef.current;
+    const box = boxRef.current;
+    if (!el || !box) return;
+    el.style.height = "auto";
+    const oneLine = el.offsetHeight;
+    const frame = el.offsetHeight - el.clientHeight;
+    el.style.paddingRight = "";
+    const stacked = voice.supported && !!query && el.scrollHeight + frame > oneLine;
+    box.toggleAttribute("data-stacked", stacked);
+    if (stacked) el.style.paddingRight = "2rem";
+    // Empty stays one line.
+    if (query) {
+      el.style.height = `${Math.max(el.scrollHeight + frame, stacked ? STACKED_BOX_MIN_PX : 0)}px`;
+    }
+  }, [query, voice.supported]);
+
   // Query first (lib/match.ts: keyword + meaning, best first), then
   // filters + sort on what's left — so the panel's counts follow what's
   // typed. Topics live in the filter panel now, hence no tags here.
   const trimmedQuery = query.trim();
   const semantic = useSemanticMatches(trimmedQuery);
+
+  // Voice mode lifts once the results are ready, so they're there to land on.
+  useEffect(() => {
+    if (voiceMode !== "searching") return;
+    const timer = setTimeout(
+      () => {
+        setVoiceMode("leaving");
+        setVoiceArrival(true);
+      },
+      semantic.settled ? VOICE_RESULTS_BEAT_MS : VOICE_RESULTS_LIMIT_MS,
+    );
+    return () => clearTimeout(timer);
+  }, [voiceMode, semantic.settled]);
+
+  useEffect(() => {
+    if (voiceMode !== "leaving") return;
+    const timer = setTimeout(() => setVoiceMode(null), VOICE_LIFT_MS);
+    return () => clearTimeout(timer);
+  }, [voiceMode]);
+
   const ranked = useMemo(() => {
     const verdicts: SemanticVerdict[] = [...semantic.matches];
     if (covered.query === trimmedQuery) {
@@ -129,6 +218,44 @@ export function SearchClient({
   );
   const filterState = useAskFilters(queryMatches);
   const filteredAsks = filterState.results;
+
+  const { optionsFor } = filterState;
+  const optionTopics = useMemo(
+    () =>
+      [...optionsFor("topics")]
+        .sort((a, b) => b.count - a.count)
+        .slice(0, OPTION_TOPICS)
+        .map((o) => o.value),
+    [optionsFor],
+  );
+  const suggestions = useMemo(
+    () =>
+      query.trim()
+        ? searchSuggestions(asks, query)
+        : asks.slice(0, OPTION_ASKS).map((ask) => ask.askText),
+    [asks, query],
+  );
+  const showOptions = boxFocused && (query ? suggestions.length > 0 : !optionsCleared);
+
+  // iOS keeps a field focused when you tap somewhere that isn't one, so
+  // tapping away has to close the options itself.
+  useEffect(() => {
+    if (!showOptions) return;
+    function handleOutside(e: PointerEvent) {
+      if (!boxRef.current?.contains(e.target as Node)) searchRef.current?.blur();
+    }
+    document.addEventListener("pointerdown", handleOutside);
+    return () => document.removeEventListener("pointerdown", handleOutside);
+  }, [showOptions]);
+
+  function pickOption(text: string) {
+    setQuery(text);
+    setBoxFocused(false);
+    setVoiceArrival(false);
+    setJustAdded(null);
+    // Back to the results, as with the keyboard's Search key.
+    searchRef.current?.blur();
+  }
 
   // A topic chip tapped in an ask's info sheet: narrow the list to that
   // topic (never toggles it off) and go back to the top to show the result.
@@ -166,63 +293,119 @@ export function SearchClient({
 
   return (
     <>
+      {/* Outside the pinned block, so on a phone it scrolls away and only the
+          box stays. People didn't see that this box also creates asks, so it
+          says so. Desktop's page doesn't scroll: the list hides it instead. */}
+      <div ref={introRef} className={cn("flex flex-col gap-0.5 lg:pb-2", listScrolled && "lg:hidden")}>
+        <h1 className="font-display text-[22px] font-black text-headline tracking-[-0.02em]">
+          What do you want?
+        </h1>
+        <p className="text-[13px] leading-snug text-text-secondary">
+          Type a topic or your idea. We&rsquo;ll show asks like it, or help you add a new one
+          with a clear target.
+        </p>
+      </div>
+
       {/* Pinned under the header while the list scrolls. On phones it bleeds
           to the screen edges (negative margin = main's gutter) so cards
           don't show through beside it. */}
       <div
         ref={controlsRef}
-        className="sticky top-14 lg:static z-30 bg-paper flex flex-col gap-2.5 sm:gap-3 pb-3 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0"
+        className="sticky top-14 lg:static z-30 bg-paper flex flex-col gap-2.5 sm:gap-3 pt-2 lg:pt-0 pb-3 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0"
       >
-        <div className="flex flex-col gap-2">
-          {/* The search box says what this screen is; on a phone the
-              heading only costs a line of list. */}
-          <h1 className="max-sm:sr-only font-display text-[22px] font-black text-headline tracking-[-0.02em]">
-            Search
-          </h1>
-          <div className="relative">
-            <input
+          <div
+            ref={boxRef}
+            className="relative group/box"
+            onFocus={() => setBoxFocused(true)}
+            onBlur={(e) => {
+              if (e.currentTarget.contains(e.relatedTarget)) return;
+              setBoxFocused(false);
+            }}
+          >
+            <textarea
               ref={searchRef}
-              type="search"
+              rows={1}
               enterKeyHint="search"
               autoComplete="off"
               spellCheck={false}
-              aria-label="Search asks"
-              placeholder="Search for an ask — or a topic you care about"
+              aria-label="Search asks by topic or idea, or add a new one"
               value={query}
               onChange={(e) => {
-                setQuery(e.target.value);
+                // One search, however it was pasted in.
+                setQuery(e.target.value.replace(/\s*\n\s*/g, " "));
+                setVoiceArrival(false);
                 // The "Added …" notice belongs to the moment of adding; the
                 // next thing typed is a new search.
                 setJustAdded(null);
               }}
               // Results already update as you type, so the keyboard's
               // Search key just puts the keyboard away to show them.
-              onKeyDown={(e) => e.key === "Enter" && e.currentTarget.blur()}
+              onKeyDown={(e) => {
+                if (e.key !== "Enter" && e.key !== "Escape") return;
+                e.preventDefault();
+                e.currentTarget.blur();
+              }}
+              // Phones: lift the box so its options open above the keyboard.
+              onFocus={revealOnFocus("start")}
               className={cn(
-                "w-full bg-card text-text placeholder:text-text-muted",
-                "border border-border rounded-sm pl-4 pr-11 py-3 text-[15px]",
+                "scroll-mt-16 block w-full bg-card text-text resize-none",
+                "border border-border rounded-sm pl-4 py-3 text-[15px] leading-6 max-h-[7.75rem] overflow-y-auto",
+                voice.supported ? "pr-[5.5rem]" : "pr-11",
                 "focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent",
-                // Our own clear button below, not WebKit's tiny one.
-                "[&::-webkit-search-cancel-button]:appearance-none",
               )}
             />
+            {!query && (
+              <div className="absolute left-[17px] right-14 top-[13px] pointer-events-none">
+                <SearchPlaceholder />
+              </div>
+            )}
             {query && (
               <button
                 type="button"
                 aria-label="Clear search"
                 onClick={() => {
                   setQuery("");
+                  setVoiceArrival(false);
                   searchRef.current?.focus();
                 }}
-                className="absolute right-0 top-0 h-full w-11 flex items-center justify-center text-text-muted hover:text-text active:text-text cursor-pointer"
+                className={cn(
+                  // The first line's height: in a taller box these stay by the top line.
+                  "absolute top-0 h-[50px] w-11 flex items-center justify-center text-text-muted hover:text-text active:text-text cursor-pointer",
+                  voice.supported ? "right-11" : "right-0",
+                  "group-data-[stacked]/box:right-0 group-data-[stacked]/box:top-[41px] group-data-[stacked]/box:h-10",
+                  STACKED_ICON,
+                )}
               >
                 <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden>
                   <path d="M5.5 5.5l9 9M14.5 5.5l-9 9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
                 </svg>
               </button>
             )}
+            {voice.supported && (
+              <VoiceButton
+                onClick={() => {
+                  setBoxFocused(false);
+                  setVoiceArrival(false);
+                  setVoiceMode("speaking");
+                  voice.start();
+                }}
+                className={cn(
+                  "absolute right-0 top-0 h-[50px] group-data-[stacked]/box:top-px group-data-[stacked]/box:h-10",
+                  STACKED_ICON,
+                )}
+              />
+            )}
+            {showOptions && (
+              <SearchOptions
+                suggestions={suggestions}
+                suggestionsHeading={query ? undefined : "Try searching"}
+                topics={query ? [] : optionTopics}
+                onPick={pickOption}
+                onClear={query ? undefined : () => setOptionsCleared(true)}
+                className="absolute inset-x-0 top-full mt-1 z-10 max-h-[min(24rem,calc(var(--vv-height,100dvh)-8rem))]"
+              />
+            )}
           </div>
-        </div>
 
         <SearchFilters state={filterState} total={queryMatches.length} searching={queryReady} />
       </div>
@@ -240,6 +423,16 @@ export function SearchClient({
             // Room for the vote tray so it never sits on top of the last card.
             votedIds.size > 0 && "pb-[calc(6rem+env(safe-area-inset-bottom))]",
           )}
+          onScroll={(e) => {
+            const el = e.currentTarget;
+            if (el.scrollTop === 0) setListScrolled(false);
+            else if (
+              el.scrollTop > INTRO_HIDE_AFTER_PX &&
+              el.scrollHeight - el.clientHeight > INTRO_HIDE_MIN_OVERFLOW_PX
+            ) {
+              setListScrolled(true);
+            }
+          }}
           // Starting to scroll the results means you're done typing: put the
           // keyboard away so the list gets the whole screen (as native apps do).
           onTouchMove={() => {
@@ -248,7 +441,14 @@ export function SearchClient({
         >
           {allSubmitted && <VotesSubmittedNotice />}
 
-          {filteredAsks.length > 0 && (
+          {(filteredAsks.length > 0 || (queryReady && !semantic.settled)) && (
+            <div className={cn("flex flex-col gap-3", voiceArrival && "voice-arrive")}>
+            {queryReady && (
+              <h2 className="text-[13px] uppercase tracking-[0.08em] text-text-muted">
+                Already asked
+              </h2>
+            )}
+            {filteredAsks.length > 0 && (
             <ShowTopicContext.Provider value={showTopic}>
             <AskList
               key={`${trimmedQuery}|${JSON.stringify(filterState.filters)}`}
@@ -271,18 +471,19 @@ export function SearchClient({
               )}
             />
             </ShowTopicContext.Provider>
+            )}
+            {queryReady && !semantic.settled && (
+              <p className="text-center text-xs text-text-muted">
+                Looking for asks that mean the same thing…
+              </p>
+            )}
+            </div>
           )}
 
           {justAdded && (
             <div className="text-center py-4 text-sm text-text-secondary bg-card border border-border rounded-card">
               Added &ldquo;{justAdded}&rdquo; — it&rsquo;s live now, and your vote is counted.
             </div>
-          )}
-
-          {queryReady && !semantic.settled && (
-            <p className="text-center text-xs text-text-muted">
-              Looking for asks that mean the same thing…
-            </p>
           )}
 
           {showAddAnywayLink && (
@@ -296,6 +497,7 @@ export function SearchClient({
           )}
 
           {showAddPanel && (
+            <div className={cn(voiceArrival && "voice-arrive-after")}>
             <AddAskPanel
               key={trimmedQuery}
               query={trimmedQuery}
@@ -309,6 +511,7 @@ export function SearchClient({
               onAuthRequired={() => auth.prompt({ query: trimmedQuery })}
               onBeforeSubmit={() => sendToOnboardingFirst({ query: trimmedQuery })}
             />
+            </div>
           )}
 
           {filteredOut && (
@@ -326,7 +529,7 @@ export function SearchClient({
 
           {queryMatches.length === 0 && !queryReady && (
             <div className="text-center py-16 text-text-secondary text-sm">
-              Search for an ask, or type a topic you care about.
+              Type a topic or your idea above.
             </div>
           )}
         </div>
@@ -335,6 +538,21 @@ export function SearchClient({
           <FilterSidebar state={filterState} />
         </div>
       </div>
+
+      {voiceMode && (
+        <VoiceMode
+          transcript={voice.transcript}
+          searching={voiceMode !== "speaking"}
+          leaving={voiceMode === "leaving"}
+          error={voice.error}
+          onSend={voice.stop}
+          onRetry={voice.start}
+          onClose={() => {
+            voice.cancel();
+            setVoiceMode(null);
+          }}
+        />
+      )}
 
       {auth.promptOpen && (
         <SignInModal onSignIn={auth.signInWithGoogle} onClose={auth.closePrompt} />

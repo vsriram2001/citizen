@@ -7,7 +7,8 @@ export default function SearchLoading() {
     <div className="min-h-screen flex flex-col">
       <SiteHeader sticky />
       <main className="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 py-3 sm:py-4 flex flex-col gap-3">
-        <div className="h-7 w-28 animate-pulse rounded-sm bg-border/60" />
+        <div className="h-7 w-64 animate-pulse rounded-sm bg-border/60" />
+        <div className="h-9 sm:h-4 w-full max-w-lg animate-pulse rounded-sm bg-border/40" />
         <div className="h-12 w-full animate-pulse rounded-sm bg-border/40" />
         <div className="mt-3 flex flex-col gap-6 lg:max-w-[calc(100%-392px)]">
           {[0, 1, 2].map((i) => (
