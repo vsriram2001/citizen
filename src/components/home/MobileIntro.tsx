@@ -23,7 +23,14 @@ const AT = {
   drops: 11.05,
   votes: [12.4, 14.22, 16.04],
   wisely: 12.4,
-  slotOpens: 16.64,
+  boxOut: 16.9,
+  why: 17.3,
+  answers: [18.3, 21.0, 23.7],
+  arcOut: 19.1,
+  arcBack: 21.8,
+  tick: 24.2,
+  pulses: [24.8, 25.4],
+  slotOpens: 26.6,
 };
 
 /** One vote's trip into the box: BallotAnimation's cycle, run three times. A
@@ -33,12 +40,32 @@ const DROP_S = 1.82;
 // Ends on roads so the ask on the ballot answers the last wish struck.
 const WISHES = ["Clean water.", "Good schools.", "Safe streets.", "Better roads."];
 
+// People told us they couldn't see why the site exists, so the opener ends on it.
+const ANSWERS = [
+  { who: "You", body: "answer for what you ask: a real number, a date, and only three votes a year." },
+  { who: "Leaders", body: "answer for what they deliver: every ask names who is responsible." },
+  { who: "We", body: "check when the date arrives, and show whether it was delivered." },
+];
+
 /** Never hold the opener longer than this waiting on fonts or art. */
 const START_WAIT_MS = 1500;
 
 const at = (seconds: number) => ({ "--at": `${seconds}s` }) as React.CSSProperties;
 
 const POSTER = "font-display font-black text-paper tracking-[-0.045em]";
+
+// The why scene's drawing, in the ballot art's chalk line: the ask goes out over
+// the top, delivery comes back underneath, and the check sits between them.
+const BALLOT = ["M34 60h52v72H34z", "M46 76h20v20H46z", "M50 86l6 6 14-18", "M46 110h28", "M46 120h18"];
+const LEADERS = ["M250 78L290 54L330 78z", "M260 86v38", "M280 86v38", "M300 86v38", "M320 86v38", "M248 130h84"];
+const CALENDAR = ["M151 72h48v48h-48z", "M151 86h48", "M163 66v10", "M187 66v10"];
+const ARC_OUT = "M72 50C120 8 230 8 276 44";
+const ARC_BACK = "M282 140C230 184 120 184 72 146";
+
+/** One chalk stroke, drawing itself on. */
+function Draw({ seconds, d, width = 3 }: { seconds: number; d: string; width?: number }) {
+  return <path className="intro-draw" style={at(seconds)} d={d} pathLength={1} strokeWidth={width} />;
+}
 
 /** A line of the ballot, rising from behind its own edge. */
 function Fact({ seconds, label, value }: { seconds: number; label: string; value?: string }) {
@@ -53,15 +80,16 @@ function Fact({ seconds, label, value }: { seconds: number; label: string; value
 }
 
 /**
- * Phones only, first visit only: about eighteen seconds on what this site is.
+ * Phones only, first visit only: about 28 seconds on what this site is and why.
  * On a phone the hero can only show one thing at a time, so this tells the
  * story before the page has to, as one unbroken thing happening to one object.
  *
  * Navy, the one screen on the site that isn't paper. Wishes everyone agrees
  * with get struck out, because the first two seconds decide whether anyone
  * stays. Then the answer arrives as a ballot paper, that ballot goes into the
- * hand, and three votes drop in. The last slot opens and paper floods out of it:
- * the home page is that same paper, so the story lands on the site with no cut.
+ * hand, and three votes drop in. Then why it matters: who answers for what. A
+ * last slot opens and paper floods out of it: the home page is that same paper,
+ * so the story lands on the site with no cut.
  *
  * The motion is CSS, held paused until `is-playing`: a CSS clock starts when
  * styles load, not when the screen paints, so on a slow load the first seconds
@@ -173,7 +201,9 @@ export function MobileIntro({ ask }: { ask: Ask }) {
         </div>
 
         {/* Three votes. bg-navy: this scene is its own stacking context while it
-            animates, and the art's screen blend needs something opaque to hit. */}
+            animates, and the art's screen blend needs something opaque to hit.
+            The out sits on a wrapper: one element can't run intro-in and intro-out. */}
+        <div className="intro-out absolute inset-0" style={at(AT.boxOut)}>
         <div
           className="intro-in absolute inset-0 bg-navy flex flex-col items-center justify-center px-5 pt-14"
           style={at(AT.box)}
@@ -196,9 +226,6 @@ export function MobileIntro({ ask }: { ask: Ask }) {
                   <Image src="/ballot-hand.png" alt="" width={1082} height={1219} unoptimized className="block w-full h-auto ballot-hand-fade" />
                 </div>
               </div>
-              {/* Centred on the slot line, 65.9% down the art (see BallotAnimation):
-                  the slot opens and paper fills the screen. */}
-              <span className="intro-slot absolute z-10 left-1/2 top-[65.9%] w-[300vw] h-[300vh] -ml-[150vw] -mt-[150vh] bg-paper" style={at(AT.slotOpens)} />
             </div>
           </div>
 
@@ -216,6 +243,71 @@ export function MobileIntro({ ask }: { ask: Ask }) {
               </span>
             ))}
           </div>
+        </div>
+        </div>
+
+        {/* Why this exists. The drawing builds up beat by beat while one answer
+            shows at a time, sharing a grid cell so nothing shifts as they swap.
+            The tick is generic on purpose: no real ask or person is shown as
+            delivered. */}
+        <div className="absolute inset-0 flex flex-col justify-center gap-5 px-5 pt-14">
+          <div className="intro-in flex flex-col gap-2" style={at(AT.why)}>
+            <p className="text-[11px] uppercase tracking-[0.16em] text-paper/70">Why this exists</p>
+            <p className={cn("text-[38px] leading-[1.08] text-balance", POSTER)}>
+              Accountability runs both ways.
+            </p>
+          </div>
+
+          {/* No animation on this wrapper: it would trap the slot's z-index. */}
+          <div className="relative">
+            <svg
+              viewBox="0 0 350 190"
+              className="block w-full overflow-visible text-paper"
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <g transform="rotate(-8 60 96)">
+                {BALLOT.map((d, i) => (
+                  <Draw key={d} seconds={AT.answers[0] + i * 0.12} d={d} />
+                ))}
+              </g>
+              <g opacity={0.55}>
+                <Draw seconds={AT.arcOut} d={ARC_OUT} />
+                <Draw seconds={AT.arcOut + 0.6} d="M270 29L276 44L260 42" />
+                <Draw seconds={AT.arcBack} d={ARC_BACK} />
+                <Draw seconds={AT.arcBack + 0.6} d="M78 161L72 146L88 148" />
+              </g>
+              {LEADERS.map((d, i) => (
+                <Draw key={d} seconds={AT.answers[1] + i * 0.1} d={d} />
+              ))}
+              <g className="intro-stamp" style={at(AT.answers[2])}>
+                {CALENDAR.map((d) => (
+                  <path key={d} d={d} strokeWidth={3} />
+                ))}
+                <Draw seconds={AT.tick} d="M162 103l8 8 18-20" width={4} />
+              </g>
+              {/* Round the loop once, so the check reads as closing it. */}
+              <path className="intro-pulse" style={at(AT.pulses[0])} d={ARC_OUT} pathLength={1} strokeWidth={4} />
+              <path className="intro-pulse" style={at(AT.pulses[1])} d={ARC_BACK} pathLength={1} strokeWidth={4} />
+            </svg>
+            {/* The check opens and paper fills the screen. */}
+            <span className="intro-slot absolute z-10 left-1/2 top-1/2 w-[300vw] h-[300vh] -ml-[150vw] -mt-[150vh] bg-paper" style={at(AT.slotOpens)} />
+          </div>
+
+          <dl className="grid">
+            {ANSWERS.map(({ who, body }, i) => (
+              <div
+                key={who}
+                className="intro-beat col-start-1 row-start-1"
+                style={{ "--at": `${AT.answers[i]}s`, "--out": `${AT.answers[i + 1] ?? 99}s` } as React.CSSProperties}
+              >
+                <dt className={cn("text-[28px] leading-tight", POSTER)}>{who}</dt>
+                <dd className="text-[17px] text-paper leading-snug">{body}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </div>
     </div>

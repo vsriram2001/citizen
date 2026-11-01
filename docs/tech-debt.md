@@ -19,6 +19,12 @@ this file is the cross-cutting list.
       Redirect URLs to the production domain.
 - [ ] **Wire Turnstile** (`components/vote/Turnstile.tsx` exists) into voting and the
       add-your-thoughts form.
+- [ ] **Build the delivery check.** The phone opener (`MobileIntro`) now promises "We check when
+      the date arrives, and show whether it was delivered", but nothing records or shows an
+      outcome yet: no field on `Ask`, no table, no UI. Someone also has to own checking each ask
+      at its deadline.
+- [ ] **"Why this exists" is only in the phone opener.** Desktop, reduced-motion and screen-reader
+      visitors, and anyone who skips it, never get it.
 
 ## Ask info (deferred from MVP)
 - [ ] **Nightly thought digest** — `api/cron/digest-thoughts`, the `vercel.json` cron and
