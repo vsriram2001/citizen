@@ -82,7 +82,8 @@ If a feature needs a new field on `Ask`, add it as **optional** so other branche
 
 ## Working in parallel
 
-- **One chat = one worktree = one branch.** Start a chat with `claude --worktree <feature>`
+- *(Superseded by "Release flow" below: chats now share this checkout and don't commit.)*
+  **One chat = one worktree = one branch.** Start a chat with `claude --worktree <feature>`
   (copies `.env.local` via `.worktreeinclude`; then run `npm ci` inside it), or run
   `scripts/new-worktree.sh <feature> <port>` which does all of it. Branch name: `feature/<name>`.
 - **Give each worktree its own port**: main checkout 3000, then 3001, 3002, …
@@ -93,6 +94,22 @@ If a feature needs a new field on `Ask`, add it as **optional** so other branche
   Write them idempotently (`if not exists`).
 - Keep `main` green: run `npm run check` before finishing; merge one feature at a time and
   rebase the others on top.
+
+## Release flow
+
+`main` is production: Vercel deploys whatever lands on it. Nothing goes there directly.
+
+1. **Working chats don't commit.** They change files and show the result on localhost for the
+   owner to review, and they keep to their own feature's files. This replaces the worktree and
+   branch steps under "Working in parallel".
+2. **One release chat does all the git work**, only when asked. It lists everything uncommitted,
+   works out which chat each change belongs to, and names anything unfinished or unrelated so
+   the owner can leave it out. Finished work goes onto `develop`, one commit per feature, with
+   any conflicts resolved.
+3. **It runs the checks on `develop`:** `npm run check` and `npm run build`, then pushes it.
+   Vercel builds a preview from that push, for the owner to test.
+4. **It merges `develop` into `main` only when the owner says so**, then confirms the deployment
+   is live. Vercel's Instant Rollback is the undo.
 
 ## Product rules that must not regress
 
