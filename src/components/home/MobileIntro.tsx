@@ -11,23 +11,24 @@ import type { Ask } from "@/lib/types";
 /** Seconds into the opener; the final fade lives in globals.css. Paced to be
  *  read, not just seen: every line gets time to land before the next. */
 const AT = {
-  wishes: [0.2, 0.6, 1.0, 1.4],
-  blame: 2.0,
-  strikes: [2.6, 2.8, 3.0, 3.2],
-  wishesOut: 3.8,
-  makeIt: 4.2,
-  ballotIn: 4.7,
-  facts: [5.4, 5.9, 6.4],
-  ballotOut: 8.0,
-  box: 8.3,
-  drops: 8.5,
-  votes: [9.54, 10.94, 12.34],
-  slotOpens: 12.8,
+  wishes: [0.26, 0.78, 1.3, 1.82],
+  blame: 2.6,
+  strikes: [3.38, 3.64, 3.9, 4.16],
+  wishesOut: 4.94,
+  makeIt: 5.46,
+  ballotIn: 6.11,
+  facts: [7.02, 7.67, 8.32],
+  ballotOut: 10.4,
+  box: 10.79,
+  drops: 11.05,
+  votes: [12.4, 14.22, 16.04],
+  wisely: 12.4,
+  slotOpens: 16.64,
 };
 
 /** One vote's trip into the box: BallotAnimation's cycle, run three times. A
  *  card is gone 74% of the way through, which is when its segment fills. */
-const DROP_S = 1.4;
+const DROP_S = 1.82;
 
 // Ends on roads so the ask on the ballot answers the last wish struck.
 const WISHES = ["Clean water.", "Good schools.", "Safe streets.", "Better roads."];
@@ -52,7 +53,7 @@ function Fact({ seconds, label, value }: { seconds: number; label: string; value
 }
 
 /**
- * Phones only, first visit only: about fourteen seconds on what this site is.
+ * Phones only, first visit only: about eighteen seconds on what this site is.
  * On a phone the hero can only show one thing at a time, so this tells the
  * story before the page has to, as one unbroken thing happening to one object.
  *
@@ -203,6 +204,9 @@ export function MobileIntro({ ask }: { ask: Ask }) {
 
           <p className={cn("mt-2 text-center text-[38px] leading-[1.08] text-balance", POSTER)}>
             You get three votes a year.
+          </p>
+          <p className="intro-in mt-2 text-center text-xl text-paper leading-snug" style={at(AT.wisely)}>
+            Choose wisely.
           </p>
           {/* VoteMeter's segments, one for each card that goes in. */}
           <div className="mt-5 flex gap-1.5 w-full max-w-[220px]">
