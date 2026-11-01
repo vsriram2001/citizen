@@ -23,6 +23,11 @@ import { AskList } from "@/components/ask/AskList";
 import { AskInfoButton } from "@/components/ask/AskInfoButton";
 import { FilterSidebar } from "@/components/search/SearchFilters";
 import { useAskFilters } from "@/components/search/useAskFilters";
+import { SearchOptions } from "@/components/search/SearchOptions";
+import { SearchPlaceholder } from "@/components/search/SearchPlaceholder";
+import { VoiceButton } from "@/components/search/VoiceButton";
+import { VoiceStage } from "@/components/search/VoiceMode";
+import { NextAskPlaceholder } from "@/components/submit/SuggestThinking";
 import { SEED_ASKS } from "@/lib/mock/asks";
 import { PARTY_STATUS_LABEL, type PartyStatus } from "@/lib/status";
 
@@ -331,6 +336,36 @@ export default function DesignGallery() {
       </Section>
 
       <Section
+        title="Voice search"
+        note="The mic shows beside the search box only where the browser can recognise speech. Tapping it opens voice mode, a full-screen Sheet: words appear large as they're spoken, then it searches and lifts onto the results."
+      >
+        <div className="flex h-11">
+          <VoiceButton onClick={() => {}} />
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {(
+            [
+              { transcript: "", searching: false, error: null },
+              { transcript: "Cleaner water in Bengaluru", searching: false, error: null },
+              { transcript: "Cleaner water in Bengaluru", searching: true, error: null },
+              { transcript: "", searching: false, error: "Didn't catch that. Tap the mic and try again." },
+            ]
+          ).map((state, i) => (
+            <div key={i} className="h-[420px] overflow-hidden rounded-card">
+              <VoiceStage {...state} onSend={() => {}} onRetry={() => {}} onClose={() => {}} />
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section
+        title="Next suggested ask"
+        note="Where the next AI-drafted card will land while the rest of the set is still being written."
+      >
+        <NextAskPlaceholder />
+      </Section>
+
+      <Section
         title="Phone opener"
         note="Home page, first visit on a phone only. CSS-only timeline in globals.css, so it clears itself without scripts. Hidden from sm up, so this button does nothing on desktop; replay on a phone or at /?intro=1."
       >
@@ -352,6 +387,30 @@ export default function DesignGallery() {
               { wish: "Fix the roads", ask: SEED_ASKS[6] },
               { wish: "Cleaner lakes", ask: SEED_ASKS[12] },
             ]}
+          />
+        </div>
+      </Section>
+
+      <Section
+        title="Search placeholder"
+        note="Sits over the empty search box. A topic, then a whole idea, sliding up one at a time. Reduced motion keeps the first example, still."
+      >
+        <div className="max-w-xl bg-card border border-border rounded-sm px-4 py-[13px]">
+          <SearchPlaceholder />
+        </div>
+      </Section>
+
+      <Section
+        title="Search options"
+        note="Opens under the search box. Empty: the most-backed ask and the most common topics, with a way to clear them. Typing: what matches so far. Tapping one fills the box."
+      >
+        <div className="max-w-xl">
+          <SearchOptions
+            suggestions={["Double the public education budget"]}
+            suggestionsHeading="Try searching"
+            topics={["Water", "Transport", "Education", "Health"]}
+            onPick={() => {}}
+            onClear={() => {}}
           />
         </div>
       </Section>

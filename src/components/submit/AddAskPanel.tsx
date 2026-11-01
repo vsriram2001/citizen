@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { AskCard } from "@/components/ask/AskCard";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
-import { SuggestThinking } from "@/components/submit/SuggestThinking";
+import { NextAskPlaceholder, SuggestThinking } from "@/components/submit/SuggestThinking";
 import {
   ReviewSubmissionModal,
   type ReviewDraft,
@@ -310,7 +310,7 @@ export function AddAskPanel({
 
         {!loading &&
           suggestions.map((s, i) => (
-            <div key={s.index} className="relative">
+            <div key={s.index} className="ask-land relative">
               <span className="absolute -top-2 left-4 z-10 text-[10px] uppercase tracking-[0.08em] bg-paper px-1.5 text-text-muted">
                 Suggested — not yet added
               </span>
@@ -336,9 +336,7 @@ export function AddAskPanel({
           ))}
 
         {/* Cards land one by one; say so while the rest are still coming. */}
-        {!loading && streaming && suggestions.length > 0 && (
-          <p className="text-center text-xs text-text-muted">Finding more…</p>
-        )}
+        {!loading && streaming && suggestions.length > 0 && <NextAskPlaceholder />}
 
         {!loading && (
           <button

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { knowledgeContext } from "@/lib/knowledge";
 import { chatJSON } from "@/lib/llm";
 import { askSimilarity, findNearIdentical, rankAsks } from "@/lib/match";
 import { findDuplicate } from "@/lib/semantic-match";
@@ -68,7 +69,9 @@ Output ONE JSON object and nothing else (no fence, no prose) with these fields:
 - sourceUrl: the URL from the search results that best supports currentValue/targetBody, or null.
 
 Rules:
-- Ground currentValue and targetBody in the live search results below — not your memory, which goes stale. If they don't support a confident figure, use a short qualitative currentValue (e.g. "No centralized public tracking") rather than inventing a number.
+- Ground currentValue and targetBody in the verified facts and live search results below — not your memory, which goes stale. If they don't support a confident figure, use a short qualitative currentValue (e.g. "No centralized public tracking") rather than inventing a number.
+- currentValue and targetValue must state the actual figure or fact, never point at it: "Existing rates", "current levels" and "25% higher than today" tell the reader nothing. If a rate is known, write it out, and compute the target from it. A percentage rise on a figure you don't have is not a usable ask: pick a measure you do have a figure for.
+- Name a specific tax, scheme or law only if the facts or search results below show it exists today; those from memory may have been abolished.
 - Be practical, not literal: if the citizen's own figure or deadline isn't realistic given where things stand, set a target and deadline a government could actually be held to.
 - If the citizen names no place, the ask is India-wide — don't narrow it to one city or state just because a search result is about one.
 - Never repeat an ask already on the platform (listed below), or reword one, even with a different figure or deadline. If this angle is already covered by one of them, or doesn't apply to what the citizen wrote, output only {"skip": true}.
@@ -151,7 +154,8 @@ async function run(
   const statusContext =
     statusResults.length > 0
       ? `\n\nLive web search results (use these for current facts, not your own memory):\n${formatSearchContext(statusResults)}`
-      : "\n\nNo web search results were available — use qualitative currentValue language rather than guessing specific figures.";
+      : "\n\nNo web search results were available — apart from any verified facts above, use qualitative currentValue language rather than guessing specific figures.";
+  const groundingContext = `${knowledgeContext(query)}${statusContext}`;
 
   const kept: { index: number; askText: string; outcome: string[] }[] = [];
   const coveredBy = new Set<string>();
@@ -210,7 +214,7 @@ async function run(
       background.push(
         chatJSON<{ summary?: string }>({
           system: SUMMARY_PROMPT,
-          user: `Citizen typed: "${query}"\nDrafted ask: "${ask.askText}" — now ${ask.currentValue}; target ${ask.targetValue} by ${ask.timeframe}.${statusContext}`,
+          user: `Citizen typed: "${query}"\nDrafted ask: "${ask.askText}" — now ${ask.currentValue}; target ${ask.targetValue} by ${ask.timeframe}.${groundingContext}`,
           maxTokens: 1500,
           signal,
         })
@@ -255,7 +259,7 @@ async function run(
     );
   }
 
-  const user = `Citizen's query: "${query}"${existingContext}${statusContext}`;
+  const user = `Citizen's query: "${query}"${existingContext}${groundingContext}`;
   let failures = 0;
   await Promise.all(
     ANGLES.map(async (angle, index) => {

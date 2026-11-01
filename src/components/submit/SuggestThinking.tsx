@@ -23,6 +23,22 @@ const BLOCKS: {
   { size: 10, radius: 30, duration: 2.4, delay: -1.2, color: "bg-muted", rotate: 300 },
 ];
 
+/** Stands where the next card will land while the rest of the set is written. */
+export function NextAskPlaceholder() {
+  return (
+    <div
+      role="status"
+      className="border border-dashed border-border rounded-card px-4 py-4 flex flex-col gap-2.5"
+    >
+      <div aria-hidden className="flex flex-col gap-2 animate-pulse motion-reduce:animate-none">
+        <span className="block h-3 w-4/5 rounded-sm bg-border" />
+        <span className="block h-3 w-3/5 rounded-sm bg-border" />
+      </div>
+      <p className="text-xs text-text-muted">Writing the next ask…</p>
+    </div>
+  );
+}
+
 export function SuggestThinking() {
   return (
     <div className="flex flex-col items-center justify-center gap-5 py-14">
