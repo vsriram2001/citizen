@@ -32,11 +32,14 @@ function suggestionToAsk(s: AskSuggestion, i: number): Ask {
 
 /** A draft on its way through review: what the person sees and edits, plus
  *  the fields that ride along unchanged (accountable body, tags). */
-type Draft = ReviewDraft & { targetBody: string; tags: string[] };
+export type AskDraft = ReviewDraft & { targetBody: string; tags: string[] };
 
 /** Everything written for a new ask — the full measurable shape, so an
  *  AI-drafted ask never loses its current → target on the way in. */
-type Payload = Draft;
+type Payload = AskDraft;
+
+const COULD_NOT_ADD = "Couldn’t add that right now.";
+const OUT_OF_VOTES = "You’ve used all your votes. Remove one to add this ask.";
 
 function newAsk(id: string, p: Payload): Ask {
   return {
@@ -80,6 +83,8 @@ export function AddAskPanel({
   onCovered,
   onAuthRequired,
   onBeforeSubmit,
+  resumeDraft,
+  onResumeClosed,
 }: {
   query: string;
   demo: boolean;
@@ -97,15 +102,20 @@ export function AddAskPanel({
   /** The server says the person isn't signed in — open the Google prompt. */
   onAuthRequired?: () => void;
   /** Return true to stop the submit (e.g. sent to onboarding first). */
-  onBeforeSubmit?: () => boolean;
+  onBeforeSubmit?: (draft: AskDraft) => boolean;
+  /** A draft reviewed before a detour to onboarding: it reopens on the review
+   *  screen, and confirming adds it without the "consider voting" step again. */
+  resumeDraft?: AskDraft | null;
+  /** The person dismissed the resumed draft. */
+  onResumeClosed?: () => void;
 }) {
   const { summary, suggestions, coveredBy, loading, streaming, error, peopleFor } =
     useSuggestions(query, true);
-  const [flowError, setFlowError] = useState(false);
+  const [flowError, setFlowError] = useState<string | null>(null);
   const [schemaChoices, setSchemaChoices] = useState<AskSuggestion[] | null>(null); // freeform path: "doesn't fit schema"
   const [working, setWorking] = useState(false); // duplicate check / filling in fields before review
   const [duplicateOf, setDuplicateOf] = useState<Ask | null>(null);
-  const [pendingReview, setPendingReview] = useState<Draft | null>(null);
+  const [pendingReview, setPendingReview] = useState<AskDraft | null>(resumeDraft ?? null);
   const [pendingConfirm, setPendingConfirm] = useState<Payload | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -171,7 +181,7 @@ export function AddAskPanel({
         responsiblePeople: data.responsiblePeople,
       });
     } catch {
-      setFlowError(true);
+      setFlowError(COULD_NOT_ADD);
     } finally {
       setWorking(false);
     }
@@ -210,7 +220,7 @@ export function AddAskPanel({
         responsiblePeople: people ?? [],
       });
     } catch {
-      setFlowError(true);
+      setFlowError(COULD_NOT_ADD);
     } finally {
       setWorking(false);
     }
@@ -218,7 +228,12 @@ export function AddAskPanel({
 
   function handleReviewConfirm(final: ReviewResult) {
     if (!pendingReview) return;
-    setPendingConfirm({ ...pendingReview, ...final });
+    const payload = { ...pendingReview, ...final };
+    if (resumeDraft) {
+      submit(payload);
+      return;
+    }
+    setPendingConfirm(payload);
     setPendingReview(null);
   }
 
@@ -231,13 +246,16 @@ export function AddAskPanel({
 
   async function submit(payload: Payload) {
     if (budgetLeft <= 0) {
-      setFlowError(true);
+      setFlowError(OUT_OF_VOTES);
+      setPendingConfirm(null);
+      setPendingReview(null);
       return;
     }
-    if (onBeforeSubmit?.()) return;
+    if (onBeforeSubmit?.(payload)) return;
     if (demo) {
       onAdded(newAsk(`demo-${Date.now()}`, payload));
       setPendingConfirm(null);
+      setPendingReview(null);
       setSchemaChoices(null);
       return;
     }
@@ -257,7 +275,12 @@ export function AddAskPanel({
         const { duplicateOf: dup } = await res.json();
         const existing = existingAsks.find((a) => a.id === dup?.id);
         if (existing) setDuplicateOf(existing);
-        else setFlowError(true);
+        else setFlowError(COULD_NOT_ADD);
+        return;
+      }
+      if (res.status === 403) {
+        // Votes spent elsewhere (another tab) that this page hasn't seen yet.
+        setFlowError(OUT_OF_VOTES);
         return;
       }
       if (!res.ok) throw new Error("submit failed");
@@ -265,10 +288,11 @@ export function AddAskPanel({
       if (data.voteId) recordVote(data.id, data.voteId);
       onAdded(newAsk(data.id, payload));
     } catch {
-      setFlowError(true);
+      setFlowError(COULD_NOT_ADD);
     } finally {
       setSubmitting(false);
       setPendingConfirm(null);
+      setPendingReview(null);
       setSchemaChoices(null);
     }
   }
@@ -294,9 +318,7 @@ export function AddAskPanel({
 
         {!loading && (error || flowError) && (
           <div className="text-center py-8 text-text-secondary text-sm">
-            {flowError
-              ? "Couldn’t add that right now."
-              : "Couldn’t generate suggestions right now."}
+            {flowError ?? "Couldn’t generate suggestions right now."}
           </div>
         )}
 
@@ -410,8 +432,11 @@ export function AddAskPanel({
       {pendingReview && (
         <ReviewSubmissionModal
           draft={pendingReview}
-          submitting={false}
-          onCancel={() => setPendingReview(null)}
+          submitting={submitting}
+          onCancel={() => {
+            setPendingReview(null);
+            onResumeClosed?.();
+          }}
           onConfirm={handleReviewConfirm}
         />
       )}

@@ -11,6 +11,8 @@
   server-side in the API route (the actual guarantee).
 */
 
+import type { AskDraft } from "@/components/submit/AddAskPanel";
+
 export const VOTE_BUDGET = 3;
 
 const SESSION_KEY = "citizen:session-id";
@@ -52,11 +54,13 @@ export function replaceVotes(votes: Record<string, string>) {
   writeVotes(votes);
 }
 
-// What the person was doing when we sent them to Google, so it can be
-// finished on return: a vote tap, or the idea they'd typed to add as an ask.
+// What the person was doing when we sent them to Google or onboarding, so it
+// can be finished on return: a vote tap, the idea they'd typed to add as an
+// ask, or the draft they had already reviewed (AI drafts differ each time, so
+// asking again would lose it).
 // sessionStorage — it only needs to survive the redirect, not the tab.
 const RESUME_KEY = "citizen:resume";
-export type Resume = { askId?: string; query?: string };
+export type Resume = { askId?: string; query?: string; draft?: AskDraft };
 
 export function saveResume(resume: Resume) {
   try {

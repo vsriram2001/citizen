@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Select } from "@/components/ui/Input";
 import { cn } from "@/lib/cn";
 import { revealOnFocus } from "@/components/mobile/useMediaQuery";
 import {
@@ -11,6 +12,7 @@ import {
   type CitySearchResult,
   type LocationSource,
 } from "@/lib/location";
+import { STATES } from "@/lib/places";
 
 export interface LocationValue {
   city: string;
@@ -25,6 +27,7 @@ interface LocationFieldProps {
 }
 
 const PIN_ICON_LOOKS_LIKE_PINCODE = /^\d{1,6}$/;
+const SORTED_STATES = STATES.toSorted((a, b) => a.localeCompare(b));
 
 const CheckIcon = () => (
   <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 shrink-0">
@@ -67,12 +70,17 @@ export function LocationField({ value, onChange }: LocationFieldProps) {
   const [locating, setLocating] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lookupFailed, setLookupFailed] = useState(false);
+  // The way out when lookups can't help: location gates voting, and a state
+  // needs no outside service, so nobody is ever stuck here.
+  const [choosingState, setChoosingState] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     // eslint-disable-next-line react-hooks/set-state-in-effect -- reset per new query, before the debounced lookup
     setNotFound(false);
+    setLookupFailed(false);
 
     const trimmed = query.trim();
     if (trimmed.length < 2) {
@@ -106,6 +114,10 @@ export function LocationField({ value, onChange }: LocationFieldProps) {
         const found = await searchCities(trimmed);
         setResults(found);
         setNotFound(found.length === 0);
+      } catch {
+        setResults([]);
+        setLookupFailed(true);
+        setChoosingState(true);
       } finally {
         setLoading(false);
       }
@@ -157,13 +169,15 @@ export function LocationField({ value, onChange }: LocationFieldProps) {
       );
       if (!resolved) {
         setError("Couldn't determine your city from that location.");
+        setChoosingState(true);
         return;
       }
       onChange({ ...resolved, source: "geolocation" });
       setQuery("");
       setResults([]);
     } catch {
-      setError("Couldn't look up your city just now. Type your city or pincode instead.");
+      setError("Couldn't look up your city just now. Choose your state instead.");
+      setChoosingState(true);
     } finally {
       setLocating(false);
     }
@@ -181,7 +195,7 @@ export function LocationField({ value, onChange }: LocationFieldProps) {
       <div className="flex items-center gap-2.5 bg-support-bg text-support-fg rounded-sm px-3 py-2.5 text-sm">
         <CheckIcon />
         <span className="flex-1">
-          {value.city}, {value.state}
+          {value.city ? `${value.city}, ${value.state}` : value.state}
         </span>
         <button
           type="button"
@@ -267,6 +281,14 @@ export function LocationField({ value, onChange }: LocationFieldProps) {
                 >
                   find your city automatically
                 </button>
+                , or{" "}
+                <button
+                  type="button"
+                  onClick={() => setChoosingState(true)}
+                  className="underline decoration-text-muted/50 hover:decoration-text-muted cursor-pointer"
+                >
+                  just choose your state
+                </button>
                 .
               </p>
             </div>
@@ -277,6 +299,29 @@ export function LocationField({ value, onChange }: LocationFieldProps) {
       {loading && <p className="text-xs text-text-muted">Looking that up…</p>}
 
       {error && <p className="text-xs text-against-fg">{error}</p>}
+
+      {lookupFailed && !loading && (
+        <p className="text-xs text-against-fg">
+          City search isn&apos;t working right now. Choose your state instead.
+        </p>
+      )}
+
+      {choosingState && (
+        <Select
+          aria-label="State or union territory"
+          value=""
+          onChange={(e) => onChange({ city: "", state: e.target.value, source: "state" })}
+        >
+          <option value="" disabled>
+            Choose your state
+          </option>
+          {SORTED_STATES.map((state) => (
+            <option key={state} value={state}>
+              {state}
+            </option>
+          ))}
+        </Select>
+      )}
     </div>
   );
 }

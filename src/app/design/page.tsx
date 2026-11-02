@@ -8,7 +8,9 @@ import { Card } from "@/components/ui/Card";
 import { Sheet, SheetActions } from "@/components/ui/Sheet";
 import { Field, Input, Select, Textarea } from "@/components/ui/Input";
 import { PartyBadge, VerificationBadge } from "@/components/ui/Badge";
+import { Logo } from "@/components/nav/Logo";
 import { BallotAnimation } from "@/components/vote/BallotAnimation";
+import { OutOfVotesNotice } from "@/components/vote/OutOfVotesNotice";
 import { ReplaceVoteModal } from "@/components/vote/ReplaceVoteModal";
 import { ReviewVotesModal } from "@/components/vote/ReviewVotesModal";
 import { VotesSubmittedNotice } from "@/components/vote/VotesSubmittedNotice";
@@ -315,6 +317,13 @@ export default function DesignGallery() {
       </Section>
 
       <Section
+        title="Out of votes notice"
+        note="/search, in place of the add-ask panel when all 3 votes are spent but at least one can still be removed."
+      >
+        <OutOfVotesNotice onReview={() => {}} />
+      </Section>
+
+      <Section
         title="Vote meter"
         note="Discrete segments, not a continuous bar. Three votes a year is the core mechanism — spending one should read as a token spent, not a task completed."
       >
@@ -366,8 +375,19 @@ export default function DesignGallery() {
       </Section>
 
       <Section
-        title="Phone opener"
-        note="Home page, first visit on a phone only. CSS-only timeline in globals.css, so it clears itself without scripts. Hidden from sm up, so this button does nothing on desktop; replay on a phone or at /?intro=1."
+        title="Logo"
+        note="A ballot box with a vote going through its slot. The outline follows the text colour; the capsule is the only place --color-brand is used."
+      >
+        <div className="flex items-end gap-6">
+          <Logo className="text-text-secondary" />
+          <Logo className="h-12 text-text-secondary" />
+          <Logo className="h-20 text-text-secondary" />
+        </div>
+      </Section>
+
+      <Section
+        title="Opener"
+        note="Home page, first visit only, at every width. CSS-only timeline in globals.css, so it clears itself without scripts. Scenes sit side by side from lg. Replay here or at /?intro=1."
       >
         <div>
           <Button size="sm" variant="secondary" onClick={() => setIntroRun((n) => n + 1)}>

@@ -1,4 +1,4 @@
-export type LocationSource = "geolocation" | "pincode" | "search";
+export type LocationSource = "geolocation" | "pincode" | "search" | "state";
 
 export interface ResolvedLocation {
   city: string;
@@ -14,11 +14,17 @@ const NOMINATIM_HEADERS = {
   "User-Agent": "CitizenPoll/1.0 (civic accountability platform)",
 };
 
+/** Both lookups are free outside services, so a hung one mustn't hold up onboarding. */
+const LOOKUP_TIMEOUT_MS = 6000;
+
 export async function lookupPincode(
   pincode: string,
 ): Promise<{ city: string; state: string } | null> {
-  const res = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
-  if (!res.ok) return null;
+  const res = await fetch(`https://api.postalpincode.in/pincode/${pincode}`, {
+    signal: AbortSignal.timeout(LOOKUP_TIMEOUT_MS),
+  });
+  // Throws rather than returning null: null means "no such pincode".
+  if (!res.ok) throw new Error("pincode lookup failed");
 
   const data = await res.json();
   const record = data?.[0];
@@ -36,7 +42,10 @@ export async function reverseGeocode(
   lon: number,
 ): Promise<{ city: string; state: string } | null> {
   const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&zoom=10&addressdetails=1`;
-  const res = await fetch(url, { headers: NOMINATIM_HEADERS });
+  const res = await fetch(url, {
+    headers: NOMINATIM_HEADERS,
+    signal: AbortSignal.timeout(LOOKUP_TIMEOUT_MS),
+  });
   if (!res.ok) return null;
 
   const data = await res.json();
@@ -63,8 +72,12 @@ export async function searchCities(query: string): Promise<CitySearchResult[]> {
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
     query,
   )}&countrycodes=in&format=json&addressdetails=1&limit=6&featureType=city`;
-  const res = await fetch(url, { headers: NOMINATIM_HEADERS });
-  if (!res.ok) return [];
+  const res = await fetch(url, {
+    headers: NOMINATIM_HEADERS,
+    signal: AbortSignal.timeout(LOOKUP_TIMEOUT_MS),
+  });
+  // Throws rather than returning []: [] means "no such place".
+  if (!res.ok) throw new Error("city search failed");
 
   const data = await res.json();
   return (data as Array<Record<string, unknown>>)

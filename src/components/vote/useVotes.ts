@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import type { Auth } from "@/components/auth/useAuth";
+import type { AskDraft } from "@/components/submit/AddAskPanel";
+import { isOnboarded } from "@/lib/onboarding";
 import type { Ask } from "@/lib/types";
 import {
   VOTE_BUDGET,
@@ -41,6 +43,7 @@ export function useVotes({
   setAsks,
   auth,
   onResumeQuery,
+  onResumeDraft,
   gate,
 }: {
   demo: boolean;
@@ -48,6 +51,8 @@ export function useVotes({
   auth: Auth;
   /** The idea the person had typed when they were sent off to sign in. */
   onResumeQuery?: (query: string) => void;
+  /** The reviewed ask they were adding when they were sent to onboarding. */
+  onResumeDraft?: (query: string, draft: AskDraft) => void;
   /** Return true to stop the vote (e.g. the person was sent to onboarding first). */
   gate?: (resume: { askId: string }) => boolean;
 }) {
@@ -82,7 +87,7 @@ export function useVotes({
       setSubmittedIds(new Set());
       // Back from onboarding with a vote tap pending: carry on to sign-in.
       const resume = takeResume();
-      if (resume) prompt(resume);
+      if (resume && isOnboarded()) prompt(resume);
       return;
     }
     let cancelled = false;
@@ -106,7 +111,15 @@ export function useVotes({
 
       const resume = takeResume();
       if (resume?.query) onResumeQuery?.(resume.query);
-      if (resume?.askId && !voted[resume.askId] && Object.keys(voted).length < VOTE_BUDGET) {
+      if (resume?.query && resume.draft) onResumeDraft?.(resume.query, resume.draft);
+      // Still not onboarded means they backed out of it, which cancels the
+      // vote tap that sent them there: a vote is only ever cast on purpose.
+      if (
+        resume?.askId &&
+        isOnboarded() &&
+        !voted[resume.askId] &&
+        Object.keys(voted).length < VOTE_BUDGET
+      ) {
         await sendVote(resume.askId);
       }
     })();

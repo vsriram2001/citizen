@@ -12,7 +12,7 @@
 
 export const ALL_INDIA = "All-India";
 
-const STATES = [
+export const STATES = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
   "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
   "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya",
@@ -21,6 +21,7 @@ const STATES = [
   "West Bengal",
   // Union territories with their own legislature/administration people ask about.
   "Delhi", "Jammu and Kashmir", "Ladakh", "Puducherry", "Chandigarh",
+  "Andaman and Nicobar Islands", "Dadra and Nagar Haveli and Daman and Diu", "Lakshadweep",
 ];
 
 const CITIES: { city: string; state: string; aliases: string[] }[] = [

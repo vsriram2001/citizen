@@ -10,8 +10,9 @@ import { useAskFilters } from "@/components/search/useAskFilters";
 import { useSemanticMatches } from "@/components/search/useSemanticMatches";
 import { SignInModal } from "@/components/auth/SignInModal";
 import { useAuth } from "@/components/auth/useAuth";
-import { AddAskPanel } from "@/components/submit/AddAskPanel";
+import { AddAskPanel, type AskDraft } from "@/components/submit/AddAskPanel";
 import { BallotAnimation } from "@/components/vote/BallotAnimation";
+import { OutOfVotesNotice } from "@/components/vote/OutOfVotesNotice";
 import { ReplaceVoteModal } from "@/components/vote/ReplaceVoteModal";
 import { ReviewVotesModal } from "@/components/vote/ReviewVotesModal";
 import { VotesSubmittedNotice } from "@/components/vote/VotesSubmittedNotice";
@@ -92,6 +93,8 @@ export function SearchClient({
     query: "",
     ids: [],
   });
+  // The ask they'd reviewed before onboarding, reopened for its query.
+  const [resumed, setResumed] = useState<{ query: string; draft: AskDraft } | null>(null);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [showBallotAnimation, setShowBallotAnimation] = useState(false);
 
@@ -140,7 +143,14 @@ export function SearchClient({
     replaceVote,
     submitVotes,
     markVoted,
-  } = useVotes({ demo, setAsks, auth, onResumeQuery: setQuery, gate: sendToOnboardingFirst });
+  } = useVotes({
+    demo,
+    setAsks,
+    auth,
+    onResumeQuery: setQuery,
+    onResumeDraft: (query, draft) => setResumed({ query, draft }),
+    gate: sendToOnboardingFirst,
+  });
 
   // Every vote spent and submitted: the ballot is final, so the screen stops
   // inviting votes (and new asks, which carry a founding vote).
@@ -275,6 +285,7 @@ export function SearchClient({
     markVoted(ask.id);
     setJustAdded(ask.askText);
     setQuery("");
+    setResumed(null);
   }
 
   // Offer to add an ask when the query itself found nothing strong — not
@@ -285,8 +296,12 @@ export function SearchClient({
   // The panel starts as soon as typing pauses, alongside the meaning check
   // instead of after it (that was ~2s of waiting for nothing). If the check
   // then finds the same ask, hasStrongMatch flips and the panel goes away.
+  const resumedDraft = resumed?.query === trimmedQuery ? resumed.draft : null;
   const showAddPanel =
-    !allSubmitted && queryReady && semantic.started && (!hasStrongMatch || addAnywayFor === trimmedQuery);
+    !allSubmitted &&
+    queryReady &&
+    (resumedDraft !== null ||
+      (semantic.started && (!hasStrongMatch || addAnywayFor === trimmedQuery)));
   const showAddAnywayLink =
     !allSubmitted && queryReady && semantic.settled && hasStrongMatch && addAnywayFor !== trimmedQuery;
   const filteredOut = queryMatches.length > 0 && filteredAsks.length === 0;
@@ -496,7 +511,11 @@ export function SearchClient({
             </button>
           )}
 
-          {showAddPanel && (
+          {showAddPanel && budgetLeft <= 0 && (
+            <OutOfVotesNotice onReview={() => setReviewOpen(true)} />
+          )}
+
+          {showAddPanel && budgetLeft > 0 && (
             <div className={cn(voiceArrival && "voice-arrive-after")}>
             <AddAskPanel
               key={trimmedQuery}
@@ -509,7 +528,9 @@ export function SearchClient({
               onVoteExisting={castVote}
               onCovered={(ids) => setCovered({ query: trimmedQuery, ids })}
               onAuthRequired={() => auth.prompt({ query: trimmedQuery })}
-              onBeforeSubmit={() => sendToOnboardingFirst({ query: trimmedQuery })}
+              onBeforeSubmit={(draft) => sendToOnboardingFirst({ query: trimmedQuery, draft })}
+              resumeDraft={resumedDraft}
+              onResumeClosed={() => setResumed(null)}
             />
             </div>
           )}
@@ -560,10 +581,12 @@ export function SearchClient({
 
       {voteError && (
         // Above the tray (or at the bottom when there is none), clear of the cards' buttons.
+        // z-[60]: over the sheets (z-50), since the review and replace sheets
+        // are where most of these errors happen.
         <div
           role="alert"
           className={cn(
-            "fixed inset-x-0 z-50 px-4 pointer-events-none",
+            "fixed inset-x-0 z-[60] px-4 pointer-events-none",
             votedIds.size > 0 ? "bottom-24" : "bottom-4",
           )}
         >
