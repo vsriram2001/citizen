@@ -69,6 +69,7 @@ Per-feature briefs (decisions so far, open questions, definition of done) are in
 | Filters & sort | `components/search/SearchFilters.tsx` (+ sort input to `lib/match.ts` via a new option) | matching internals |
 | Ask card & list | `components/ask/*` | data in `lib/mock` |
 | Voting / vote budget | `components/vote/*`, `lib/vote-session.ts`, `api/votes` | card layout |
+| Ballot ID & ledger | `lib/ledger.ts`, `lib/ballot.ts`, `api/ballot`, `api/ledger`, `app/verify` | `api/votes` (sealing stays apart from casting) |
 | Suggest / add ask | `components/submit/*`, `api/suggest`, `api/resolve`, `api/feasibility`, `api/submissions`, `lib/resolve-ask.ts` | search list |
 | State map | `components/map/*`, `lib/mock/states.ts` | search list |
 | Onboarding | `app/onboarding`, `components/onboarding/*`, `lib/location.ts`, `lib/occupations.ts` | — |

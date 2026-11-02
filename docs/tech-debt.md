@@ -63,6 +63,9 @@ this file is the cross-cutting list.
       Decide later whether to purge them.
 - [ ] **Multiple Google accounts per person** still get multiple sets of votes. Backstop:
       Turnstile on the vote action and a per-IP daily limit (`ip_hash` is a placeholder today).
+- [ ] **Anchor the vote ledger.** We run the chain, so we could rewrite all of it. Publish the
+      latest block hash somewhere outside our control on a schedule. See
+      [ballot-id.md](features/ballot-id.md).
 - [ ] **Voting without a Google account** — phone OTP or email magic link fit the same model.
 - [ ] **Adding an ask while signed out** redirects to Google and restores the typed idea, but
       the person redoes the review step.

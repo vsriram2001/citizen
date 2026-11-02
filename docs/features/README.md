@@ -15,6 +15,7 @@ Each chat should run in its own worktree (see "Working in parallel" in /CLAUDE.m
 | [ask-info.md](ask-info.md) | MVP built; nightly digest deferred | `src/components/ask/AskInfoButton.tsx`, `src/lib/brief.ts` |
 | [accountability.md](accountability.md) | open questions | `src/lib/mock/asks.ts`, `src/components/ask/InfoPopover.tsx` |
 | [mobile.md](mobile.md) | built; real-device polish next | `src/components/ui/Sheet.tsx`, `src/components/mobile/*` |
+| [ballot-id.md](ballot-id.md) | built; needs migration + secret | `src/lib/ledger.ts`, `src/lib/ballot.ts`, `src/components/vote/VerifyBallot.tsx` |
 
 These three are safe to run at the same time: search-matching, state-map and
 vote-budget. filters-and-sort also touches `lib/match.ts`, so start it after

@@ -13,10 +13,12 @@ export default async function ShareVotes() {
   const asks = await getApprovedSubmissions();
 
   return (
-    <div className="min-h-screen flex flex-col">
+    // Exactly one visible screen: card and buttons fit together, nothing below
+    // the fold. dvh, not vh, so a phone's browser bars can't hide the buttons.
+    <div className="h-dvh flex flex-col">
       <SiteHeader />
 
-      <main className="flex-1 mx-auto w-full max-w-lg px-4 sm:px-6 py-6 sm:py-14 pb-[max(2rem,env(safe-area-inset-bottom))]">
+      <main className="flex-1 min-h-0 overflow-y-auto flex flex-col mx-auto w-full max-w-lg px-4 sm:px-6 pt-4 sm:pt-6 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <VotesShareClient asks={asks} />
       </main>
     </div>

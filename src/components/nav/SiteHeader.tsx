@@ -17,6 +17,7 @@ const NAV = [
   { href: "/search", label: "Browse asks" },
   { href: "/share/votes", label: "My votes" },
   { href: "/share", label: "Share" },
+  { href: "/verify", label: "Verify" },
 ] as const;
 
 export function SiteHeader({

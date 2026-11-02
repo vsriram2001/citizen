@@ -7,6 +7,8 @@ import { Button, buttonClass } from "@/components/ui/Button";
 import { useAuth } from "@/components/auth/useAuth";
 import { useIsTouch } from "@/components/mobile/useMediaQuery";
 import { ShareButton } from "@/components/share/ShareButton";
+import { BallotIdCard } from "@/components/vote/BallotIdCard";
+import type { Ballot } from "@/lib/ballot";
 import type { Ask } from "@/lib/types";
 import { getVotedAskIds } from "@/lib/vote-session";
 import { getSiteUrl } from "@/lib/site-url";
@@ -24,6 +26,8 @@ import { getSiteUrl } from "@/lib/site-url";
 export function VotesShareClient({ asks }: { asks: Ask[] }) {
   const auth = useAuth();
   const isTouch = useIsTouch();
+  const [ballots, setBallots] = useState<Ballot[]>([]);
+  const latestBallot = ballots.at(0);
   const [votedAsks, setVotedAsks] = useState<Ask[]>(() => {
     const votedIds = new Set(getVotedAskIds());
     return asks.filter((ask) => votedIds.has(ask.id));
@@ -45,10 +49,22 @@ export function VotesShareClient({ asks }: { asks: Ask[] }) {
       });
   }, [asks, auth.userId]);
 
+  // Also seals any finished votes onto the ledger; empty until votes are finished.
+  useEffect(() => {
+    if (!auth.userId) return;
+    fetch("/api/ballot", { method: "POST" })
+      .then((res) => res.json())
+      .then((data: { ballots?: Ballot[] }) => setBallots(data.ballots ?? []))
+      .catch(() => {
+        // The ID is an extra here; the page works without it.
+      });
+  }, [auth.userId]);
+
   const imageUrl = useMemo(() => {
     const ids = votedAsks.map((a) => a.id).join(",");
-    return `${getSiteUrl()}/share/votes/image?ids=${encodeURIComponent(ids)}`;
-  }, [votedAsks]);
+    const ballot = latestBallot ? `&ballot=${encodeURIComponent(latestBallot.id)}` : "";
+    return `${getSiteUrl()}/share/votes/image?ids=${encodeURIComponent(ids)}${ballot}`;
+  }, [votedAsks, latestBallot]);
 
   // Signed out: the local record may belong to whoever used this browser last,
   // so don't show it — votes belong to a Google account.
@@ -87,32 +103,39 @@ export function VotesShareClient({ asks }: { asks: Ask[] }) {
   const inviteText = `I just backed ${votedAsks.length} ${votedAsks.length === 1 ? "ask" : "asks"} on Citizen Poll — specific, quantifiable policy asks and who backs them. Cast your own votes:`;
 
   return (
-    <div className="flex flex-col gap-6 max-w-md mx-auto">
-      {/* On-page card — mirrors the generated share image 1:1 so what you
+    // m-auto centres the pair on tall screens; on short ones the margins collapse
+    // and the card gives up height, so the buttons below it never leave the screen.
+    <div className="m-auto flex flex-col gap-3 sm:gap-4 w-full max-w-md min-h-0">
+      {/* On-page card — same content as the generated share image so what you
           see is what gets shared, no surprises. */}
-      <div className="bg-card border border-border rounded-card overflow-hidden">
+      <div className="flex flex-col min-h-0 bg-card border border-border rounded-card overflow-hidden">
         {/* Perforated tear-off edge, matching the ballot-stub concept. */}
         <div
-          className="h-3.5"
+          className="h-2.5 shrink-0"
           style={{
             backgroundImage:
               "repeating-linear-gradient(90deg, var(--color-ink) 0 7px, var(--color-paper) 7px 14px)",
           }}
         />
 
-        <div className="px-5 sm:px-8 pb-8 pt-2">
-          <div className="flex flex-col items-center text-center gap-2 py-6">
+        {/* Scrolls only if the record outgrows the screen (very long asks, a
+            small phone): better a scrolling card than unreachable buttons.
+            relative: keeps SaveBallotId's sr-only fields inside this scroller,
+            or they stretch the page below it. */}
+        <div className="relative min-h-0 overflow-y-auto px-4 sm:px-6 pb-4">
+          <div className="flex flex-col items-center text-center gap-1 py-4">
+            {/* First thing to go on short screens: it's decoration, the votes aren't. */}
             <Image
               src="/illustration-vote.png"
               alt=""
               width={560}
               height={630}
-              className="w-11 h-auto shrink-0 opacity-90 mb-1"
+              className="w-9 h-auto shrink-0 opacity-90 mb-1 [@media(max-height:760px)]:hidden"
             />
-            <span className="block text-xs uppercase tracking-[0.16em] text-text-muted">
+            <span className="block text-[11px] uppercase tracking-[0.16em] text-text-muted">
               Citizen Poll · Official Record
             </span>
-            <h1 className="text-[26px] sm:text-[28px] leading-[1.14] tracking-[-0.015em]">
+            <h1 className="text-[24px] leading-[1.14] tracking-[-0.015em]">
               Here&apos;s what I voted for
             </h1>
           </div>
@@ -121,28 +144,35 @@ export function VotesShareClient({ asks }: { asks: Ask[] }) {
             {votedAsks.map((ask, i) => (
               <div
                 key={ask.id}
-                className="flex gap-4 py-5 border-t border-border last:border-b"
+                className="flex gap-3 py-3 [@media(max-height:600px)]:py-2 border-t border-border last:border-b"
               >
-                <span className="font-display font-black text-2xl text-text-muted w-7 shrink-0 text-center mt-px">
+                <span className="font-display font-black text-xl text-text-muted w-6 shrink-0 text-center">
                   {i + 1}
                 </span>
                 <div>
-                  <p className="text-[17px] font-semibold text-text leading-snug">
+                  <p className="text-[15px] font-semibold text-text leading-snug">
                     {ask.askText}
                   </p>
-                  <p className="text-[13px] text-text-muted mt-1.5 tabular-nums">
+                  <p className="text-[12px] text-text-muted mt-0.5 tabular-nums">
                     Deadline {ask.timeframe}
                   </p>
                 </div>
               </div>
             ))}
           </div>
+
+          {ballots.map((ballot) => (
+            <div key={ballot.id} className="-mt-2">
+              <BallotIdCard id={ballot.id} year={ballot.year} />
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="flex flex-col gap-2.5">
+      <div className="flex gap-2.5 shrink-0">
         {/* Share sheet only exists in a useful form on phones, where it's the
-            main action; on desktop copying is. */}
+            main action; on desktop copying is. Side by side to leave the card
+            the height. */}
         {isTouch && (
           <ShareButton
             url={imageUrl}
@@ -151,7 +181,7 @@ export function VotesShareClient({ asks }: { asks: Ask[] }) {
             variant="primary"
             label="Share card"
             downloadName="citizen-poll-my-votes.png"
-            className="w-full justify-center"
+            className="flex-1 min-w-0 justify-center"
           />
         )}
         <ShareButton
@@ -161,7 +191,7 @@ export function VotesShareClient({ asks }: { asks: Ask[] }) {
           forceCopy
           caption={`${inviteText}\n${siteUrl}`}
           downloadName="citizen-poll-my-votes.png"
-          className="w-full justify-center"
+          className="flex-1 min-w-0 justify-center"
         />
       </div>
     </div>

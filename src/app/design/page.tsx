@@ -13,7 +13,11 @@ import { BallotAnimation } from "@/components/vote/BallotAnimation";
 import { OutOfVotesNotice } from "@/components/vote/OutOfVotesNotice";
 import { ReplaceVoteModal } from "@/components/vote/ReplaceVoteModal";
 import { ReviewVotesModal } from "@/components/vote/ReviewVotesModal";
+import { AskDetails } from "@/components/ask/AskDetails";
 import { VotesSubmittedNotice } from "@/components/vote/VotesSubmittedNotice";
+import { BallotIdCard } from "@/components/vote/BallotIdCard";
+import { BallotResult } from "@/components/vote/BallotResult";
+import { VerifyBallot } from "@/components/vote/VerifyBallot";
 import { VoteMeter } from "@/components/vote/VoteMeter";
 import { VoteTray } from "@/components/vote/VoteTray";
 import { AskCard } from "@/components/ask/AskCard";
@@ -324,6 +328,47 @@ export default function DesignGallery() {
       </Section>
 
       <Section
+        title="Ballot ID"
+        note="On /share/votes once votes are finished. The ID also prints on the share card; the info and copy buttons are page-only. The info button opens saving to passwords. The ID here is a sample."
+      >
+        <BallotIdCard id="CP26-00000-00000-00000-0000R" year={2026} />
+      </Section>
+
+      <Section
+        title="Verify a ballot"
+        note="/verify. Opens a ballot by its ID, then the browser recomputes the hashes itself."
+      >
+        <VerifyBallot />
+      </Section>
+
+      <Section
+        title="Verified ballot"
+        note="/verify once a ballot opens: the verdict, the votes, then the proof. Sample data."
+      >
+        <BallotResult
+          ballot={{
+            ballotId: "CP26-00000-00000-00000-0000R",
+            blocks: [
+              {
+                height: 1,
+                prevHash: "0".repeat(64),
+                hash: "0".repeat(64),
+                ballotKey: "0".repeat(64),
+                leaves: [],
+                sealedAt: "2026-11-01T00:00:00.000Z",
+              },
+            ],
+            votes: [{ askId: SAMPLE_ASK.id, askText: SAMPLE_ASK.askText, timeframe: SAMPLE_ASK.timeframe }],
+          }}
+          checks={[
+            { ok: true, title: "Found on the public ledger", detail: "Sealed in block #1." },
+            { ok: false, title: "Ledger doesn\u2019t add up", detail: "A failed check looks like this." },
+          ]}
+          onReset={() => {}}
+        />
+      </Section>
+
+      <Section
         title="Vote meter"
         note="Discrete segments, not a continuous bar. Three votes a year is the core mechanism — spending one should read as a token spent, not a task completed."
       >
@@ -540,6 +585,13 @@ export default function DesignGallery() {
           <AskInfoButton ask={SAMPLE_ASK} />
           <span className="text-xs text-text-muted">Click to open</span>
         </div>
+      </Section>
+
+      <Section
+        title="Ask details"
+        note="On /share/[askId], below the share card, and where the arrows on /verify lead: who's responsible, how it would happen, tags, verification state and the full brief."
+      >
+        <AskDetails ask={SAMPLE_ASK} />
       </Section>
 
       <Section

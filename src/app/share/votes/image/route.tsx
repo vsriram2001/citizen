@@ -1,6 +1,7 @@
 import { readFile } from "fs/promises";
 import path from "path";
 import { ImageResponse } from "next/og";
+import { parseBallotId } from "@/lib/ledger";
 import { getApprovedSubmissionsByIds } from "@/lib/submissions";
 
 export const runtime = "nodejs";
@@ -31,6 +32,9 @@ export async function GET(req: Request) {
     .map((id) => id.trim())
     .filter(Boolean)
     .slice(0, 3);
+  // Parsed, not printed as given, so the card can't carry arbitrary text. An ID
+  // here proves nothing by itself; /verify is what checks it.
+  const ballotId = parseBallotId(searchParams.get("ballot") ?? "");
 
   const fontDir = path.join(process.cwd(), "src", "fonts");
   const [asks, voteIconBuffer, playfairBuffer, pubSans400Buffer, pubSans700Buffer] =
@@ -55,7 +59,8 @@ export async function GET(req: Request) {
   const rowsHeight = asks.reduce((sum, ask) => sum + 158 + askLines(ask.askText) * 48, 0);
   const HEADER_BLOCK = 470;
   const CHROME = 380; // canvas padding + card padding + perforation + footer
-  const estimatedHeight = HEADER_BLOCK + rowsHeight + CHROME;
+  const BALLOT_BLOCK = ballotId ? 170 : 0;
+  const estimatedHeight = HEADER_BLOCK + rowsHeight + CHROME + BALLOT_BLOCK;
   const height = Math.min(1920, Math.max(1280, estimatedHeight));
 
   return new ImageResponse(
@@ -206,6 +211,34 @@ export async function GET(req: Request) {
                 </div>
               ))}
             </div>
+
+            {ballotId && (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 12,
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: 22,
+                    letterSpacing: 3,
+                    textTransform: "uppercase",
+                    color: "#8A8A82",
+                  }}
+                >
+                  Ballot ID
+                </span>
+                <span style={{ fontSize: 36, fontWeight: 700, color: "#1A1A18", letterSpacing: 1 }}>
+                  {ballotId}
+                </span>
+                <span style={{ fontSize: 24, color: "#8A8A82" }}>
+                  Check these votes at citizenpoll.in/verify
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
