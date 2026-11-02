@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { AskDetails } from "@/components/ask/AskDetails";
 import { SiteHeader } from "@/components/nav/SiteHeader";
 import { notFound } from "next/navigation";
 import { buttonClass } from "@/components/ui/Button";
@@ -40,18 +41,23 @@ export default async function ShareAsk({
   const url = `${getSiteUrl()}/share/${askId}`;
 
   return (
-    <div className="min-h-screen flex flex-col">
+    // One visible screen, as on /share/votes: the ask scrolls if it has to, the
+    // buttons stay put. dvh, not vh, so a phone's browser bars can't hide them.
+    <div className="h-dvh flex flex-col">
       <SiteHeader />
 
-      <main className="flex-1 mx-auto w-full max-w-md px-4 sm:px-6 py-6 sm:py-14 flex flex-col gap-6">
-        <ShareCard ask={ask} />
+      <main className="flex-1 min-h-0 mx-auto w-full max-w-md px-4 sm:px-6 pt-4 sm:pt-6 pb-[max(1rem,env(safe-area-inset-bottom))] flex flex-col gap-3 sm:gap-4">
+        <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-4">
+          <ShareCard ask={ask} />
+          <AskDetails ask={ask} />
+        </div>
 
-        <div className="flex flex-col gap-2.5">
+        <div className="grid grid-cols-2 gap-2.5 shrink-0">
           {/* Someone opening a shared link came for this ask — let them back it.
               Search opens prefilled with it, so it ranks first with its Vote button. */}
           <Link
             href={`/search?q=${encodeURIComponent(ask.askText)}`}
-            className={buttonClass({ className: "w-full" })}
+            className={buttonClass({ className: "col-span-2 w-full" })}
           >
             Vote for this ask
           </Link>
@@ -59,6 +65,7 @@ export default async function ShareAsk({
             url={url}
             title={ask.askText}
             text="A specific, quantifiable policy ask on Citizen Poll."
+            className="w-full"
           />
           <Link href="/search" className={buttonClass({ variant: "ghost", className: "w-full" })}>
             Browse other asks
