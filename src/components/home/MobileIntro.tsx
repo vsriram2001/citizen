@@ -12,25 +12,25 @@ import type { Ask } from "@/lib/types";
  *  read, not just seen: every line gets time to land before the next. */
 const AT = {
   wishes: [0.26, 0.78, 1.3, 1.82],
-  blame: 2.6,
-  strikes: [3.38, 3.64, 3.9, 4.16],
-  wishesOut: 4.94,
-  makeIt: 5.46,
-  ballotIn: 6.11,
-  facts: [7.02, 7.67, 8.32],
-  ballotOut: 10.4,
-  box: 10.79,
-  drops: 11.05,
-  votes: [12.4, 14.22, 16.04],
-  wisely: 12.4,
-  boxOut: 16.9,
-  why: 17.3,
-  answers: [18.3, 21.0, 23.7],
-  arcOut: 19.1,
-  arcBack: 21.8,
-  tick: 24.2,
-  pulses: [24.8, 25.4],
-  slotOpens: 26.6,
+  strikes: [2.6, 2.8, 3.0, 3.2],
+  blame: 3.8,
+  wishesOut: 5.94,
+  makeIt: 6.46,
+  ballotIn: 7.11,
+  facts: [8.02, 8.67, 9.32],
+  ballotOut: 11.4,
+  box: 11.79,
+  drops: 12.05,
+  votes: [13.4, 15.22, 17.04],
+  wisely: 13.4,
+  boxOut: 17.9,
+  why: 18.3,
+  answers: [19.3, 22.0, 24.7],
+  arcOut: 20.1,
+  arcBack: 22.8,
+  tick: 25.2,
+  pulses: [25.8, 26.4],
+  slotOpens: 27.6,
 };
 
 /** One vote's trip into the box: BallotAnimation's cycle, run three times. A
@@ -80,9 +80,11 @@ function Fact({ seconds, label, value }: { seconds: number; label: string; value
 }
 
 /**
- * Phones only, first visit only: about 28 seconds on what this site is and why.
- * On a phone the hero can only show one thing at a time, so this tells the
- * story before the page has to, as one unbroken thing happening to one object.
+ * First visit only: about 29 seconds on what this site is and why. It began on
+ * phones, where the hero can only show one thing at a time, and now plays at
+ * every width: the story is the same, and from lg the scenes sit side by side.
+ * It tells the story before the page has to, as one unbroken thing happening to
+ * one object.
  *
  * Navy, the one screen on the site that isn't paper. Wishes everyone agrees
  * with get struck out, because the first two seconds decide whether anyone
@@ -104,9 +106,6 @@ export function MobileIntro({ ask }: { ask: Ask }) {
   const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
-    // Not on desktop, where it never showed: a phone-sized window later should
-    // still get the first-visit version.
-    if (!window.matchMedia("(max-width: 39.99rem)").matches) return;
     document.cookie = `${INTRO_SEEN_COOKIE}=1; path=/; max-age=31536000; samesite=lax`;
 
     let live = true;
@@ -125,6 +124,23 @@ export function MobileIntro({ ask }: { ask: Ask }) {
     };
   }, []);
 
+  // Desktop: touch-none doesn't stop a wheel, and the paper reveal has to land on
+  // the top of the page. Reduced motion never shows the overlay, so nothing to hold.
+  useEffect(() => {
+    if (gone || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const { documentElement: root } = document;
+    const previous = root.style.overflow;
+    root.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setGone(true);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      root.style.overflow = previous;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [gone]);
+
   if (gone) return null;
 
   const drop = { animationDelay: `${AT.drops}s`, animationDuration: `${DROP_S}s`, animationIterationCount: 3 };
@@ -132,7 +148,7 @@ export function MobileIntro({ ask }: { ask: Ask }) {
   return (
     <div
       className={cn(
-        "mobile-intro fixed inset-0 z-50 bg-navy overflow-hidden touch-none sm:hidden",
+        "mobile-intro fixed inset-0 z-50 bg-navy overflow-hidden touch-none",
         playing && "is-playing",
       )}
       onClick={() => setGone(true)}
@@ -141,7 +157,7 @@ export function MobileIntro({ ask }: { ask: Ask }) {
       }}
     >
       {/* Same height and gutter as SiteHeader. */}
-      <div className="absolute inset-x-0 top-[env(safe-area-inset-top)] z-20 h-14 flex items-center justify-between px-4 text-paper">
+      <div className="absolute inset-x-0 top-[env(safe-area-inset-top)] z-20 mx-auto max-w-7xl h-14 flex items-center justify-between px-4 sm:px-6 text-paper">
         <span className="text-[15px] font-semibold tracking-[-0.02em]">Citizen Poll</span>
         <button type="button" className="text-[13px] underline underline-offset-4 py-2 -my-2 cursor-pointer">
           Skip
@@ -151,23 +167,23 @@ export function MobileIntro({ ask }: { ask: Ask }) {
       <div className="absolute inset-0" aria-hidden>
         {/* Wishes */}
         <div
-          className="intro-out absolute inset-0 flex flex-col justify-center gap-6 px-5"
+          className="intro-out absolute inset-0 mx-auto max-w-7xl sm:max-lg:max-w-xl flex flex-col justify-center gap-6 px-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:gap-12"
           style={at(AT.wishesOut)}
         >
           <div className="flex flex-col">
             {WISHES.map((wish, i) => (
               <span key={wish} className="relative w-fit overflow-hidden">
                 <span
-                  className={cn("intro-wish block text-[clamp(44px,13.6vw,60px)] leading-[1.14] whitespace-nowrap", POSTER)}
+                  className={cn("intro-wish block text-[clamp(44px,13.6vw,60px)] sm:text-[min(10vw,13svh,116px)] leading-[1.14] whitespace-nowrap", POSTER)}
                   style={{ "--at": `${AT.wishes[i]}s`, "--dim": `${AT.strikes[i]}s` } as React.CSSProperties}
                 >
                   {wish}
                 </span>
-                <span className="intro-strike absolute left-0 top-[56%] h-1 w-full bg-paper" style={at(AT.strikes[i])} />
+                <span className="intro-strike absolute left-0 top-[56%] h-1 lg:h-1.5 w-full bg-paper" style={at(AT.strikes[i])} />
               </span>
             ))}
           </div>
-          <p className="intro-in text-xl text-paper leading-snug" style={at(AT.blame)}>
+          <p className="intro-in text-xl lg:text-2xl lg:shrink-0 text-paper leading-snug" style={at(AT.blame)}>
             Everyone has wishes.
             <br />
             Nobody has to answer for them.
@@ -176,22 +192,22 @@ export function MobileIntro({ ask }: { ask: Ask }) {
 
         {/* The ballot */}
         <div
-          className="intro-out absolute inset-0 flex flex-col justify-center gap-5 px-5 pt-14"
+          className="intro-out absolute inset-0 mx-auto sm:max-w-xl lg:max-w-6xl flex flex-col justify-center gap-5 px-5 sm:px-6 pt-14 lg:flex-row lg:items-center lg:gap-16"
           style={at(AT.ballotOut)}
         >
-          <span className="block overflow-hidden">
+          <span className="block overflow-hidden lg:flex-1 lg:py-2">
             <span
-              className={cn("intro-rise block text-[min(11.3vw,60px)] leading-[1.1] whitespace-nowrap", POSTER)}
+              className={cn("intro-rise block text-[min(11.3vw,60px)] lg:text-[min(6.8vw,88px)] leading-[1.1] whitespace-nowrap lg:whitespace-normal", POSTER)}
               style={at(AT.makeIt)}
             >
               So make it an ask.
             </span>
           </span>
           <div
-            className="intro-ballot flex flex-col gap-3 bg-paper rounded-card p-5"
+            className="intro-ballot flex flex-col gap-3 bg-paper rounded-card p-5 lg:flex-1 lg:p-7"
             style={{ "--at": `${AT.ballotIn}s`, "--out": `${AT.ballotOut}s` } as React.CSSProperties}
           >
-            <p className="text-[22px] font-semibold text-text leading-tight">{ask.askText}</p>
+            <p className="text-[22px] lg:text-[26px] font-semibold text-text leading-tight">{ask.askText}</p>
             <dl className="flex flex-col gap-2.5 border-t border-border pt-3">
               <Fact seconds={AT.facts[0]} label="A number" value={ask.targetValue} />
               <Fact seconds={AT.facts[1]} label="A date" value={ask.timeframe} />
@@ -205,10 +221,10 @@ export function MobileIntro({ ask }: { ask: Ask }) {
             The out sits on a wrapper: one element can't run intro-in and intro-out. */}
         <div className="intro-out absolute inset-0" style={at(AT.boxOut)}>
         <div
-          className="intro-in absolute inset-0 bg-navy flex flex-col items-center justify-center px-5 pt-14"
+          className="intro-in absolute inset-0 bg-navy flex flex-col items-center justify-center px-5 pt-14 lg:flex-row lg:gap-20"
           style={at(AT.box)}
         >
-          <div className="ballot-stage">
+          <div className="ballot-stage lg:w-[min(30vw,420px,58svh)]!">
             {/* No z-index here: it would cut the blend below off from the navy. */}
             <div className="relative" style={{ marginTop: "8%" }}>
               {/* The art is dark line on paper fill. Inverted, then screened as
@@ -229,19 +245,21 @@ export function MobileIntro({ ask }: { ask: Ask }) {
             </div>
           </div>
 
-          <p className={cn("mt-2 text-center text-[38px] leading-[1.08] text-balance", POSTER)}>
-            You get three votes a year.
-          </p>
-          <p className="intro-in mt-2 text-center text-xl text-paper leading-snug" style={at(AT.wisely)}>
-            Choose wisely.
-          </p>
-          {/* VoteMeter's segments, one for each card that goes in. */}
-          <div className="mt-5 flex gap-1.5 w-full max-w-[220px]">
-            {AT.votes.map((seconds) => (
-              <span key={seconds} className="relative h-1.5 flex-1 rounded-sm bg-paper/25 overflow-hidden">
-                <span className="intro-fill absolute inset-0 bg-paper" style={at(seconds)} />
-              </span>
-            ))}
+          <div className="flex flex-col items-center lg:items-start lg:max-w-xl">
+            <p className={cn("mt-2 lg:mt-0 text-center lg:text-left text-[38px] sm:text-[52px] lg:text-[min(6vw,76px)] leading-[1.08] text-balance", POSTER)}>
+              You get three votes a year.
+            </p>
+            <p className="intro-in mt-2 lg:mt-4 text-center lg:text-left text-xl lg:text-2xl text-paper leading-snug" style={at(AT.wisely)}>
+              Choose wisely.
+            </p>
+            {/* VoteMeter's segments, one for each card that goes in. */}
+            <div className="mt-5 lg:mt-7 flex gap-1.5 w-full max-w-[220px] lg:max-w-[320px]">
+              {AT.votes.map((seconds) => (
+                <span key={seconds} className="relative h-1.5 flex-1 rounded-sm bg-paper/25 overflow-hidden">
+                  <span className="intro-fill absolute inset-0 bg-paper" style={at(seconds)} />
+                </span>
+              ))}
+            </div>
           </div>
         </div>
         </div>
@@ -250,16 +268,16 @@ export function MobileIntro({ ask }: { ask: Ask }) {
             shows at a time, sharing a grid cell so nothing shifts as they swap.
             The tick is generic on purpose: no real ask or person is shown as
             delivered. */}
-        <div className="absolute inset-0 flex flex-col justify-center gap-5 px-5 pt-14">
-          <div className="intro-in flex flex-col gap-2" style={at(AT.why)}>
+        <div className="absolute inset-0 mx-auto sm:max-w-xl lg:max-w-6xl flex flex-col justify-center gap-5 px-5 sm:px-6 pt-14 lg:grid lg:grid-cols-2 lg:content-center lg:items-center lg:gap-x-16">
+          <div className="intro-in flex flex-col gap-2 lg:self-end" style={at(AT.why)}>
             <p className="text-[11px] uppercase tracking-[0.16em] text-paper/70">Why this exists</p>
-            <p className={cn("text-[38px] leading-[1.08] text-balance", POSTER)}>
+            <p className={cn("text-[38px] lg:text-[min(5.2vw,68px)] leading-[1.08] text-balance", POSTER)}>
               Accountability runs both ways.
             </p>
           </div>
 
           {/* No animation on this wrapper: it would trap the slot's z-index. */}
-          <div className="relative">
+          <div className="relative lg:col-start-2 lg:row-start-1 lg:row-span-2">
             <svg
               viewBox="0 0 350 190"
               className="block w-full overflow-visible text-paper"
@@ -296,15 +314,15 @@ export function MobileIntro({ ask }: { ask: Ask }) {
             <span className="intro-slot absolute z-10 left-1/2 top-1/2 w-[300vw] h-[300vh] -ml-[150vw] -mt-[150vh] bg-paper" style={at(AT.slotOpens)} />
           </div>
 
-          <dl className="grid">
+          <dl className="grid lg:col-start-1 lg:row-start-2 lg:self-start">
             {ANSWERS.map(({ who, body }, i) => (
               <div
                 key={who}
                 className="intro-beat col-start-1 row-start-1"
                 style={{ "--at": `${AT.answers[i]}s`, "--out": `${AT.answers[i + 1] ?? 99}s` } as React.CSSProperties}
               >
-                <dt className={cn("text-[28px] leading-tight", POSTER)}>{who}</dt>
-                <dd className="text-[17px] text-paper leading-snug">{body}</dd>
+                <dt className={cn("text-[28px] lg:text-[36px] leading-tight", POSTER)}>{who}</dt>
+                <dd className="text-[17px] lg:text-xl text-paper leading-snug">{body}</dd>
               </div>
             ))}
           </dl>

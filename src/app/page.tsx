@@ -22,10 +22,11 @@ import { SEED_ASKS } from "@/lib/mock/asks";
   wish examples are hand-paired with seed asks because they need a matching
   vague phrasing; the ballot uses whatever people are really voting on.
 
-  Phones get a first-visit opener (MobileIntro), and a hero reordered around
-  what a narrow screen can hold: headline, one line, the example, and the CTA
-  along the bottom edge, all fitted to one visible screen whatever its height.
-  Desktop keeps its two columns. ?intro=1 replays the opener, for checking it.
+  First visits get an opener (MobileIntro) at every width. Phones also get a
+  hero reordered around what a narrow screen can hold: headline, one line, the
+  example, and the CTA along the bottom edge, all fitted to one visible screen
+  whatever its height. Desktop keeps its two columns. ?intro=1 replays the
+  opener, for checking it.
 */
 
 const WISHES = [

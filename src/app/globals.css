@@ -587,7 +587,7 @@ html[data-keyboard="open"] .keyboard-room {
   }
 }
 
-/* Phone opener (components/home/MobileIntro.tsx). All CSS so it starts on first
+/* Opener (components/home/MobileIntro.tsx). All CSS so it starts on first
    paint and clears itself without scripts. Each piece takes its start time from
    --at; the last rule here is the end of the timeline. */
 @keyframes intro-in {
@@ -763,7 +763,7 @@ html[data-keyboard="open"] .keyboard-room {
 
 .mobile-intro {
   animation:
-    intro-leave 0.65s ease-out 27.64s both,
+    intro-leave 0.65s ease-out 28.64s both,
     intro-leave 0.65s ease-out 34s forwards;
   animation-play-state: paused, running;
 }
