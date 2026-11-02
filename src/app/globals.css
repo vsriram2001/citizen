@@ -21,6 +21,8 @@
   --color-accent: #2f4858;
   --color-muted: #8a8a82;
   --color-navy: #0f1e2c;
+  /* The logo's capsule, and nothing else: UI colours stay muted. */
+  --color-brand: #0248a6;
 
   /* Text — derived from the sample copy in the palette file */
   --color-text: #1a1a18;
