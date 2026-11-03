@@ -141,6 +141,33 @@ export function MobileIntro({ ask }: { ask: Ask }) {
     };
   }, [gone]);
 
+  // At ~29 seconds with no touch, phones dimmed or slept before the end, and the
+  // tap that woke them skipped what was left. Keep the screen on until it's done.
+  // The browser drops the lock when the tab is hidden, so take it again on return.
+  // Reduced motion never shows the overlay or ends it, so it would never let go.
+  useEffect(() => {
+    if (gone || !("wakeLock" in navigator) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let lock: WakeLockSentinel | null = null;
+    let live = true;
+    const take = () => {
+      if (document.visibilityState !== "visible") return;
+      navigator.wakeLock
+        .request("screen")
+        .then((sentinel) => {
+          if (live) lock = sentinel;
+          else sentinel.release();
+        })
+        .catch(() => {}); // Low battery or a policy said no: the intro still plays.
+    };
+    take();
+    document.addEventListener("visibilitychange", take);
+    return () => {
+      live = false;
+      document.removeEventListener("visibilitychange", take);
+      lock?.release().catch(() => {});
+    };
+  }, [gone]);
+
   if (gone) return null;
 
   const drop = { animationDelay: `${AT.drops}s`, animationDuration: `${DROP_S}s`, animationIterationCount: 3 };
