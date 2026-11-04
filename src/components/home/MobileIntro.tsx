@@ -25,12 +25,12 @@ const AT = {
   wisely: 13.4,
   boxOut: 17.9,
   why: 18.3,
-  answers: [19.3, 22.0, 24.7],
-  arcOut: 20.1,
-  arcBack: 22.8,
-  tick: 25.2,
-  pulses: [25.8, 26.4],
-  slotOpens: 27.6,
+  answers: [19.8, 24.3, 28.8],
+  arcOut: 20.6,
+  arcBack: 25.1,
+  tick: 29.3,
+  pulses: [29.9, 30.5],
+  slotOpens: 33.3,
 };
 
 /** One vote's trip into the box: BallotAnimation's cycle, run three times. A
@@ -80,7 +80,7 @@ function Fact({ seconds, label, value }: { seconds: number; label: string; value
 }
 
 /**
- * First visit only: about 29 seconds on what this site is and why. It began on
+ * First visit only: about 34 seconds on what this site is and why. It began on
  * phones, where the hero can only show one thing at a time, and now plays at
  * every width: the story is the same, and from lg the scenes sit side by side.
  * It tells the story before the page has to, as one unbroken thing happening to
@@ -141,7 +141,7 @@ export function MobileIntro({ ask }: { ask: Ask }) {
     };
   }, [gone]);
 
-  // At ~29 seconds with no touch, phones dimmed or slept before the end, and the
+  // At ~34 seconds with no touch, phones dimmed or slept before the end, and the
   // tap that woke them skipped what was left. Keep the screen on until it's done.
   // The browser drops the lock when the tab is hidden, so take it again on return.
   // Reduced motion never shows the overlay or ends it, so it would never let go.
