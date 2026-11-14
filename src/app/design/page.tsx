@@ -25,6 +25,7 @@ import { MobileIntro } from "@/components/home/MobileIntro";
 import { SampleBallot } from "@/components/home/SampleBallot";
 import { SystemFlow } from "@/components/home/SystemFlow";
 import { WishToAsk } from "@/components/home/WishToAsk";
+import { HeroScene } from "@/components/home/HeroScene";
 import type { Ask } from "@/lib/types";
 import { AskList } from "@/components/ask/AskList";
 import { AskInfoButton } from "@/components/ask/AskInfoButton";
@@ -485,7 +486,7 @@ export default function DesignGallery() {
 
       <Section
         title="Wish to ask"
-        note="Home hero. A vague wish is typed, struck through, and replaced by a specific ask. All examples share one grid cell so the card never changes height. Reduced motion shows the first example, still."
+        note="Home hero, drawn as a ballot slip (serial stub, perforated tear line). A vague wish is typed, struck through, and replaced by a specific ask, whose line drawing (AskDrawings) draws itself in. All examples share one grid cell, and every wish is sized invisibly, so the card never changes height. Reduced motion shows the first example, still."
       >
         <div className="max-w-xl">
           <WishToAsk
@@ -494,6 +495,15 @@ export default function DesignGallery() {
               { wish: "Cleaner lakes", ask: SEED_ASKS[12] },
             ]}
           />
+        </div>
+      </Section>
+
+      <Section
+        title="Hero city"
+        note="Home hero background (HeroScene). An Indian city in fine lines: civic dome, clock tower, towers, telecom mast, metro with a train that pulls into a platform, buses (one stops and people board), walkers, swaying trees, a flock. Phones get a narrower slice plus slim towers rising behind the headline. All motion stops under reduced motion."
+      >
+        <div className="relative isolate h-80 overflow-clip border border-border rounded-card">
+          <HeroScene className="pointer-events-none absolute -z-10 inset-0" />
         </div>
       </Section>
 

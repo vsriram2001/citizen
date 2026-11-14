@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { Playfair_Display } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { SiteHeader } from "@/components/nav/SiteHeader";
@@ -9,6 +10,7 @@ import { IntroPlayer, ReplayIntroButton } from "@/components/home/IntroPlayer";
 import { AskSlider } from "@/components/home/AskSlider";
 import { FlowLegend, LoopWheel, VoteStream } from "@/components/home/SystemFlowVariants";
 import { WishToAsk } from "@/components/home/WishToAsk";
+import { HeroScene } from "@/components/home/HeroScene";
 import { GOOGLE_AUTH_ENABLED } from "@/lib/auth-flag";
 import { getSearchableAsks } from "@/lib/submissions";
 import { SEED_ASKS } from "@/lib/mock/asks";
@@ -17,6 +19,11 @@ import { SEED_ASKS } from "@/lib/mock/asks";
   Home screen. A first-time visitor has to be able to say what this site is
   after one screen, and the earlier single-viewport version didn't manage
   that: people landed on a question and a button, and were lost.
+
+  The hero asks "So, what do you actually want?" and the line under it says
+  what makes an ask (a number, a deadline, a name) as against a wish. Behind
+  it, a city in fine lines (HeroScene) with a metro, buses and people moving.
+  The earlier hero ("A wish is free…", Playfair at 900) read as too stark.
 
   So the page shows rather than tells: a wish turning into an ask, then a
   sliding row of the asks people are really backing, then what happens to
@@ -31,6 +38,16 @@ import { SEED_ASKS } from "@/lib/mock/asks";
   opener, for checking it, and the header's Watch intro button replays it for
   anyone who missed it.
 */
+
+/* The global heading face is Playfair at 900 only (layout.tsx). The hero
+   heading is lighter (700) and needs the italic for "actually", so those are
+   loaded here, for the home page only. */
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["700"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
 
 const WISHES = [
   { wish: "Fix the roads", askId: "pothole-sla" },
@@ -87,10 +104,10 @@ const H2 = "text-[30px] sm:text-[40px] leading-[1.08]";
 const TEXT_LINK =
   "text-sm text-text-secondary hover:text-text transition-colors underline underline-offset-4";
 
-/** The headline's three demands, underlined the way search marks a match. */
+/** The three things an ask has, underlined the way search marks a match. */
 function Key({ children }: { children: React.ReactNode }) {
   return (
-    <span className="underline decoration-accent/60 decoration-[3px] underline-offset-[5px]">
+    <span className="text-text underline decoration-accent/60 decoration-2 underline-offset-[4px]">
       {children}
     </span>
   );
@@ -118,29 +135,42 @@ export default async function Home({
       <SiteHeader>{introAsk && <ReplayIntroButton />}</SiteHeader>
 
       <main className="flex-1">
-        {/* What it is */}
+        {/* What it is. The wrapper is full width so the city behind the hero
+            runs edge to edge, not just across the content column. overflow-clip,
+            not overflow-hidden: hidden would make this a scroll container and
+            stop the phone's pinned buttons from sticking. Phones: the city
+            stops above the pinned buttons. */}
+        <div className="relative isolate overflow-clip">
+          <HeroScene className="pointer-events-none absolute -z-10 inset-x-0 top-0 bottom-[calc(5rem+env(safe-area-inset-bottom))] sm:bottom-0" />
         <section
-          className={`${CONTAINER} flex flex-col max-sm:min-h-[calc(100svh-3.5rem)] gap-3 sm:gap-5 lg:grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-14 lg:items-center pt-5 sm:pt-16 sm:pb-20`}
+          className={`${CONTAINER} relative flex flex-col max-sm:min-h-[calc(100svh-3.5rem)] gap-3 sm:gap-5 lg:grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-14 lg:items-center pt-5 sm:pt-16 sm:pb-44`}
         >
           {/* contents: below lg the copy and the example are one column, so the
               example can sit between the copy and the buttons on a phone. */}
           <div className="contents lg:flex lg:flex-col lg:gap-5">
-            <span className={`${LABEL} max-sm:[@media(max-height:639px)]:hidden`}>Three votes a year</span>
+            {/* Phones: the vote count rides on the label's row, so the space
+                under the card is left to the street drawn behind the hero. */}
+            <div className="flex items-baseline justify-between gap-3 max-sm:[@media(max-height:639px)]:hidden">
+              <span className={LABEL}>Three votes a year</span>
+              <span className="sm:hidden text-[13px] text-text-secondary tabular-nums">
+                {totalVotesCast.toLocaleString("en-IN")} votes cast
+              </span>
+            </div>
             {/* Phones: follows the visible height as well as the width, so a
-                short screen gets a smaller headline rather than a cut-off card. */}
-            <h1 className="text-[clamp(32px,min(12.4vw,6.5svh),50px)] sm:text-[58px] xl:text-[68px] leading-[1.05]">
-              A wish is free. An ask has a <Key>number</Key>, a <Key>date</Key> and a{" "}
-              <Key>name</Key>.
+                short screen gets a smaller headline rather than a cut-off card.
+                Weight 700, not the global 900, with tracking eased to match. */}
+            <h1
+              className={`${playfair.className} text-[clamp(32px,min(12.4vw,6.5svh),50px)] sm:text-[58px] xl:text-[68px] leading-[1.05]`}
+              style={{ fontWeight: 700, letterSpacing: "-0.03em" }}
+            >
+              So, what do you <em className="italic">actually</em> want?
             </h1>
-            <p className="sm:hidden [@media(max-height:519px)]:hidden text-[15px] text-text-secondary leading-snug">
-              Tell the government what to change, in terms that can be checked.
-              Three votes a year.
-            </p>
-            <p className="hidden sm:block text-base xl:text-lg text-text-secondary leading-relaxed max-w-xl">
-              Citizen Poll is where people in India tell the government what to
-              change, in terms that can be checked. You get three votes a year to
-              back the asks that matter most, and every ask shows who is
-              responsible for delivering it.
+            {/* One line at every width: it carries the wish/ask idea, so it
+                stays even on short phones. */}
+            <p className="text-[15px] sm:text-base xl:text-lg text-text-secondary leading-snug sm:leading-relaxed max-w-xl">
+              Wishes are easy to ignore. Asks have a <Key>number</Key>, a{" "}
+              <Key>deadline</Key> and a <Key>name</Key>. Back the ones you mean,
+              three votes a year.
             </p>
             {/* Phones: pinned under the thumb for as long as the hero is on
                 screen, then it scrolls away with it. */}
@@ -158,15 +188,19 @@ export default async function Home({
                 Browse asks
               </Link>
             </div>
-            <span className="order-2 sm:order-3 lg:order-none text-sm text-text-secondary tabular-nums max-sm:[@media(max-height:699px)]:hidden">
+            <span className="max-sm:hidden sm:order-3 lg:order-none text-sm text-text-secondary tabular-nums">
               {totalVotesCast.toLocaleString("en-IN")} votes cast
             </span>
           </div>
 
+          {/* Phones: a band between the card and the buttons that's always
+              left clear, so the street behind the hero is never hidden. */}
+          <div aria-hidden className="sm:hidden order-2 shrink-0 h-[clamp(52px,9svh,84px)]" />
           <div className="order-1 sm:order-4 lg:order-none min-w-0 sm:mt-5 lg:mt-0">
             <WishToAsk examples={EXAMPLES} />
           </div>
         </section>
+        </div>
 
         {/* What people are backing: one sliding row, not a full practice ballot */}
         <section id="ballot" className="border-t border-border scroll-mt-4">
