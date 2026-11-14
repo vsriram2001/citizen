@@ -8,10 +8,14 @@ import type { AskSuggestion, ResponsiblePerson } from "@/lib/types";
  *  until the background lookup lands. */
 export type SuggestionItem = AskSuggestion & { index: number };
 
+/** What the server is doing before the first card lands (see /api/suggest). */
+export type SuggestStage = "reading" | "researching" | "drafting";
+
 interface Result {
   forQuery: string;
   /** Why these suggestions, in a line or two for the whole set. */
   summary: string;
+  stage: SuggestStage | null;
   items: SuggestionItem[];
   /** Existing asks that drafts were dropped for repeating (see /api/suggest). */
   coveredBy: string[];
@@ -22,6 +26,7 @@ interface Result {
 
 const EMPTY: Omit<Result, "forQuery"> = {
   summary: "",
+  stage: null,
   items: [],
   coveredBy: [],
   done: false,
@@ -32,6 +37,7 @@ type Event =
   | { t: "summary"; summary: string }
   | { t: "ask"; index: number; ask: Omit<AskSuggestion, "responsiblePeople"> }
   | { t: "people"; index: number; people: ResponsiblePerson[] }
+  | { t: "stage"; stage: SuggestStage }
   | { t: "drop"; index: number; duplicateId?: string }
   | { t: "done"; coveredBy?: string[] }
   | { t: "error" };
@@ -54,6 +60,8 @@ function apply(r: Result, e: Event): Result {
           s.index === e.index ? { ...s, responsiblePeople: e.people } : s,
         ),
       };
+    case "stage":
+      return { ...r, stage: e.stage };
     case "drop":
       return {
         ...r,
@@ -153,6 +161,7 @@ export function useSuggestions(query: string, enabled: boolean) {
 
   return {
     summary: current.summary,
+    stage: current.stage,
     suggestions: current.items,
     coveredBy: current.coveredBy,
     error: current.error,

@@ -59,3 +59,13 @@ export function formatSearchContext(
     )
     .join("\n\n");
 }
+
+/** Several searches at once, merged with repeated pages dropped. */
+export async function webSearchAll(
+  queries: string[],
+  maxResults = 4,
+): Promise<Awaited<ReturnType<typeof webSearch>>> {
+  const batches = await Promise.all(queries.map((q) => webSearch(q, maxResults)));
+  const seen = new Set<string>();
+  return batches.flat().filter((r) => !seen.has(r.url) && seen.add(r.url));
+}

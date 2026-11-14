@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { PartyBadge } from "@/components/ui/Badge";
 import { InfoPopover } from "@/components/ask/InfoPopover";
 import { AskInfoButton } from "@/components/ask/AskInfoButton";
+import { PrecedentButton } from "@/components/ask/PrecedentButton";
 import { TagsPopover } from "@/components/ask/TagsPopover";
 import type { Ask } from "@/lib/types";
 
@@ -72,6 +73,7 @@ export function AskCard({
   highlight,
   showInfo = true,
   showShare = true,
+  suggested = false,
   className,
 }: {
   ask: Ask;
@@ -94,12 +96,16 @@ export function AskCard({
   barPct?: number;
   /** Words to underline in askText — the search terms it matched. */
   highlight?: string[];
-  /** Show the "i" button that opens the ask's full Info section. Off for
-   *  not-yet-added suggestions, which have no stored ask to describe. */
+  /** Show the "i" button that opens the ask's full Info section. For a
+   *  suggestion (`suggested`) the brief is drafted when it's opened. */
   showInfo?: boolean;
   /** Show "Share" once voted. Off for the home page's practice ballot, where
    *  the vote isn't real and there's nothing to share yet. Compact-only. */
   showShare?: boolean;
+  /** Compact-only: a suggestion not on the platform yet. "Done before ·
+   *  <place>" shows as a visible tag instead of the footsteps icon (it's the
+   *  reason to pick one card over another), and ⓘ drafts its brief on open. */
+  suggested?: boolean;
   className?: string;
 }) {
   if (compact) {
@@ -116,6 +122,7 @@ export function AskCard({
         highlight={highlight}
         showInfo={showInfo}
         showShare={showShare}
+        suggested={suggested}
         className={className}
       />
     );
@@ -225,6 +232,7 @@ function CompactAskCard({
   highlight,
   showInfo,
   showShare,
+  suggested,
   className,
 }: {
   ask: Ask;
@@ -238,6 +246,7 @@ function CompactAskCard({
   highlight?: string[];
   showInfo: boolean;
   showShare: boolean;
+  suggested: boolean;
   className?: string;
 }) {
   const tags = ask.tags ?? [];
@@ -287,11 +296,16 @@ function CompactAskCard({
           </h3>
           <div className="inline-flex items-center gap-2 ml-1.5 align-middle whitespace-nowrap -mt-0.5">
             <InfoPopover body={ask.targetBody} people={ask.responsiblePeople} />
-            {showInfo && <AskInfoButton ask={ask} />}
+            {showInfo && <AskInfoButton ask={ask} unsaved={suggested} />}
+            {/* Last, and only on asks somewhere has already achieved. */}
+            {ask.precedent && !suggested && <PrecedentButton precedent={ask.precedent} />}
           </div>
         </div>
 
         <Delta ask={ask} className="text-[13px]" />
+        {ask.precedent && suggested && (
+          <PrecedentButton precedent={ask.precedent} variant="tag" />
+        )}
       </div>
 
       {/* One thin metadata line: deadline first (the accountability

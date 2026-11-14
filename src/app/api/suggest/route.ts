@@ -4,14 +4,21 @@ import { chatJSON } from "@/lib/llm";
 import { askSimilarity, findNearIdentical, rankAsks } from "@/lib/match";
 import { findDuplicate } from "@/lib/semantic-match";
 import { getSearchableAsks } from "@/lib/submissions";
+import {
+  PRECEDENT_RULES,
+  formatPrecedentContext,
+  validPrecedent,
+} from "@/lib/precedent";
+import { planResearch } from "@/lib/research-plan";
 import { normalizeTimeframe } from "@/lib/timeframe";
-import { formatSearchContext, webSearch } from "@/lib/web-search";
+import { formatSearchContext, webSearchAll } from "@/lib/web-search";
 import {
   RESPONSIBLE_PEOPLE_RULES,
   finalizeResponsiblePeople,
   gatherOfficeholderContext,
 } from "@/lib/resolve-ask";
-import type { Ask, ResponsiblePerson } from "@/lib/types";
+import type { Ask, Precedent, ResponsiblePerson } from "@/lib/types";
+import { toTopics, topicsForPrompt } from "@/lib/topics";
 
 /*
   Suggest flow, built around two measured facts about these models: they
@@ -27,6 +34,9 @@ import type { Ask, ResponsiblePerson } from "@/lib/types";
                     card has no people yet; that was most of the length.
     people          who's responsible, per card, from a background call
                     (it needs the officeholder searches, started up front).
+    stage           progress before the first card — "reading" what was
+                    typed, "researching", then "drafting" — so the wait
+                    says what it's doing.
     drop            a card that turned out to repeat an existing ask; the
                     meaning-based duplicate check runs per card in the
                     background rather than holding every card back.
@@ -47,15 +57,18 @@ interface Draft {
   targetBody: string;
   tags: string[];
   sourceUrl: string | null;
+  precedent: Precedent | null;
 }
 
-/** Fixed roles so parallel calls can't converge on the same card — "distinct
- *  angles" decided up front instead of by one model seeing all three. */
-const ANGLES = [
-  "the citizen's own request, made realistic: the most direct measurable ask that matches what they typed",
-  "the funding, staffing or policy lever that would actually make that happen — the enabler, not the outcome",
-  "transparency: regular public reporting or tracking so progress toward this goal can be checked by anyone",
-];
+/** One card per facet of the plan (lib/research-plan.ts): different
+ *  changes decided up front, so parallel calls can't converge on the same
+ *  card. Each copies what has already worked for its own change, because an
+ *  ask with a delivered result behind it is the hardest to wave away. (A
+ *  "publish the data" card used to be a fixed third angle; it made a third
+ *  of all suggestions reporting asks, so now it's a facet only when asked.) */
+function angleFor(focus: string): string {
+  return `${focus}. Ask for exactly this change — the other cards cover the other parts of what the citizen wants. If the "done elsewhere" results show a place that has already made this change, bring it here: the same change on the same measure, with a target and deadline in line with what that place achieved and how long it took`;
+}
 
 const CARD_PROMPT = `You write ONE concrete, verifiable policy "ask" for a civic accountability platform in India, from a citizen's plain-text complaint. Your angle: {ANGLE}.
 
@@ -65,19 +78,23 @@ Output ONE JSON object and nothing else (no fence, no prose) with these fields:
 - targetValue: the desired state, 12 words at most (e.g. "6% of GDP").
 - timeframe: an absolute deadline "Mon YYYY" (e.g. "Mar 2030"), never a relative phrase. If only a year is known, use "Jan YYYY" or "Dec YYYY".
 - targetBody: the government body accountable (e.g. "Ministry of Education").
-- tags: 1-3 short topic tags in Title Case, reusing common ones where they fit (e.g. ["Education", "Budget"]).
+- tags: 1-2 topics, main one first, each copied exactly from this fixed list (pick by what the ask would change, not how: a "publish the data" ask about water is Water, not Governance):
+${topicsForPrompt()}
 - sourceUrl: the URL from the search results that best supports currentValue/targetBody, or null.
+- precedent: {place, summary, sourceUrl} for a place that has already achieved what THIS card asks for, or null. ${PRECEDENT_RULES}
 
 Rules:
-- Ground currentValue and targetBody in the verified facts and live search results below — not your memory, which goes stale. If they don't support a confident figure, use a short qualitative currentValue (e.g. "No centralized public tracking") rather than inventing a number.
+- Ground currentValue and targetBody in the verified facts and live search results below — not your memory, which goes stale. If they don't support a confident figure, describe where things stand in words (e.g. "Manual tests at most RTOs; no camera record") rather than inventing a number.
+- Ask for the change the citizen wants, never a report about it, unless your angle is transparency. A missing figure is not a reason to turn the ask into "publish data" or "track X": ask for the real outcome with a target anyone can check without a statistic — "at every RTO", "all new licences", "within 30 days".
 - currentValue and targetValue must state the actual figure or fact, never point at it: "Existing rates", "current levels" and "25% higher than today" tell the reader nothing. If a rate is known, write it out, and compute the target from it. A percentage rise on a figure you don't have is not a usable ask: pick a measure you do have a figure for.
 - Name a specific tax, scheme or law only if the facts or search results below show it exists today; those from memory may have been abolished.
 - Be practical, not literal: if the citizen's own figure or deadline isn't realistic given where things stand, set a target and deadline a government could actually be held to.
+- Where there is a precedent, set targetValue and timeframe from what that place actually reached and how long it took — a result someone has already delivered is the strongest case that this one can be.
 - If the citizen names no place, the ask is India-wide — don't narrow it to one city or state just because a search result is about one.
 - Never repeat an ask already on the platform (listed below), or reword one, even with a different figure or deadline. If this angle is already covered by one of them, or doesn't apply to what the citizen wrote, output only {"skip": true}.
 - Do NOT name officials — that is handled separately.`;
 
-const SUMMARY_PROMPT = `A citizen typed a policy request and we drafted one ask for them. In one or two short sentences, 30 words at most, tell them how you read what they typed and, if the ask's target or deadline differs from what they asked for, why. No figures already shown on the ask, no restating their query, no marketing tone, nothing about other suggestions. E.g. "A 10-point jump isn't achievable by 2030 at today's pace, so the target is 24%." Output ONLY {"summary": "..."}.`;
+const SUMMARY_PROMPT = `A citizen typed a policy request, and we're drafting three asks for them, each a different change. In one or two short sentences, 30 words at most, tell them how you read what they typed and how the asks between them tackle it. No figures, no restating their query, no marketing tone, no list. E.g. "We read this as touts helping people skip the driving test, so the asks go after the test itself, how licences are issued, and checks on the road." Output ONLY {"summary": "..."}.`;
 
 const PEOPLE_PROMPT = `Name who is accountable for one policy ask. Output ONLY {"responsiblePeople":[{"name":"...","designation":"...","organization":"..."}]} — no prose, no markdown fence.
 
@@ -136,15 +153,53 @@ async function run(
     return null;
   });
 
-  const [{ asks }, statusResults] = await Promise.all([
-    getSearchableAsks(),
-    webSearch(`${query} India government policy current status 2026`),
+  // Understand first, then research, then write. People type the way they
+  // talk, and searching on their exact words found nothing usable — so one
+  // call reads what they meant and writes the searches, then all of them run
+  // at once, and only then are the cards drafted: with where India stands
+  // and where this has already worked both in hand, so the precedent shapes
+  // the targets instead of arriving after them.
+  send({ t: "stage", stage: "reading" });
+  const [plan, { asks }] = await Promise.all([planResearch(query, signal), getSearchableAsks()]);
+  send({ t: "stage", stage: "researching" });
+
+  // The note for the whole set, from the plan — it says how the three
+  // changes tackle what was typed, so it needn't wait for any card (written
+  // from the first card, it described that one card as if it were all).
+  const background: Promise<unknown>[] = [
+    chatJSON<{ summary?: string }>({
+      system: SUMMARY_PROMPT,
+      user: `Citizen typed: "${query}"\nRead as: ${plan.topic}\nThe three asks: ${plan.facets.map((f) => f.focus).join("; ")}`,
+      maxTokens: 1500,
+      signal,
+    })
+      .then((r) => {
+        if (typeof r.summary === "string" && r.summary.trim()) {
+          send({ t: "summary", summary: firstSentences(r.summary.trim(), 2) });
+        }
+      })
+      .catch((err) => {
+        if (!signal.aborted) console.error("summary failed:", err);
+      }),
+  ];
+  const [statusResults, precedentResults] = await Promise.all([
+    webSearchAll(plan.statusQueries, 4),
+    webSearchAll(
+      plan.facets.map((f) => f.precedentQuery).filter(Boolean),
+      4,
+    ),
   ]);
+  send({ t: "stage", stage: "drafting" });
+  console.log(
+    `[suggest] read as "${plan.topic}"; facets: ${plan.facets.map((f) => f.focus).join(" | ")}; ${statusResults.length} status / ${precedentResults.length} precedent results`,
+  );
+  const readAs = `${query} ${plan.topic}`;
+
   // The cards are written without waiting on the meaning-based match (the
   // search box is still running it, ~2s): for a small catalogue every ask
   // goes into the prompt, otherwise the keyword-closest ones. Paraphrases
   // that slip through are caught by the per-card duplicate check.
-  const existing = relevantExisting(query, asks);
+  const existing = relevantExisting(readAs, asks);
   const existingContext =
     existing.length > 0
       ? `\n\nAsks already on the platform on this topic (do not duplicate these):\n${existing
@@ -154,13 +209,11 @@ async function run(
   const statusContext =
     statusResults.length > 0
       ? `\n\nLive web search results (use these for current facts, not your own memory):\n${formatSearchContext(statusResults)}`
-      : "\n\nNo web search results were available — apart from any verified facts above, use qualitative currentValue language rather than guessing specific figures.";
-  const groundingContext = `${knowledgeContext(query)}${statusContext}`;
+      : "\n\nNo web search results were available — apart from any verified facts above, describe where things stand in words rather than guessing specific figures.";
+  const groundingContext = `${knowledgeContext(readAs)}${statusContext}`;
 
   const kept: { index: number; askText: string; outcome: string[] }[] = [];
   const coveredBy = new Set<string>();
-  const background: Promise<unknown>[] = [];
-  let summaryStarted = false;
 
   function accept(index: number, draft: Draft) {
     if (typeof draft.askText !== "string" || !draft.askText.trim()) return;
@@ -183,8 +236,10 @@ async function run(
     const ask: Draft = {
       ...draft,
       timeframe: normalizeTimeframe(String(draft.timeframe ?? "")),
-      tags: Array.isArray(draft.tags) ? draft.tags.slice(0, 3) : [],
+      // Snapped to the fixed topic list even if the model strays from it.
+      tags: toTopics(Array.isArray(draft.tags) ? draft.tags : [], String(draft.askText ?? "")),
       sourceUrl: draft.sourceUrl ?? null,
+      precedent: validPrecedent(draft.precedent, precedentResults),
     };
     // Two cards chasing the same numeric outcome ("add 3,000 buses" and
     // "fund 3,000 more buses") read as one ask twice. Keep the direct one —
@@ -205,27 +260,6 @@ async function run(
     }
     kept.push({ index, askText: ask.askText, outcome });
     send({ t: "ask", index, ask });
-
-    // The note for the whole set, written once from the first card to land
-    // and in the background — inside a card's own call it made that card the
-    // slowest of the three.
-    if (!summaryStarted) {
-      summaryStarted = true;
-      background.push(
-        chatJSON<{ summary?: string }>({
-          system: SUMMARY_PROMPT,
-          user: `Citizen typed: "${query}"\nDrafted ask: "${ask.askText}" — now ${ask.currentValue}; target ${ask.targetValue} by ${ask.timeframe}.${groundingContext}`,
-          maxTokens: 1500,
-          signal,
-        })
-          .then((r) => {
-            if (typeof r.summary === "string" && r.summary.trim()) {
-              send({ t: "summary", summary: firstSentences(r.summary.trim(), 2) });
-            }
-          })
-          .catch((err) => console.error("summary failed:", err)),
-      );
-    }
 
     background.push(
       // Who's responsible — joins when the officeholder lookup is ready.
@@ -259,13 +293,15 @@ async function run(
     );
   }
 
-  const user = `Citizen's query: "${query}"${existingContext}${groundingContext}`;
+  // The precedent results go to the cards only: the summary note is about
+  // how the query was read, and shouldn't quote another city's figures.
+  const user = `Citizen's query: "${query}"\nRead as: ${plan.topic}${existingContext}${groundingContext}${formatPrecedentContext(precedentResults)}`;
   let failures = 0;
   await Promise.all(
-    ANGLES.map(async (angle, index) => {
+    plan.facets.map(async ({ focus }, index) => {
       try {
         const out = await chatJSON<Record<string, unknown>>({
-          system: CARD_PROMPT.replace("{ANGLE}", angle),
+          system: CARD_PROMPT.replace("{ANGLE}", angleFor(focus)),
           user,
           maxTokens: 2000,
           signal,
@@ -281,7 +317,7 @@ async function run(
       }
     }),
   );
-  if (failures === ANGLES.length) throw new Error("every card call failed");
+  if (failures === plan.facets.length) throw new Error("every card call failed");
 
   await Promise.allSettled(background);
   send({ t: "done", coveredBy: [...coveredBy] });

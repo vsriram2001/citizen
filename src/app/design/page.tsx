@@ -37,6 +37,8 @@ import { SearchPlaceholder } from "@/components/search/SearchPlaceholder";
 import { VoiceButton } from "@/components/search/VoiceButton";
 import { VoiceStage } from "@/components/search/VoiceMode";
 import { NextAskPlaceholder } from "@/components/submit/SuggestThinking";
+import { PrecedentNote } from "@/components/ask/PrecedentNote";
+import { PrecedentButton } from "@/components/ask/PrecedentButton";
 import { SEED_ASKS } from "@/lib/mock/asks";
 import { PARTY_STATUS_LABEL, type PartyStatus } from "@/lib/status";
 
@@ -420,6 +422,40 @@ export default function DesignGallery() {
         note="Where the next AI-drafted card will land while the rest of the set is still being written."
       >
         <NextAskPlaceholder />
+      </Section>
+
+      <Section
+        title="Done before"
+        note="Only when a web search shows somewhere has already achieved the ask, and never without a source. On suggested asks it's a visible tag under the figures; on listed asks it's the footsteps icon after the people and info icons: hover on desktop, tap for a sheet on phones. On the review screen it's the full line. The example here is a sample."
+      >
+        <div className="flex items-center gap-2 text-sm text-text-secondary">
+          Tag on a suggested ask:
+          <PrecedentButton
+            variant="tag"
+            precedent={{
+              place: "Sample City",
+              summary: "Cut average pothole repair time from 15 days to 48 hours between 2019 and 2022",
+              sourceUrl: "https://example.com",
+            }}
+          />
+        </div>
+        <div className="flex items-center gap-2 text-sm text-text-secondary">
+          Icon on a listed ask:
+          <PrecedentButton
+            precedent={{
+              place: "Sample City",
+              summary: "Cut average pothole repair time from 15 days to 48 hours between 2019 and 2022",
+              sourceUrl: "https://example.com",
+            }}
+          />
+        </div>
+        <PrecedentNote
+          precedent={{
+            place: "Sample City",
+            summary: "Cut average pothole repair time from 15 days to 48 hours between 2019 and 2022",
+            sourceUrl: "https://example.com",
+          }}
+        />
       </Section>
 
       <Section

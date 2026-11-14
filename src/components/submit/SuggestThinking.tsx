@@ -1,3 +1,5 @@
+import type { SuggestStage } from "@/components/submit/useSuggestions";
+
 /**
  * Loading state while /api/suggest is in flight. Six blocks of varying
  * size and tone orbit a shared center at different radii and speeds,
@@ -39,7 +41,15 @@ export function NextAskPlaceholder() {
   );
 }
 
-export function SuggestThinking() {
+/** Says what the wait is for — research comes before drafting, so the
+ *  first card takes a while, and a silent spinner reads as stuck. */
+const STAGE_TEXT: Record<SuggestStage, string> = {
+  reading: "Reading what you asked…",
+  researching: "Checking where India stands, and where this has worked…",
+  drafting: "Writing asks from what has worked…",
+};
+
+export function SuggestThinking({ stage }: { stage?: SuggestStage | null }) {
   return (
     <div className="flex flex-col items-center justify-center gap-5 py-14">
       <div
@@ -68,8 +78,8 @@ export function SuggestThinking() {
           </span>
         ))}
       </div>
-      <span className="text-sm text-text-secondary">
-        Shaping this into an ask…
+      <span role="status" className="text-sm text-text-secondary text-center px-4">
+        {stage ? STAGE_TEXT[stage] : "Shaping this into an ask…"}
       </span>
     </div>
   );

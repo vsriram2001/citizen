@@ -34,6 +34,8 @@ export interface Ask {
   responsiblePeople?: ResponsiblePerson[];
   mechanism?: string;
   tags?: string[];
+  /** Somewhere that has already done this (lib/precedent.ts); absent when none was found. */
+  precedent?: Precedent;
   verificationStatus: VerificationStatus;
   voteCount: number;
   partyResponses: PartyResponse[];
@@ -66,4 +68,17 @@ export interface AskSuggestion {
   responsiblePeople: ResponsiblePerson[] | null;
   tags: string[];
   sourceUrl: string | null;
+  /** Somewhere that has already done this, from a web search (lib/precedent.ts).
+   *  Absent when none was found — never filled in from memory. */
+  precedent?: Precedent | null;
+}
+
+/** Proof an ask is achievable: a place that has already done it, with the
+ *  measured result and the page that says so. Only ever shown with its source. */
+export interface Precedent {
+  /** City, state or country, e.g. "Indore, Madhya Pradesh" or "Seoul, South Korea". */
+  place: string;
+  /** What they did and the measured result, with years — 25 words at most. */
+  summary: string;
+  sourceUrl: string;
 }

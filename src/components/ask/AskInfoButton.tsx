@@ -31,7 +31,15 @@ const InfoIcon = ({ className }: { className?: string }) => (
  * (/api/brief), so it is fetched only when someone actually asks for it —
  * never as part of the list payload.
  */
-export function AskInfoButton({ ask }: { ask: Ask }) {
+export function AskInfoButton({
+  ask,
+  unsaved = false,
+}: {
+  ask: Ask;
+  /** A suggestion not on the platform yet: its brief is drafted from the
+   *  ask itself when opened, and there's nothing to add thoughts to. */
+  unsaved?: boolean;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -51,7 +59,7 @@ export function AskInfoButton({ ask }: { ask: Ask }) {
       >
         <InfoIcon className="w-3 h-3" />
       </button>
-      {open && <AskInfoDialog ask={ask} onClose={() => setOpen(false)} />}
+      {open && <AskInfoDialog ask={ask} unsaved={unsaved} onClose={() => setOpen(false)} />}
     </>
   );
 }
@@ -61,13 +69,36 @@ type Load =
   | { state: "ready"; brief: AskBrief }
   | { state: "error"; message: string };
 
-function AskInfoDialog({ ask, onClose }: { ask: Ask; onClose: () => void }) {
+function AskInfoDialog({
+  ask,
+  unsaved,
+  onClose,
+}: {
+  ask: Ask;
+  unsaved: boolean;
+  onClose: () => void;
+}) {
   const [load, setLoad] = useState<Load>({ state: "loading" });
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch(`/api/brief?id=${encodeURIComponent(ask.id)}`, { signal: controller.signal })
+    const request = unsaved
+      ? fetch("/api/brief", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            askText: ask.askText,
+            currentValue: ask.currentValue,
+            targetValue: ask.targetValue,
+            timeframe: ask.timeframe,
+            targetBody: ask.targetBody,
+            tags: ask.tags,
+          }),
+          signal: controller.signal,
+        })
+      : fetch(`/api/brief?id=${encodeURIComponent(ask.id)}`, { signal: controller.signal });
+    request
       .then(async (res) => {
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.brief) {
@@ -84,7 +115,8 @@ function AskInfoDialog({ ask, onClose }: { ask: Ask; onClose: () => void }) {
         setLoad({ state: "error", message: err.message });
       });
     return () => controller.abort();
-  }, [ask.id, attempt]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed on the ask, not its object identity
+  }, [ask.id, ask.askText, unsaved, attempt]);
 
   // A long read: a tall sheet on phones (header pinned, body scrolls), a
   // wide dialog on desktop. Sheet portals to <body>, clear of the list rows
@@ -114,7 +146,7 @@ function AskInfoDialog({ ask, onClose }: { ask: Ask; onClose: () => void }) {
       bodyClassName="pt-2"
     >
       <div className="flex flex-col gap-6">
-        {load.state === "loading" && <BriefSkeleton />}
+        {load.state === "loading" && <BriefSkeleton unsaved={unsaved} />}
 
         {load.state === "error" && (
           <div className="flex flex-col items-start gap-3 rounded-sm border border-border bg-paper px-4 py-4">
@@ -136,7 +168,7 @@ function AskInfoDialog({ ask, onClose }: { ask: Ask; onClose: () => void }) {
 
         {load.state === "ready" && <BriefBody brief={load.brief} />}
 
-        {load.state === "ready" && <ThoughtForm askId={ask.id} />}
+        {load.state === "ready" && !unsaved && <ThoughtForm askId={ask.id} />}
       </div>
     </Sheet>
   );
@@ -193,11 +225,13 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
   );
 }
 
-function BriefSkeleton() {
+function BriefSkeleton({ unsaved }: { unsaved: boolean }) {
   return (
     <div className="flex flex-col gap-3" aria-live="polite">
       <p className="text-sm text-text-secondary">
-        Reading up on this ask — the first time takes a few seconds…
+        {unsaved
+          ? "Writing up the full case for this suggestion — this can take up to half a minute…"
+          : "Reading up on this ask — the first time takes a few seconds…"}
       </p>
       {[92, 100, 85, 96, 60].map((w, i) => (
         <span

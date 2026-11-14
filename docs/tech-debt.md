@@ -92,3 +92,14 @@ this file is the cross-cutting list.
 - [ ] **Desktop paste drops the text.** WhatsApp Web / Gmail take only the image from a clipboard that
       holds image + text, so on a MacBook the invite text and link can't arrive with the card.
       Option: add a "Cast your own votes at citizenpoll.in" line inside the card image (`share/votes/image/route.tsx`).
+
+## Done before (precedents)
+- [ ] **A precedent sent with a new ask is checked for shape only.** It's found by a server-side
+      web search (`api/suggest`, `api/precedent`) but reaches `api/submissions` via the browser,
+      which can't prove it came from that search; `asStoredPrecedent` (`lib/precedent.ts`) only
+      holds it to a place, a short summary and an http(s) link. Option: sign precedents on the
+      server when found and verify the signature on submit.
+- [ ] **Precedent quality is unreviewed by a person.** 35 of 72 asks found one (2026-11-14); some
+      are weak (one prison for a national undertrial ask; cover for under-6s for an under-15s ask)
+      and one reads against its ask (California's reservation ban). Each needs a human
+      look before launch, like the officeholder names.

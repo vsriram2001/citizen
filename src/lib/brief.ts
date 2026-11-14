@@ -100,13 +100,44 @@ const inflight = new Map<string, Promise<AskBrief>>();
  * An existing brief is never regenerated here — it changes only through the
  * nightly thought digest (api/cron/digest-thoughts).
  */
+/**
+ * Briefs drafted for suggestions that aren't on the platform yet (their ⓘ,
+ * via POST /api/brief), by what the ask says. Opening it twice doesn't
+ * draft twice, and adding the suggestion unchanged saves the brief the
+ * person already read rather than a second, different draft. Per server
+ * instance and best-effort — a miss just drafts again.
+ */
+const drafts = new Map<string, Promise<AskBrief>>();
+const MAX_DRAFTS = 200;
+
+function draftKey(ask: Ask): string {
+  return [ask.askText, ask.currentValue, ask.targetValue, ask.timeframe]
+    .map((s) => s.trim().toLowerCase())
+    .join("\u0000");
+}
+
+/** The brief for an ask that has no id yet — drafted once, never stored. */
+export function draftBrief(ask: Ask): Promise<AskBrief> {
+  const key = draftKey(ask);
+  let pending = drafts.get(key);
+  if (!pending) {
+    pending = generateBrief(ask);
+    // A failed draft is forgotten, so the next open tries again.
+    pending.catch(() => drafts.delete(key));
+    drafts.set(key, pending);
+    if (drafts.size > MAX_DRAFTS) drafts.delete(drafts.keys().next().value!);
+  }
+  return pending;
+}
+
 export async function ensureBrief(ask: Ask): Promise<AskBrief> {
   const stored = await getStoredBrief(ask.id);
   if (stored) return stored;
 
   let pending = inflight.get(ask.id);
   if (!pending) {
-    pending = generateBrief(ask)
+    // Reuses the draft someone read on the suggestion, if this is it.
+    pending = (drafts.get(draftKey(ask)) ?? generateBrief(ask))
       .then(async (brief) => {
         await saveBrief(ask.id, brief);
         return brief;

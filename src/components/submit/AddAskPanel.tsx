@@ -24,6 +24,7 @@ function suggestionToAsk(s: AskSuggestion, i: number): Ask {
     targetBody: s.targetBody,
     responsiblePeople: s.responsiblePeople ?? undefined,
     tags: s.tags,
+    precedent: s.precedent ?? undefined,
     verificationStatus: "unverified",
     voteCount: 0,
     partyResponses: [],
@@ -51,6 +52,7 @@ function newAsk(id: string, p: Payload): Ask {
     targetBody: p.targetBody,
     responsiblePeople: p.responsiblePeople,
     tags: p.tags,
+    precedent: p.precedent ?? undefined,
     verificationStatus: "unverified",
     voteCount: 1,
     partyResponses: [],
@@ -109,7 +111,7 @@ export function AddAskPanel({
   /** The person dismissed the resumed draft. */
   onResumeClosed?: () => void;
 }) {
-  const { summary, suggestions, coveredBy, loading, streaming, error, peopleFor } =
+  const { summary, stage, suggestions, coveredBy, loading, streaming, error, peopleFor } =
     useSuggestions(query, true);
   const [flowError, setFlowError] = useState<string | null>(null);
   const [schemaChoices, setSchemaChoices] = useState<AskSuggestion[] | null>(null); // freeform path: "doesn't fit schema"
@@ -218,6 +220,7 @@ export function AddAskPanel({
         targetBody: s.targetBody ?? "",
         tags: s.tags ?? [],
         responsiblePeople: people ?? [],
+        precedent: s.precedent ?? null,
       });
     } catch {
       setFlowError(COULD_NOT_ADD);
@@ -306,7 +309,7 @@ export function AddAskPanel({
           New — Suggested
         </h2>
 
-        {loading && <SuggestThinking />}
+        {loading && <SuggestThinking stage={stage} />}
 
         {/* One short note for the whole set — how the query was read and
             why these targets — so the cards themselves stay terse. */}
@@ -339,8 +342,8 @@ export function AddAskPanel({
               <AskCard
                 ask={suggestionToAsk(s, i)}
                 compact
-                showInfo={false}
                 voteLabel="1st vote"
+                suggested
                 disabled={working}
                 onVote={() => handleSuggestionClick(s)}
               />

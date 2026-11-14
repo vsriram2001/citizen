@@ -7,7 +7,8 @@ import { Sheet, SheetActions } from "@/components/ui/Sheet";
 import { cn } from "@/lib/cn";
 import { retitleByFigures } from "@/lib/headline";
 import { monthOptions, toTimeframe, fromTimeframe } from "@/lib/timeframe";
-import type { ResponsiblePerson } from "@/lib/types";
+import { PrecedentNote } from "@/components/ask/PrecedentNote";
+import type { Precedent, ResponsiblePerson } from "@/lib/types";
 
 
 export interface ReviewDraft {
@@ -16,6 +17,8 @@ export interface ReviewDraft {
   targetValue: string;
   timeframe: string;
   responsiblePeople: ResponsiblePerson[];
+  /** From the suggestion card, if it had one; otherwise looked up here. */
+  precedent?: Precedent | null;
 }
 
 /** What comes back from review — askText included, since the headline is
@@ -55,6 +58,36 @@ export function ReviewSubmissionModal({
     reason: string | null;
   }>({ checked: false, feasible: true, reason: null });
   const [checkingFeasibility, setCheckingFeasibility] = useState(false);
+
+  // Asks typed by hand (and cards that had none) get their own "done
+  // before" lookup. It's about the idea, not the figures, so it runs once
+  // and edits don't redo it. Nothing is shown unless one turns up.
+  const [foundPrecedent, setFoundPrecedent] = useState<Precedent | null>(null);
+  const precedent = draft.precedent ?? foundPrecedent;
+  useEffect(() => {
+    if (draft.precedent) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/precedent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            askText: draft.askText,
+            currentValue: draft.currentValue,
+            targetValue: draft.targetValue,
+          }),
+        });
+        const data = await res.json();
+        if (!cancelled && data.precedent) setFoundPrecedent(data.precedent);
+      } catch {
+        // No precedent line — the ask stands on its own.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [draft]);
 
   // The headline states the size of the change, so it follows edits to the
   // figures. A plain number swap is instant; anything subtler asks the
@@ -117,7 +150,7 @@ export function ReviewSubmissionModal({
         const res = await fetch("/api/feasibility", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ askText: draft.askText, currentValue, targetValue, timeframe }),
+          body: JSON.stringify({ askText: draft.askText, currentValue, targetValue, timeframe, precedent }),
         });
         const data = await res.json();
         if (!cancelled) {
@@ -138,7 +171,7 @@ export function ReviewSubmissionModal({
       clearTimeout(timer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeframe, currentValue, targetValue]);
+  }, [timeframe, currentValue, targetValue, precedent?.sourceUrl]);
 
   function toggle(i: number) {
     setChecked((prev) => {
@@ -190,6 +223,7 @@ export function ReviewSubmissionModal({
                 targetValue: targetValue.trim(),
                 timeframe,
                 responsiblePeople: selectedPeople,
+                precedent,
               })
             }
           >
@@ -230,6 +264,7 @@ export function ReviewSubmissionModal({
               Not known? Say so, e.g. &ldquo;Not published&rdquo;.
             </p>
           )}
+          {precedent && <PrecedentNote precedent={precedent} />}
         </div>
 
         <div className="flex flex-col gap-2">

@@ -8,6 +8,7 @@ import { isValidTimeframe } from "@/lib/timeframe";
 import { VOTE_BUDGET } from "@/lib/vote-session";
 import { OUT_OF_VOTES, ensureVoterSession, getVoterId, votesUsed } from "@/lib/voter";
 import { toTopics } from "@/lib/topics";
+import { asStoredPrecedent } from "@/lib/precedent";
 
 interface SubmitBody {
   askText: string;
@@ -24,6 +25,8 @@ interface SubmitBody {
         twitterHandle?: string;
       }[]
     | null;
+  /** "Done before", from the suggestion card or the review screen's lookup. */
+  precedent?: unknown;
 }
 
 // The person must be signed in with Google (see lib/voter.ts): adding an ask
@@ -99,6 +102,9 @@ export async function POST(req: Request) {
       target_body: body.targetBody ?? null,
       // The fixed topic list (lib/topics.ts), whatever the draft carried.
       tags: toTopics(body.tags ?? [], body.askText),
+      // Found by a web search on the server (/api/suggest or /api/precedent)
+      // but carried here by the browser, so only its shape can be checked.
+      precedent: asStoredPrecedent(body.precedent),
       moderation_status: "approved",
     })
     .select("id")

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { ensureBrief, getStoredBrief, loadAsk } from "@/lib/brief";
+import { draftBrief, ensureBrief, getStoredBrief, loadAsk } from "@/lib/brief";
+import type { Ask } from "@/lib/types";
 
 // GET /api/brief?id=<askId> — the ask's stored Info brief. Briefs are drafted
 // when an ask is created (api/submissions) or pre-generated for the seed
@@ -21,6 +22,39 @@ export async function GET(req: Request) {
     return NextResponse.json({ brief: await ensureBrief(ask) });
   } catch (err) {
     console.error("brief route failed:", err);
+    return NextResponse.json({ error: "Could not draft the brief" }, { status: 502 });
+  }
+}
+
+// POST /api/brief { askText, currentValue, targetValue, timeframe, targetBody, tags }
+// The brief for a suggested ask that isn't on the platform yet — drafted
+// only when someone opens its ⓘ, never stored (see draftBrief). Fields are
+// capped: this spends search and LLM calls on whatever text it's given.
+export async function POST(req: Request) {
+  const body = await req.json().catch(() => null);
+  const text = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
+  const askText = text(body?.askText, 200);
+  if (askText.length < 5) {
+    return NextResponse.json({ error: "askText required" }, { status: 400 });
+  }
+  const ask: Ask = {
+    id: "draft",
+    askText,
+    currentValue: text(body?.currentValue, 120),
+    targetValue: text(body?.targetValue, 120),
+    timeframe: text(body?.timeframe, 20),
+    targetBody: text(body?.targetBody, 120),
+    tags: Array.isArray(body?.tags)
+      ? body.tags.filter((t: unknown): t is string => typeof t === "string").slice(0, 3)
+      : [],
+    verificationStatus: "unverified",
+    voteCount: 0,
+    partyResponses: [],
+  };
+  try {
+    return NextResponse.json({ brief: await draftBrief(ask) });
+  } catch (err) {
+    console.error("draft brief failed:", err);
     return NextResponse.json({ error: "Could not draft the brief" }, { status: 502 });
   }
 }

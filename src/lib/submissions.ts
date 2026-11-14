@@ -1,6 +1,7 @@
 import { SEED_ASKS } from "@/lib/mock/asks";
 import { createClient } from "@/lib/supabase/server";
 import type { Ask } from "@/lib/types";
+import { asStoredPrecedent } from "@/lib/precedent";
 import { toTopics } from "@/lib/topics";
 
 interface SubmissionRow {
@@ -12,6 +13,7 @@ interface SubmissionRow {
   target_body: string | null;
   mechanism: string | null;
   tags: string[] | null;
+  precedent: unknown;
   verification_status: Ask["verificationStatus"];
   vote_count: number;
   party_responses: {
@@ -47,6 +49,7 @@ export async function getApprovedSubmissions(): Promise<Ask[]> {
       target_body,
       mechanism,
       tags,
+      precedent,
       verification_status,
       vote_count,
       party_responses ( party_name, status, source_url ),
@@ -107,6 +110,7 @@ export async function getApprovedSubmission(id: string): Promise<Ask | null> {
       target_body,
       mechanism,
       tags,
+      precedent,
       verification_status,
       vote_count,
       party_responses ( party_name, status, source_url ),
@@ -148,6 +152,7 @@ export async function getApprovedSubmissionsByIds(ids: string[]): Promise<Ask[]>
       target_body,
       mechanism,
       tags,
+      precedent,
       verification_status,
       vote_count,
       party_responses ( party_name, status, source_url ),
@@ -185,6 +190,9 @@ function mapSubmissionRow(row: SubmissionRow): Ask {
     // Stored tags are free text from whoever wrote the ask; shown as the
     // fixed topics (lib/topics.ts) so one subject never has two names.
     tags: toTopics(row.tags ?? [], row.ask_text),
+    // "Done before" (lib/precedent.ts): saved with a new ask, or found for an
+    // existing one by scripts/generate-precedents.ts.
+    precedent: asStoredPrecedent(row.precedent) ?? undefined,
     verificationStatus: row.verification_status,
     voteCount: row.vote_count,
     partyResponses: row.party_responses.map((pr) => ({
