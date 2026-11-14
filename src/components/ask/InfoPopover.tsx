@@ -3,10 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { Sheet } from "@/components/ui/Sheet";
+import { FloatingCard } from "@/components/ask/FloatingCard";
 import { useIsTouch } from "@/components/mobile/useMediaQuery";
 import type { ResponsiblePerson } from "@/lib/types";
 
-const PersonIcon = ({ className }: { className?: string }) => (
+export const PersonIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 20 20" fill="none" className={className}>
     <circle cx="10" cy="6.5" r="3.25" stroke="currentColor" strokeWidth="1.5" />
     <path
@@ -56,6 +57,7 @@ export function InfoPopover({
 }) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const count = people?.length ?? 0;
   // Touch screens have no hover, and a side popover runs off a phone's edge:
   // a tap opens the same content as a bottom sheet instead.
@@ -64,9 +66,10 @@ export function InfoPopover({
   useEffect(() => {
     if (touch) return; // the sheet's backdrop handles outside taps
     function handleClickOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+      const target = e.target as Node;
+      // The card is portalled out of the container, so check it separately.
+      if (containerRef.current?.contains(target) || cardRef.current?.contains(target)) return;
+      setOpen(false);
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -85,7 +88,7 @@ export function InfoPopover({
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label={
-          count > 1 ? `Responsible: ${count} people` : `Responsible: ${body}`
+          count > 1 ? `Who answers for this: ${count} people` : `Who answers for this: ${body}`
         }
         aria-haspopup="dialog"
         className="relative flex items-center cursor-pointer group after:absolute after:-inset-[7px]"
@@ -132,7 +135,7 @@ export function InfoPopover({
 
       {open && touch && (
         <Sheet
-          eyebrow="Who's responsible"
+          eyebrow="Who answers for this"
           title={body}
           onClose={() => setOpen(false)}
         >
@@ -173,17 +176,19 @@ export function InfoPopover({
       )}
 
       {open && !touch && (
-        <div
-          role="tooltip"
-          className="absolute z-20 left-full top-1/2 -translate-y-1/2 ml-2 w-max max-w-80"
-        >
+        <FloatingCard anchorRef={containerRef} cardRef={cardRef} className="w-max max-w-80">
           {people && people.length > 0 ? (
             <div className="bg-card border border-ink/80 rounded-card shadow-lg overflow-hidden">
+              {/* Names alone didn't say why they were there; the phone sheet
+                  already had this eyebrow, the hover card now matches it. */}
+              <p className="px-4 pt-2.5 text-[11px] uppercase tracking-[0.08em] text-text-muted">
+                Who answers for this
+              </p>
               {people.map((person, i) => (
                 <div
                   key={person.name}
                   className={cn(
-                    "px-4 py-3",
+                    i === 0 ? "px-4 pt-1 pb-3" : "px-4 py-3",
                     i > 0 && "border-t border-border",
                   )}
                 >
@@ -224,7 +229,7 @@ export function InfoPopover({
               No named officeholder on file yet.
             </div>
           )}
-        </div>
+        </FloatingCard>
       )}
     </div>
   );

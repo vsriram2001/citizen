@@ -14,7 +14,7 @@ import type { Ask, AskBrief } from "@/lib/types";
 const MIN_THOUGHT = 20;
 const MAX_THOUGHT = 1000;
 
-const InfoIcon = ({ className }: { className?: string }) => (
+export const InfoIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 20 20" fill="none" className={className}>
     <circle cx="10" cy="10" r="7.25" stroke="currentColor" strokeWidth="1.5" />
     <path d="M10 9v4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -47,7 +47,9 @@ export function AskInfoButton({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        aria-label={`Full info about: ${ask.askText}`}
+        aria-label={`The full case for: ${ask.askText}`}
+        // Desktop hover label; phones get the one-time key above the list.
+        title="The full case: why, the downsides, what others think"
         aria-haspopup="dialog"
         className={cn(
           "relative flex items-center justify-center w-5 h-5 rounded-full cursor-pointer",

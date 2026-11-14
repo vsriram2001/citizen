@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AskCard } from "@/components/ask/AskCard";
+import { IconHint } from "@/components/ask/IconKey";
 import type { Ask } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
 
@@ -29,6 +30,8 @@ export function AskList({
 
   return (
     <div className="flex flex-col gap-3">
+      {/* Says what the person and "i" icons on each card are, until closed. */}
+      <IconHint />
       {visible.map((ask, i) => {
         const barPct = (ask.voteCount / top) * 100;
         return (

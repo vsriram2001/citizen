@@ -27,6 +27,7 @@ import { WishToAsk } from "@/components/home/WishToAsk";
 import type { Ask } from "@/lib/types";
 import { AskList } from "@/components/ask/AskList";
 import { AskInfoButton } from "@/components/ask/AskInfoButton";
+import { IconKey, IconHint } from "@/components/ask/IconKey";
 import { FilterSidebar } from "@/components/search/SearchFilters";
 import { TopicTabs } from "@/components/search/TopicTabs";
 import { TopicPicker } from "@/components/topics/TopicPicker";
@@ -624,6 +625,14 @@ export default function DesignGallery() {
           <AskInfoButton ask={SAMPLE_ASK} />
           <span className="text-xs text-text-muted">Click to open</span>
         </div>
+      </Section>
+
+      <Section
+        title="Icon key"
+        note="Says what the person and i icons on an ask mean. IconKey is the static legend under the home slider; IconHint sits above the /search list until closed (remembered per browser, so it may be hidden here if you closed it)."
+      >
+        <IconKey />
+        <IconHint />
       </Section>
 
       <Section
