@@ -606,8 +606,29 @@ export function SearchClient({
           )}
 
           {queryMatches.length === 0 && !queryReady && (
-            <div className="text-center py-16 text-text-secondary text-sm">
-              Type a topic or your idea above.
+            <div className="flex flex-col items-center gap-3 text-center py-16 text-text-secondary text-sm">
+              {/* A word or two too short to search on (a stray "25" carried
+                  over from /start) emptied every tab and still said "type
+                  something", so it read as the asks having vanished. */}
+              {trimmedQuery ? (
+                <>
+                  <span>
+                    Nothing matches &ldquo;{trimmedQuery}&rdquo;. Type a few words, or clear the search to see every ask.
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setQuery("");
+                      setVoiceArrival(false);
+                    }}
+                    className="text-[13px] text-accent hover:underline underline-offset-4 cursor-pointer"
+                  >
+                    Clear search
+                  </button>
+                </>
+              ) : (
+                "Type a topic or your idea above."
+              )}
             </div>
           )}
         </div>
