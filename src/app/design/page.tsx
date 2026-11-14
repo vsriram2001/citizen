@@ -10,6 +10,7 @@ import { Field, Input, Select, Textarea } from "@/components/ui/Input";
 import { PartyBadge, VerificationBadge } from "@/components/ui/Badge";
 import { Logo } from "@/components/nav/Logo";
 import { BallotAnimation } from "@/components/vote/BallotAnimation";
+import { InkMark, INK_MARK_DURATION } from "@/components/vote/InkMark";
 import { OutOfVotesNotice } from "@/components/vote/OutOfVotesNotice";
 import { ReplaceVoteModal } from "@/components/vote/ReplaceVoteModal";
 import { ReviewVotesModal } from "@/components/vote/ReviewVotesModal";
@@ -128,6 +129,8 @@ export default function DesignGallery() {
   const [reviewOpen, setReviewOpen] = useState(false);
   const [replaceOpen, setReplaceOpen] = useState(false);
   const [ballotPlaying, setBallotPlaying] = useState(false);
+  const [inkRun, setInkRun] = useState(0);
+  const [inkT, setInkT] = useState<number | null>(null);
   const filterDemo = useAskFilters(SEED_ASKS);
 
   return (
@@ -579,6 +582,37 @@ export default function DesignGallery() {
             onClose={() => setReviewOpen(false)}
           />
         )}
+      </Section>
+
+      <Section
+        title="Ink mark"
+        note="Plays in the ballot animation after the last vote drops: a hand rises, a marker draws the ink line across the nail, and the camera pushes in while the hand dissolves until the fingertip is the logo. Drag to step through it; Replay plays it again. Reduced motion shows the finished logo."
+      >
+        <div className="flex flex-col gap-3 max-w-xs">
+          <div className="aspect-[1182/1331] bg-paper border border-border rounded-card overflow-hidden" data-ink-mark>
+            <InkMark key={inkRun} freezeAt={inkT ?? undefined} />
+          </div>
+          <input
+            type="range"
+            min={0}
+            max={INK_MARK_DURATION}
+            step={0.01}
+            value={inkT ?? INK_MARK_DURATION}
+            onChange={(e) => setInkT(Number(e.target.value))}
+            aria-label="Ink mark time"
+          />
+          <div>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setInkT(null);
+                setInkRun((r) => r + 1);
+              }}
+            >
+              Replay
+            </Button>
+          </div>
+        </div>
       </Section>
 
       <Section

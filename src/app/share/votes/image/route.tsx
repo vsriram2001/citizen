@@ -37,15 +37,13 @@ export async function GET(req: Request) {
   const ballotId = parseBallotId(searchParams.get("ballot") ?? "");
 
   const fontDir = path.join(process.cwd(), "src", "fonts");
-  const [asks, voteIconBuffer, playfairBuffer, pubSans400Buffer, pubSans700Buffer] =
-    await Promise.all([
-      getApprovedSubmissionsByIds(ids),
-      readFile(path.join(process.cwd(), "public", "illustration-vote.png")),
-      readFile(path.join(fontDir, "playfair-display.ttf")),
-      readFile(path.join(fontDir, "public-sans-400.ttf")),
-      readFile(path.join(fontDir, "public-sans-700.ttf")),
-    ]);
-  const voteIconSrc = `data:image/png;base64,${voteIconBuffer.toString("base64")}`;
+  const [asks, playfairBuffer, pubSans400Buffer, pubSans700Buffer] = await Promise.all([
+    getApprovedSubmissionsByIds(ids),
+    readFile(path.join(fontDir, "playfair-display.ttf")),
+    readFile(path.join(fontDir, "public-sans-400.ttf")),
+    readFile(path.join(fontDir, "public-sans-700.ttf")),
+  ]);
+  const year = new Date().getUTCFullYear();
 
   const width = 1080;
   // Portrait canvas (see file header), but height adapts to content between
@@ -73,7 +71,7 @@ export async function GET(req: Request) {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "#F1EFE8",
+          background: CANVAS,
           fontFamily: "Public Sans",
           padding: "64px 0",
         }}
@@ -88,7 +86,6 @@ export async function GET(req: Request) {
             flexDirection: "column",
             width: 936,
             borderRadius: 32,
-            border: "1px solid #D9D7CF",
             background: "#FFFFFF",
             overflow: "hidden",
           }}
@@ -98,7 +95,7 @@ export async function GET(req: Request) {
               display: "flex",
               height: 22,
               backgroundImage:
-                "repeating-linear-gradient(90deg, #1A1A18 0 11px, #F1EFE8 11px 22px)",
+                `repeating-linear-gradient(90deg, #1A1A18 0 11px, ${CANVAS} 11px 22px)`,
             }}
           />
 
@@ -118,8 +115,7 @@ export async function GET(req: Request) {
                 textAlign: "center",
               }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element -- ImageResponse requires a raw <img>, not next/image */}
-              <img src={voteIconSrc} width={100} height={112} alt="" style={{ marginBottom: 28 }} />
+              <LogoMark />
               <span
                 style={{
                   fontSize: 22,
@@ -129,7 +125,7 @@ export async function GET(req: Request) {
                   marginBottom: 20,
                 }}
               >
-                Citizen Poll · Official Record
+                {`Citizen Poll · My ballot ${year}`}
               </span>
               <span
                 style={{
@@ -147,7 +143,9 @@ export async function GET(req: Request) {
               </span>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column" }}>
+            <TearLine />
+
+            <div style={{ display: "flex", flexDirection: "column", marginTop: -56 }}>
               {asks.map((ask, i) => (
                 <div
                   key={ask.id}
@@ -156,10 +154,7 @@ export async function GET(req: Request) {
                     alignItems: "flex-start",
                     gap: 30,
                     padding: "44px 0",
-                    borderTop: "1px solid #D9D7CF",
-                    ...(i === asks.length - 1
-                      ? { borderBottom: "1px solid #D9D7CF" }
-                      : {}),
+                    ...(i > 0 ? { borderTop: "1px solid #D9D7CF" } : {}),
                   }}
                 >
                   <span
@@ -211,6 +206,8 @@ export async function GET(req: Request) {
                 </div>
               ))}
             </div>
+
+            <TearLine />
 
             {ballotId && (
               <div
@@ -279,5 +276,45 @@ export async function GET(req: Request) {
         },
       ],
     },
+  );
+}
+
+const CANVAS = "#F1EFE8";
+
+/** The logo (nav/Logo.tsx), as the ballot animation ends on it. */
+function LogoMark() {
+  return (
+    <svg width={86} height={110} viewBox="54.5 37 234.5 299" fill="none" style={{ marginBottom: 30 }}>
+      <path d="M68.5 336V180C68.5 116 114 51 171.75 51C229.5 51 275 116 275 180V336" stroke="#1A1A18" strokeWidth={28} />
+      <path
+        d="M132 66C112 88 105.5 104 105.5 124V202C105.5 233 135.2 257 171.75 257C208.3 257 238 233 238 202V124C238 104 231.5 88 211.5 66"
+        stroke="#1A1A18"
+        strokeWidth={17.5}
+      />
+      <path d="M171.75 202.5V278.75" stroke="#0248A6" strokeWidth={35} strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/**
+ * A ticket's tear line, as on the page (VotesShareClient): dashes across and a
+ * half-circle notch cut into each edge, canvas-coloured discs centred on the
+ * card's edge that the card clips in half. Spans the card's 72px side padding.
+ */
+function TearLine() {
+  return (
+    <div style={{ display: "flex", position: "relative", height: 56, margin: "0 -72px" }}>
+      <div
+        style={{
+          position: "absolute",
+          left: 64,
+          right: 64,
+          top: 27,
+          borderTop: "3px dashed #D9D7CF",
+        }}
+      />
+      <div style={{ position: "absolute", left: -28, top: 0, width: 56, height: 56, borderRadius: 28, background: CANVAS }} />
+      <div style={{ position: "absolute", right: -28, top: 0, width: 56, height: 56, borderRadius: 28, background: CANVAS }} />
+    </div>
   );
 }

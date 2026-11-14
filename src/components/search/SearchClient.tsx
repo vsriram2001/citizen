@@ -12,6 +12,7 @@ import { SignInModal } from "@/components/auth/SignInModal";
 import { useAuth } from "@/components/auth/useAuth";
 import { AddAskPanel, type AskDraft } from "@/components/submit/AddAskPanel";
 import { BallotAnimation } from "@/components/vote/BallotAnimation";
+import { prepareVotesShare } from "@/components/share/votesSharePrep";
 import { OutOfVotesNotice } from "@/components/vote/OutOfVotesNotice";
 import { ReplaceVoteModal } from "@/components/vote/ReplaceVoteModal";
 import { ReviewVotesModal } from "@/components/vote/ReviewVotesModal";
@@ -700,6 +701,8 @@ export function SearchClient({
             // Submitting locks the votes; only play the ballot if that stuck.
             if (!(await submitVotes())) return;
             setReviewOpen(false);
+            // Seal the ballot and render the share card while the ballot plays.
+            prepareVotesShare(asks.filter((a) => votedIds.has(a.id)).map((a) => a.id));
             setShowBallotAnimation(true);
           }}
         />
@@ -723,6 +726,7 @@ export function SearchClient({
       {showBallotAnimation && (
         <BallotAnimation
           asks={asks.filter((a) => votedIds.has(a.id))}
+          continueHref="/share/votes"
           onComplete={() => router.push("/share/votes")}
         />
       )}

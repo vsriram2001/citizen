@@ -1,12 +1,18 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Button, buttonClass } from "@/components/ui/Button";
 import { useAuth } from "@/components/auth/useAuth";
 import { useIsTouch } from "@/components/mobile/useMediaQuery";
+import { Logo } from "@/components/nav/Logo";
 import { ShareButton } from "@/components/share/ShareButton";
+import {
+  getLoadedBallots,
+  inVotedOrder,
+  loadBallots,
+  votesImageUrl,
+} from "@/components/share/votesSharePrep";
 import { BallotIdCard } from "@/components/vote/BallotIdCard";
 import type { Ballot } from "@/lib/ballot";
 import type { Ask } from "@/lib/types";
@@ -26,11 +32,13 @@ import { getSiteUrl } from "@/lib/site-url";
 export function VotesShareClient({ asks }: { asks: Ask[] }) {
   const auth = useAuth();
   const isTouch = useIsTouch();
-  const [ballots, setBallots] = useState<Ballot[]>([]);
+  // Arriving from the ballot animation, the ID and the card image were
+  // prepared while it played (votesSharePrep), so the first render has them.
+  const [ballots, setBallots] = useState<Ballot[]>(() => getLoadedBallots() ?? []);
   const latestBallot = ballots.at(0);
   const [votedAsks, setVotedAsks] = useState<Ask[]>(() => {
     const votedIds = new Set(getVotedAskIds());
-    return asks.filter((ask) => votedIds.has(ask.id));
+    return inVotedOrder(asks.filter((ask) => votedIds.has(ask.id)));
   });
 
   // The signed-in person's votes on the server are the truth — this also
@@ -42,29 +50,28 @@ export function VotesShareClient({ asks }: { asks: Ask[] }) {
       .then((data: { votes?: { submissionId: string }[] }) => {
         // Signed in, so even an empty list is the truth (e.g. all retracted).
         const ids = new Set((data.votes ?? []).map((v) => v.submissionId));
-        setVotedAsks(asks.filter((ask) => ids.has(ask.id)));
+        setVotedAsks(inVotedOrder(asks.filter((ask) => ids.has(ask.id))));
       })
       .catch(() => {
         // Offline — keep the local record.
       });
   }, [asks, auth.userId]);
 
-  // Also seals any finished votes onto the ledger; empty until votes are finished.
+  // Also seals any finished votes onto the ledger; empty until votes are
+  // finished. Reuses the request the vote screen started, if there is one.
   useEffect(() => {
     if (!auth.userId) return;
-    fetch("/api/ballot", { method: "POST" })
-      .then((res) => res.json())
-      .then((data: { ballots?: Ballot[] }) => setBallots(data.ballots ?? []))
-      .catch(() => {
-        // The ID is an extra here; the page works without it.
-      });
+    let live = true;
+    loadBallots().then((b) => live && setBallots(b));
+    return () => {
+      live = false;
+    };
   }, [auth.userId]);
 
-  const imageUrl = useMemo(() => {
-    const ids = votedAsks.map((a) => a.id).join(",");
-    const ballot = latestBallot ? `&ballot=${encodeURIComponent(latestBallot.id)}` : "";
-    return `${getSiteUrl()}/share/votes/image?ids=${encodeURIComponent(ids)}${ballot}`;
-  }, [votedAsks, latestBallot]);
+  const imageUrl = useMemo(
+    () => votesImageUrl(votedAsks.map((a) => a.id), latestBallot?.id),
+    [votedAsks, latestBallot],
+  );
 
   // Signed out: the local record may belong to whoever used this browser last,
   // so don't show it — votes belong to a Google account.
@@ -108,7 +115,9 @@ export function VotesShareClient({ asks }: { asks: Ask[] }) {
     <div className="m-auto flex flex-col gap-3 sm:gap-4 w-full max-w-md min-h-0">
       {/* On-page card — same content as the generated share image so what you
           see is what gets shared, no surprises. */}
-      <div className="flex flex-col min-h-0 bg-card border border-border rounded-card overflow-hidden">
+      {/* The outline is an inset ring, not a border, so the ticket notches
+          (TearLine) can sit over it and cut the edge. */}
+      <div className="flex flex-col min-h-0 bg-card shadow-[inset_0_0_0_1px_var(--color-border)] rounded-card overflow-hidden">
         {/* Perforated tear-off edge, matching the ballot-stub concept. */}
         <div
           className="h-2.5 shrink-0"
@@ -122,29 +131,27 @@ export function VotesShareClient({ asks }: { asks: Ask[] }) {
             small phone): better a scrolling card than unreachable buttons.
             relative: keeps SaveBallotId's sr-only fields inside this scroller,
             or they stretch the page below it. */}
-        <div className="relative min-h-0 overflow-y-auto px-4 sm:px-6 pb-4">
+        <div className="relative min-h-0 overflow-y-auto overflow-x-hidden px-4 sm:px-6 pb-4">
           <div className="flex flex-col items-center text-center gap-1 py-4">
-            {/* First thing to go on short screens: it's decoration, the votes aren't. */}
-            <Image
-              src="/illustration-vote.png"
-              alt=""
-              width={560}
-              height={630}
-              className="w-9 h-auto shrink-0 opacity-90 mb-1 [@media(max-height:760px)]:hidden"
-            />
+            {/* The inked finger the ballot animation ends on. First thing to go
+                on short screens: it's decoration, the votes aren't. */}
+            <Logo className="h-10 shrink-0 text-ink mb-2 [@media(max-height:760px)]:hidden" />
+            {/* Not "official": these are citizens' asks, not an election. */}
             <span className="block text-[11px] uppercase tracking-[0.16em] text-text-muted">
-              Citizen Poll · Official Record
+              Citizen Poll · My ballot {latestBallot?.year ?? new Date().getFullYear()}
             </span>
             <h1 className="text-[24px] leading-[1.14] tracking-[-0.015em]">
               Here&apos;s what I voted for
             </h1>
           </div>
 
+          <TearLine />
+
           <div className="flex flex-col">
             {votedAsks.map((ask, i) => (
               <div
                 key={ask.id}
-                className="flex gap-3 py-3 [@media(max-height:600px)]:py-2 border-t border-border last:border-b"
+                className="flex gap-3 py-3 [@media(max-height:600px)]:py-2 border-t border-border first:border-t-0"
               >
                 <span className="font-display font-black text-xl text-text-muted w-6 shrink-0 text-center">
                   {i + 1}
@@ -160,6 +167,8 @@ export function VotesShareClient({ asks }: { asks: Ask[] }) {
               </div>
             ))}
           </div>
+
+          <TearLine />
 
           {ballots.map((ballot) => (
             <div key={ballot.id} className="-mt-2">
@@ -194,6 +203,22 @@ export function VotesShareClient({ asks }: { asks: Ask[] }) {
           className="flex-1 min-w-0 justify-center"
         />
       </div>
+    </div>
+  );
+}
+
+/**
+ * A ticket's tear line: dashes across, and a half-circle notch cut into each
+ * edge. The notches are page-coloured discs centred on the card's edge; the
+ * card clips their outer half, and their own outline covers the card's inset
+ * ring there, so the edge reads as cut, not bumped.
+ */
+function TearLine() {
+  return (
+    <div aria-hidden="true" className="relative -mx-4 sm:-mx-6 h-6 shrink-0">
+      <span className="absolute inset-x-5 sm:inset-x-7 top-1/2 border-t-2 border-dashed border-border" />
+      <span className="absolute -left-3 top-0 size-6 rounded-full bg-paper border border-border" />
+      <span className="absolute -right-3 top-0 size-6 rounded-full bg-paper border border-border" />
     </div>
   );
 }

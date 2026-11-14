@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useIsTouch } from "@/components/mobile/useMediaQuery";
 import { Button } from "@/components/ui/Button";
+import { getLoadedCardImage, loadCardImage } from "@/components/share/votesSharePrep";
 
 /**
  * Two modes, picked by whether `downloadName` is set:
@@ -56,18 +57,19 @@ export function ShareButton({
   // uses that window up, and navigator.share is then refused silently.
   // Copying fetches its own image, so it has nothing to wait for.
   const prefetches = !!downloadName && !forceCopy;
-  const [prepared, setPrepared] = useState<{ url: string; file: File | null } | null>(null);
+  // Shared with every button and with votesSharePrep, which may already have
+  // fetched this exact image while the ballot animation played.
+  const [prepared, setPrepared] = useState<{ url: string; file: File | null } | null>(() => {
+    const blob = prefetches ? getLoadedCardImage(url) : undefined;
+    return blob ? { url, file: toFile(blob, downloadName!) } : null;
+  });
   useEffect(() => {
     if (!prefetches) return;
     let cancelled = false;
-    fetch(url)
-      .then((r) => {
-        if (!r.ok) throw new Error(`Card image: ${r.status}`);
-        return r.blob();
-      })
+    loadCardImage(url)
       .then((blob) => {
         if (!cancelled) {
-          setPrepared({ url, file: new File([blob], downloadName!, { type: blob.type }) });
+          setPrepared((p) => (p?.url === url && p.file ? p : { url, file: toFile(blob, downloadName!) }));
         }
       })
       .catch(() => {
@@ -112,7 +114,7 @@ export function ShareButton({
         try {
           await navigator.clipboard.write([
             new ClipboardItem({
-              "image/png": fetch(url).then((r) => r.blob()),
+              "image/png": loadCardImage(url),
               ...(caption && {
                 "text/plain": new Blob([caption], { type: "text/plain" }),
               }),
@@ -126,7 +128,7 @@ export function ShareButton({
         }
       }
 
-      const blob: Blob = ready ?? (await (await fetch(url)).blob());
+      const blob: Blob = ready ?? (await loadCardImage(url));
 
       const objectUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -179,6 +181,10 @@ export function ShareButton({
               : label}
     </Button>
   );
+}
+
+function toFile(blob: Blob, name: string) {
+  return new File([blob], name, { type: blob.type });
 }
 
 function ShareIcon() {
