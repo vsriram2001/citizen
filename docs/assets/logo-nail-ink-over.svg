@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 332 336" fill="none">
+  <!-- Ink drawn over the nail base: one unbroken mark from nail onto finger. -->
+  <path d="M68.5 336V180C68.5 116 114 51 171.75 51C229.5 51 275 116 275 180V336" stroke="#33322e" stroke-width="28"/>
+  <path d="M132 66C112 88 105.5 104 105.5 124V202C105.5 233 135.2 257 171.75 257C208.3 257 238 233 238 202V124C238 104 231.5 88 211.5 66" stroke="#33322e" stroke-width="17.5"/>
+  <path d="M171.75 202.5V278.75" stroke="#0248a6" stroke-width="35" stroke-linecap="round"/>
+</svg>

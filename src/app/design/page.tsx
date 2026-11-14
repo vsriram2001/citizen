@@ -462,12 +462,12 @@ export default function DesignGallery() {
 
       <Section
         title="Logo"
-        note="A ballot box with a vote going through its slot. The outline follows the text colour; the capsule is the only place --color-brand is used."
+        note="A raised fingertip with its nail, and the voter's ink line drawn from the nail across its base onto the skin, as at the polling booth. The outline follows the text colour; the ink is the only place --color-brand is used. Same drawing in the favicon and app icons."
       >
         <div className="flex items-end gap-6">
-          <Logo className="text-text-secondary" />
-          <Logo className="h-12 text-text-secondary" />
-          <Logo className="h-20 text-text-secondary" />
+          <Logo className="text-headline" />
+          <Logo className="h-12 text-headline" />
+          <Logo className="h-20 text-headline" />
         </div>
       </Section>
 

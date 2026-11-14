@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Nail Logo Drafts</title>
+<style>
+  :root { --headline: #33322e; --paper: #fafaf7; --border: #d9d7cf; --muted: #6f6f68; }
+  body { margin: 0; background: var(--paper); color: var(--headline); font: 14px/1.4 system-ui, sans-serif; padding: 24px 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; max-width: 900px; margin: 0 auto; }
+  figure { margin: 0; border: 1px solid var(--border); border-radius: 6px; background: #fff; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .big { width: 100%; aspect-ratio: 332 / 336; object-fit: contain; }
+  .small { display: flex; align-items: center; gap: 16px; border-top: 1px solid var(--border); padding-top: 12px; }
+  .small img:nth-child(1) { height: 24px; } .small img:nth-child(2) { height: 40px; } .small img:nth-child(3) { height: 64px; }
+  figcaption { color: var(--muted); }
+  figcaption b { color: var(--headline); display: block; }
+</style>
+</head>
+<body>
+  <div class="grid">
+    <figure>
+      <img class="big" src="assets/logo-nail-source.png" alt="" />
+      <div class="small"><img src="assets/logo-nail-source.png" alt="" /><img src="assets/logo-nail-source.png" alt="" /><img src="assets/logo-nail-source.png" alt="" /></div>
+      <figcaption><b>Your image</b>Ink on the nail only.</figcaption>
+    </figure>
+    <figure>
+      <img class="big" src="assets/logo-nail-ink-over.svg" alt="" />
+      <div class="small"><img src="assets/logo-nail-ink-over.svg" alt="" /><img src="assets/logo-nail-ink-over.svg" alt="" /><img src="assets/logo-nail-ink-over.svg" alt="" /></div>
+      <figcaption><b>A · ink over the nail base</b>One unbroken mark from the nail onto the finger.</figcaption>
+    </figure>
+    <figure>
+      <img class="big" src="assets/logo-nail-ink-under.svg" alt="" />
+      <div class="small"><img src="assets/logo-nail-ink-under.svg" alt="" /><img src="assets/logo-nail-ink-under.svg" alt="" /><img src="assets/logo-nail-ink-under.svg" alt="" /></div>
+      <figcaption><b>B · nail base over the ink</b>The cuticle line crosses the mark.</figcaption>
+    </figure>
+  </div>
+</body>
+</html>

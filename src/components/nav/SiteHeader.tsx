@@ -38,7 +38,7 @@ export function SiteHeader({
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-2 text-[15px] font-semibold tracking-[-0.02em] shrink-0">
-          <Logo className="text-text-secondary" />
+          <Logo className="text-headline" />
           Citizen Poll
         </Link>
         <nav className="hidden sm:flex items-center gap-5">
