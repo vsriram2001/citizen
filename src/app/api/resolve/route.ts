@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { chatJSON } from "@/lib/llm";
 import { normalizeTimeframe } from "@/lib/timeframe";
+import { toTopics, topicsForPrompt } from "@/lib/topics";
 import {
   RESPONSIBLE_PEOPLE_RULES,
   finalizeResponsiblePeople,
@@ -21,7 +22,8 @@ const SYSTEM_PROMPT = `A citizen is submitting a policy ask exactly as they type
 
 - currentValue: where things stand today, ideally a figure, taken from the search results (e.g. "2.9% of GDP"). If the results don't support a confident figure, use a short qualitative phrase (e.g. "Not published") — never invent a number.
 - targetValue: the outcome the citizen's own text asks for (e.g. "6% of GDP", "Abolished"). Only what their words state or plainly imply — if they give no target, use "".
-- tags: 1-3 short topic tags in Title Case (e.g. ["Education", "Budget"])
+- tags: 1-2 topics, main one first, each copied exactly from this fixed list (pick by what the ask would change, not how: a "publish the data" ask about water is Water, not Governance):
+${topicsForPrompt()}
 - timeframe: an absolute deadline as "Mon YYYY" (e.g. "Mar 2030") — never a relative phrase.
 - targetBody: the government body accountable (e.g. "Ministry of Finance")
 - ${RESPONSIBLE_PEOPLE_RULES}
@@ -49,7 +51,8 @@ export async function POST(req: Request) {
     return NextResponse.json({
       currentValue: resolution.currentValue ?? "",
       targetValue: resolution.targetValue ?? "",
-      tags: Array.isArray(resolution.tags) ? resolution.tags.slice(0, 3) : [],
+      // Snapped to the fixed topic list even if the model strays from it.
+      tags: toTopics(Array.isArray(resolution.tags) ? resolution.tags : [], trimmed),
       timeframe: normalizeTimeframe(resolution.timeframe),
       targetBody: resolution.targetBody,
       responsiblePeople: finalizeResponsiblePeople(

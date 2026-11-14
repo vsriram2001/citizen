@@ -28,6 +28,9 @@ import type { Ask } from "@/lib/types";
 import { AskList } from "@/components/ask/AskList";
 import { AskInfoButton } from "@/components/ask/AskInfoButton";
 import { FilterSidebar } from "@/components/search/SearchFilters";
+import { TopicTabs } from "@/components/search/TopicTabs";
+import { TopicPicker } from "@/components/topics/TopicPicker";
+import { TOPIC_NAMES } from "@/lib/topics";
 import { useAskFilters } from "@/components/search/useAskFilters";
 import { SearchOptions } from "@/components/search/SearchOptions";
 import { SearchPlaceholder } from "@/components/search/SearchPlaceholder";
@@ -656,6 +659,13 @@ export default function DesignGallery() {
       </Section>
 
       <Section
+        title="Topics: pills and tabs"
+        note="/start asks what people care about before they see Popular, so the list doesn't anchor them. Pills (components/topics/TopicPicker) pick any number, each with a keyword-matched line icon (TopicIcon). The 13 topics and the rules behind them live in lib/topics.ts; every ask's tags are mapped onto them as it's read. The picks become tabs over the list (components/search/TopicTabs): Popular, then their topics in the order picked, then Add topic. The list opens on the first."
+      >
+        <TopicsDemo />
+      </Section>
+
+      <Section
         title="Site header"
         note="One header on every page: wordmark home, Browse asks, My votes, Share, Sign out once signed in. Pages pass extras (the search screen's vote total) as children. Below sm the links fold into a Menu button (components/nav/MobileNav.tsx)."
       >
@@ -680,5 +690,17 @@ export default function DesignGallery() {
         </div>
       </Section>
     </main>
+  );
+}
+
+function TopicsDemo() {
+  const topics = TOPIC_NAMES;
+  const [picked, setPicked] = useState<string[]>(["Transport & Roads", "Water, Power & Waste"]);
+  const [tab, setTab] = useState("Transport & Roads");
+  return (
+    <div className="flex flex-col gap-6 max-w-2xl">
+      <TopicPicker topics={topics} selected={picked} onChange={setPicked} />
+      <TopicTabs tabs={picked} active={tab} onSelect={setTab} choices={topics} onTabsChange={setPicked} />
+    </div>
   );
 }

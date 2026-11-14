@@ -7,6 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isValidTimeframe } from "@/lib/timeframe";
 import { VOTE_BUDGET } from "@/lib/vote-session";
 import { OUT_OF_VOTES, ensureVoterSession, getVoterId, votesUsed } from "@/lib/voter";
+import { toTopics } from "@/lib/topics";
 
 interface SubmitBody {
   askText: string;
@@ -96,7 +97,8 @@ export async function POST(req: Request) {
       target_value: body.targetValue ?? null,
       timeframe: body.timeframe ?? null,
       target_body: body.targetBody ?? null,
-      tags: body.tags ?? [],
+      // The fixed topic list (lib/topics.ts), whatever the draft carried.
+      tags: toTopics(body.tags ?? [], body.askText),
       moderation_status: "approved",
     })
     .select("id")

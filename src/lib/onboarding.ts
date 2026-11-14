@@ -34,7 +34,9 @@ export function saveOnboarding(answers: OnboardingAnswers) {
   }
 }
 
-/** Where to go after onboarding. Same-site paths only, so `?next=` can't bounce people off-site. */
+/** Where to go after onboarding. Same-site paths only, so `?next=` can't bounce people off-site.
+ *  No `next` (they came from home): /start asks what they care about before
+ *  showing Popular, and passes straight on to /search if already answered. */
 export function safeNext(next: string | null | undefined): string {
-  return next && next.startsWith("/") && !next.startsWith("//") ? next : "/search";
+  return next && next.startsWith("/") && !next.startsWith("//") ? next : "/start";
 }

@@ -11,7 +11,7 @@ import { FACETS, SORT_OPTIONS } from "@/lib/filters";
 type FilterState = ReturnType<typeof useAskFilters>;
 
 /**
- * List heading (named after the current sort), the active-filter chips,
+ * List heading ("Asks", or "Results" for a search), the active-filter chips,
  * and — below lg — the Filters button that opens the panel as a bottom
  * sheet. On lg+ the panel itself sits in the sidebar (FilterSidebar).
  */
@@ -19,19 +19,27 @@ export function SearchFilters({
   state,
   total,
   searching = false,
+  tabTopic,
 }: {
   state: FilterState;
   total: number;
   /** A query is typed — the list is matches for it, not the whole board. */
   searching?: boolean;
+  /** The topic tab that's open — the tab already shows it, so no chip for it. */
+  tabTopic?: string;
 }) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const { filters, activeCount, toggle, clearAll } = state;
-  // "Popular" over a list of search matches reads as the wrong list.
-  const heading = searching
-    ? "Results"
-    : (SORT_OPTIONS.find((o) => o.value === filters.sort)?.heading ?? "Popular");
-  const chips = FACETS.flatMap((key) => filters[key].map((value) => ({ key, value })));
+  // Not "Popular": that's the first topic tab right under it (TopicTabs),
+  // and the same word twice read as two things. A search shows its matches.
+  const heading = searching ? "Results" : "Asks";
+  // Most votes is the default and the "Popular" tab already says so; any
+  // other order is named beside the heading.
+  const sortLabel =
+    filters.sort === "votes" ? null : SORT_OPTIONS.find((o) => o.value === filters.sort)?.heading;
+  const chips = FACETS.flatMap((key) => filters[key].map((value) => ({ key, value }))).filter(
+    ({ key, value }) => !(key === "topics" && value === tabTopic),
+  );
 
   return (
     <>
@@ -40,6 +48,7 @@ export function SearchFilters({
           <h2 className="font-display text-[22px] font-black text-headline tracking-[-0.02em]">
             {heading}
           </h2>
+          {sortLabel && <span className="text-[13px] text-text-secondary">{sortLabel}</span>}
           {activeCount > 0 && (
             <span className="text-[13px] text-text-muted tabular-nums">
               {state.results.length} of {total}

@@ -21,11 +21,14 @@ import { useVotes } from "@/components/vote/useVotes";
 import { cn } from "@/lib/cn";
 import { revealOnFocus } from "@/components/mobile/useMediaQuery";
 import { SearchOptions } from "@/components/search/SearchOptions";
+import { POPULAR_TAB, TopicTabs } from "@/components/search/TopicTabs";
 import { SearchPlaceholder } from "@/components/search/SearchPlaceholder";
 import { VoiceButton } from "@/components/search/VoiceButton";
 import { VoiceMode } from "@/components/search/VoiceMode";
 import { useVoiceInput } from "@/components/search/useVoiceInput";
 import { isOnboarded } from "@/lib/onboarding";
+import { asTopic, getInterests, popularTopics, saveInterests } from "@/lib/interests";
+import { TOPIC_NAMES } from "@/lib/topics";
 import { rankAsks, type SemanticVerdict } from "@/lib/match";
 import { searchSuggestions } from "@/lib/search-suggestions";
 import type { Ask } from "@/lib/types";
@@ -48,6 +51,8 @@ const STACKED_BOX_MIN_PX = 82;
 const OPTION_ASKS = 1;
 /** How many topics to offer under the empty box. */
 const OPTION_TOPICS = 8;
+/** Topic tabs for someone who skipped /start: the most-asked topics. */
+const DEFAULT_TABS = 5;
 /** Desktop list scrolled this far: the intro steps aside. */
 const INTRO_HIDE_AFTER_PX = 24;
 /** Hiding the intro makes the list taller; with less overflow than this, that
@@ -280,6 +285,46 @@ export function SearchClient({
     [activeFilters.topics, toggleFilter],
   );
 
+  // Topic tabs over the list (components/search/TopicTabs). A tab is the
+  // topics filter holding just that one topic, so the filter panel, its
+  // counts and the info sheet's topic chips all stay in step with it.
+  const { clearFacet } = filterState;
+  const [interests, setInterests] = useState<string[] | null>(null);
+  const defaultTabs = useMemo(() => popularTopics(asks, DEFAULT_TABS), [asks]);
+  const tabs = interests?.length ? interests : defaultTabs;
+  const activeTab =
+    activeFilters.topics.length === 0
+      ? POPULAR_TAB
+      : activeFilters.topics.length === 1
+        ? activeFilters.topics[0]
+        : null;
+  const selectTab = useCallback(
+    (topic: string) => {
+      clearFacet("topics");
+      if (topic !== POPULAR_TAB) toggleFilter("topics", topic);
+      listRef.current?.scrollTo({ top: 0 });
+    },
+    [clearFacet, toggleFilter],
+  );
+  // Open on the topic they picked first on /start (?topic=), or on later
+  // visits on their first topic, so Popular is never the first thing seen
+  // by someone who said what they care about. A ?q= without a topic (a
+  // shared ask's "Vote for this") searches everything instead.
+  useEffect(() => {
+    const mine = getInterests();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage only exists after mount
+    setInterests(mine);
+    const fromUrl = new URLSearchParams(window.location.search).get("topic");
+    const first = fromUrl ? asTopic(fromUrl) : initialQuery ? null : mine?.[0];
+    // selectTab, not a toggle: safe to run twice (Strict Mode does).
+    if (first) selectTab(first);
+  }, [initialQuery, selectTab]);
+  function changeTabs(next: string[]) {
+    setInterests(next);
+    saveInterests(next);
+    if (activeTab && !next.includes(activeTab)) selectTab(POPULAR_TAB);
+  }
+
   function handleAdded(ask: Ask) {
     setAsks((prev) => [ask, ...prev]);
     markVoted(ask.id);
@@ -422,7 +467,19 @@ export function SearchClient({
             )}
           </div>
 
-        <SearchFilters state={filterState} total={queryMatches.length} searching={queryReady} />
+        <SearchFilters
+          state={filterState}
+          total={queryMatches.length}
+          searching={queryReady}
+          tabTopic={activeTab || undefined}
+        />
+        <TopicTabs
+          tabs={tabs}
+          active={activeTab}
+          onSelect={selectTab}
+          choices={TOPIC_NAMES}
+          onTabsChange={changeTabs}
+        />
       </div>
 
       <div

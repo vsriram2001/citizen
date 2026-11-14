@@ -1,6 +1,7 @@
 import { SEED_ASKS } from "@/lib/mock/asks";
 import { createClient } from "@/lib/supabase/server";
 import type { Ask } from "@/lib/types";
+import { toTopics } from "@/lib/topics";
 
 interface SubmissionRow {
   id: string;
@@ -74,7 +75,7 @@ export async function getApprovedSubmissions(): Promise<Ask[]> {
 export async function getSearchableAsks(): Promise<{ asks: Ask[]; demo: boolean }> {
   const live = await getApprovedSubmissions();
   const demo = live.length === 0;
-  return { asks: demo ? SEED_ASKS : live, demo };
+  return { asks: demo ? SEED_ASKS.map(withTopics) : live, demo };
 }
 
 /** Real total of votes cast — sum of vote_count over the asks people can see. */
@@ -168,6 +169,10 @@ export async function getApprovedSubmissionsByIds(ids: string[]): Promise<Ask[]>
   return ids.map((id) => byId.get(id)).filter((ask): ask is Ask => ask !== undefined);
 }
 
+function withTopics(ask: Ask): Ask {
+  return { ...ask, tags: toTopics(ask.tags ?? [], ask.askText) };
+}
+
 function mapSubmissionRow(row: SubmissionRow): Ask {
   return {
     id: row.id,
@@ -177,7 +182,9 @@ function mapSubmissionRow(row: SubmissionRow): Ask {
     timeframe: row.timeframe ?? "",
     targetBody: row.target_body ?? "",
     mechanism: row.mechanism ?? undefined,
-    tags: row.tags ?? [],
+    // Stored tags are free text from whoever wrote the ask; shown as the
+    // fixed topics (lib/topics.ts) so one subject never has two names.
+    tags: toTopics(row.tags ?? [], row.ask_text),
     verificationStatus: row.verification_status,
     voteCount: row.vote_count,
     partyResponses: row.party_responses.map((pr) => ({
