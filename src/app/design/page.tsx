@@ -23,6 +23,7 @@ import { VoteTray } from "@/components/vote/VoteTray";
 import { AskCard } from "@/components/ask/AskCard";
 import { MobileIntro } from "@/components/home/MobileIntro";
 import { SampleBallot } from "@/components/home/SampleBallot";
+import { SystemFlow } from "@/components/home/SystemFlow";
 import { WishToAsk } from "@/components/home/WishToAsk";
 import type { Ask } from "@/lib/types";
 import { AskList } from "@/components/ask/AskList";
@@ -527,6 +528,13 @@ export default function DesignGallery() {
         <SampleBallot asks={SEED_ASKS.slice(0, 4)}>
           <p className="text-[13px] text-text-secondary">Heading slot</p>
         </SampleBallot>
+      </Section>
+
+      <Section
+        title="What happens to your vote"
+        note="Home page, after the practice ballot. A rail fills as you scroll and each step switches on and plays its demo. Steps not built yet are dashed and say Planned. Reduced motion shows every step on, still."
+      >
+        <SystemFlow example={SEED_ASKS[6]} leaders={SEED_ASKS.slice(0, 3)} />
       </Section>
 
       <Section

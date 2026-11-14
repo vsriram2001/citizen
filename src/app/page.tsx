@@ -5,8 +5,9 @@ import { SiteHeader } from "@/components/nav/SiteHeader";
 import { buttonClass } from "@/components/ui/Button";
 import { VerificationBadge } from "@/components/ui/Badge";
 import { INTRO_SEEN_COOKIE } from "@/components/home/introCookie";
-import { MobileIntro } from "@/components/home/MobileIntro";
-import { SampleBallot } from "@/components/home/SampleBallot";
+import { IntroPlayer, ReplayIntroButton } from "@/components/home/IntroPlayer";
+import { AskSlider } from "@/components/home/AskSlider";
+import { FlowLegend, LoopWheel, VoteStream } from "@/components/home/SystemFlowVariants";
 import { WishToAsk } from "@/components/home/WishToAsk";
 import { GOOGLE_AUTH_ENABLED } from "@/lib/auth-flag";
 import { getSearchableAsks } from "@/lib/submissions";
@@ -18,15 +19,17 @@ import { SEED_ASKS } from "@/lib/mock/asks";
   that: people landed on a question and a button, and were lost.
 
   So the page shows rather than tells: a wish turning into an ask, then a
-  practice ballot on the real vote components, then the rules behind it. The
-  wish examples are hand-paired with seed asks because they need a matching
-  vague phrasing; the ballot uses whatever people are really voting on.
+  sliding row of the asks people are really backing, then what happens to
+  a vote, then the rules behind it. The wish examples are hand-paired with
+  seed asks because they need a matching vague phrasing; the slider uses
+  whatever people are really voting on.
 
   First visits get an opener (MobileIntro) at every width. Phones also get a
   hero reordered around what a narrow screen can hold: headline, one line, the
   example, and the CTA along the bottom edge, all fitted to one visible screen
   whatever its height. Desktop keeps its two columns. ?intro=1 replays the
-  opener, for checking it.
+  opener, for checking it, and the header's Watch intro button replays it for
+  anyone who missed it.
 */
 
 const WISHES = [
@@ -111,8 +114,8 @@ export default async function Home({
 
   return (
     <div className="flex flex-col min-h-screen">
-      {showIntro && <MobileIntro ask={introAsk} />}
-      <SiteHeader />
+      {introAsk && <IntroPlayer ask={introAsk} autoPlay={showIntro} />}
+      <SiteHeader>{introAsk && <ReplayIntroButton />}</SiteHeader>
 
       <main className="flex-1">
         {/* What it is */}
@@ -165,22 +168,61 @@ export default async function Home({
           </div>
         </section>
 
-        {/* Try it */}
+        {/* What people are backing: one sliding row, not a full practice ballot */}
         <section id="ballot" className="border-t border-border scroll-mt-4">
-          <div className={`${CONTAINER} py-12 sm:py-20`}>
-            <SampleBallot asks={topAsks}>
-              <div className="flex flex-col gap-3">
-                <span className={LABEL}>Practice ballot. Nothing is saved.</span>
-                <h2 className={H2}>You only get three.</h2>
-                <p className="text-[15px] text-text-secondary leading-relaxed max-w-md">
-                  These are the asks people are backing most. Spend your votes
-                  and watch what appears, then try to back a fourth.
-                </p>
-                <Link href="/search" className={`${TEXT_LINK} w-fit`}>
-                  Browse every ask
-                </Link>
+          <div className={`${CONTAINER} py-10 sm:py-14 flex flex-col gap-5`}>
+            <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+              <div className="flex flex-col gap-2">
+                <span className={LABEL}>Most backed right now</span>
+                <h2 className={H2}>What people are asking for.</h2>
               </div>
-            </SampleBallot>
+              <Link href="/search" className={`${TEXT_LINK} w-fit`}>
+                Browse every ask
+              </Link>
+            </div>
+            <AskSlider asks={topAsks} />
+          </div>
+        </section>
+
+        {/* The whole loop, one stop at a time. Comes first: the big picture,
+            then the vote stream zooms in on what happens to one vote. */}
+        <section id="system" className="border-t border-border">
+          <div className={`${CONTAINER} py-8 sm:py-20 flex flex-col gap-5 sm:gap-8`}>
+            <div className="flex flex-col gap-2 sm:gap-3 max-w-2xl">
+              <span className={LABEL}>The loop</span>
+              <h2 className={`${H2} text-balance`}>You ask. They answer. Everyone sees.</h2>
+              {/* Phones skip this line so the heading, wheel and step all fit
+                  one screen; the heading carries the idea on its own. */}
+              <p className="hidden sm:block text-[15px] text-text-secondary leading-relaxed text-pretty">
+                Citizens answer for what they ask for, and officials answer for
+                what they deliver.
+              </p>
+            </div>
+            <LoopWheel />
+          </div>
+        </section>
+
+        {/* What happens to your vote: one vote's journey, ask to tally.
+            Two takes on it are on trial together (see /design/system-flow);
+            the scroll timeline (SystemFlow) is parked, not deleted. */}
+        <section id="vote-stream" className="border-t border-border">
+          <div className={`${CONTAINER} py-12 sm:py-20 grid lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] gap-8 lg:gap-14`}>
+            <div className="flex flex-col gap-3 lg:sticky lg:top-6 lg:self-start">
+              <span className={LABEL}>What happens to your vote</span>
+              <h2 className={H2}>It doesn&rsquo;t vanish into a count.</h2>
+              <p className="text-[15px] text-text-secondary leading-relaxed max-w-md">
+                Votes pour into asks. When one crosses 100, it goes to the
+                officials it names, their answer goes on record, and on the
+                deadline it&rsquo;s checked against official data: delivered or
+                missed, in public.
+              </p>
+              <FlowLegend />
+              <p className="text-[13px] text-text-muted max-w-md">
+                Dashed parts are still being built. Numbers in the drawing are
+                an illustration.
+              </p>
+            </div>
+            <VoteStream />
           </div>
         </section>
 

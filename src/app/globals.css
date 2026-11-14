@@ -788,3 +788,16 @@ html[data-keyboard="open"] .keyboard-room {
     display: none;
   }
 }
+
+/* Home page loop wheel: the step's word fades up as the ring arrives.
+   Used by LoopWheel (components/home/SystemFlowVariants.tsx). */
+@keyframes wheel-word {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
