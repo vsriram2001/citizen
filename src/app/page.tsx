@@ -11,6 +11,7 @@ import { AskSlider } from "@/components/home/AskSlider";
 import { FlowLegend, LoopWheel, VoteStream } from "@/components/home/SystemFlowVariants";
 import { WishToAsk } from "@/components/home/WishToAsk";
 import { HeroScene } from "@/components/home/HeroScene";
+import { DELIVERY_THRESHOLD_LABEL } from "@/components/home/threshold";
 import { GOOGLE_AUTH_ENABLED } from "@/lib/auth-flag";
 import { getSearchableAsks } from "@/lib/submissions";
 import { SEED_ASKS } from "@/lib/mock/asks";
@@ -245,7 +246,7 @@ export default async function Home({
               <span className={LABEL}>What happens to your vote</span>
               <h2 className={H2}>It doesn&rsquo;t vanish into a count.</h2>
               <p className="text-[15px] text-text-secondary leading-relaxed max-w-md">
-                Votes pour into asks. When one crosses 100, it goes to the
+                Votes pour into asks. When one crosses {DELIVERY_THRESHOLD_LABEL}, it goes to the
                 officials it names, their answer goes on record, and on the
                 deadline it&rsquo;s checked against official data: delivered or
                 missed, in public.

@@ -20,7 +20,8 @@ import type { Ask } from "@/lib/types";
 
 /** Backing an ask needs before it's sent to the people responsible.
  *  Provisional: the number isn't settled, and nothing sends yet. */
-export const DELIVERY_THRESHOLD = 100;
+export { DELIVERY_THRESHOLD } from "@/components/home/threshold";
+import { DELIVERY_THRESHOLD, DELIVERY_THRESHOLD_LABEL } from "@/components/home/threshold";
 
 type Track = "vote" | "receipt" | "pressure" | "spread";
 
@@ -163,9 +164,9 @@ const STEPS: Step[] = [
   {
     track: "pressure",
     icon: "send",
-    title: `At ${DELIVERY_THRESHOLD} votes, it's sent`,
+    title: `At ${DELIVERY_THRESHOLD_LABEL} votes, it's sent`,
     sub: "To the people named on it",
-    body: `When an ask crosses ${DELIVERY_THRESHOLD} votes, we send it, with its count and where its voters are, to the officials it names. Local first: a city problem goes to the city.`,
+    body: `When an ask crosses ${DELIVERY_THRESHOLD_LABEL} votes, we send it, with its count and where its voters are, to the officials it names. Local first: a city problem goes to the city.`,
     live: false,
     demo: ({ on, example }) => <ThresholdDemo on={on} ask={example} />,
   },
@@ -496,7 +497,7 @@ function ThresholdDemo({ on, ask }: { on: boolean; ask: Ask }) {
       <div className="flex items-baseline justify-between gap-3">
         <span className="text-text-secondary truncate">{ask.askText}</span>
         <span className="tabular-nums text-text shrink-0">
-          {n} / {DELIVERY_THRESHOLD}
+          {n.toLocaleString("en-IN")} / {DELIVERY_THRESHOLD.toLocaleString("en-IN")}
         </span>
       </div>
       <span className="relative h-1.5 rounded-sm bg-paper overflow-hidden">
@@ -506,7 +507,7 @@ function ThresholdDemo({ on, ask }: { on: boolean; ask: Ask }) {
         />
       </span>
       <span className={cn(RISE, "text-text-muted")} style={delay(4)}>
-        {reached ? "Sent to" : `${DELIVERY_THRESHOLD - ask.voteCount} more and it goes to`}
+        {reached ? "Sent to" : `${(DELIVERY_THRESHOLD - ask.voteCount).toLocaleString("en-IN")} more and it goes to`}
       </span>
       <ul className="flex flex-col gap-1">
         {offices.slice(0, 3).map((o, i) => (

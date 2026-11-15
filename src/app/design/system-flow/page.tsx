@@ -58,7 +58,7 @@ export default function SystemFlowOptions() {
         <Option
           letter="C"
           name="Vote stream"
-          note="Most literal: dots leave voters, pour into asks, and the ask that crosses 100 flows on to officials, their answers, the deadline check and the tally. Top to bottom, so it reads the same on a phone. Numbers are made up."
+          note="Most literal: dots leave voters, pour into asks, and the ask that crosses 1 lakh flows on to officials, their answers, the deadline check and the tally. Top to bottom, so it reads the same on a phone. Numbers are made up."
         >
           <VoteStream />
         </Option>

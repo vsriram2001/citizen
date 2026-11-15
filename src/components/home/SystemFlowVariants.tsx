@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
+import { DELIVERY_THRESHOLD, DELIVERY_THRESHOLD_LABEL, shortVotes } from "@/components/home/threshold";
 
 /*
   Three candidate replacements for the home page's linear SystemFlow, shown
@@ -90,7 +91,7 @@ const MAP_NODES: MapNode[] = [
   { id: "ballot", c: 3, r: 0, title: "Ballot ID", sub: "Yearly receipt", icon: "ticket", live: true, at: 3 },
   { id: "verify", c: 4, r: 0, title: "Verify page", sub: "Check it’s intact", icon: "shield", live: true, at: 4 },
   { id: "totals", c: 3, r: 1, title: "Public totals", sub: "Ranks priorities", icon: "bars", live: true, at: 3 },
-  { id: "sent", c: 4, r: 1, title: "Sent to officials", sub: "Once it hits 100", icon: "send", live: false, at: 4 },
+  { id: "sent", c: 4, r: 1, title: "Sent to officials", sub: `Once it hits ${DELIVERY_THRESHOLD_LABEL}`, icon: "send", live: false, at: 4 },
   { id: "respond", c: 5, r: 1, title: "They respond", sub: "Endorse, decline", icon: "building", live: false, at: 5 },
   { id: "check", c: 6, r: 1, title: "Delivery check", sub: "Vs official data", icon: "inspect", live: false, at: 6 },
   { id: "tally", c: 7, r: 1, title: "Public tally", sub: "Promised vs done", icon: "scales", live: false, at: 7 },
@@ -106,7 +107,7 @@ const MAP_EDGES: [string, string, string?][] = [
   ["seal", "totals"],
   ["seal", "share"],
   ["ballot", "verify"],
-  ["totals", "sent", "100 votes"],
+  ["totals", "sent", `${DELIVERY_THRESHOLD_LABEL} votes`],
   ["sent", "respond"],
   ["respond", "check"],
   ["check", "tally"],
@@ -218,11 +219,11 @@ const WHEEL: { title: string; word: string; body: string; icon: IconName; live: 
   { title: "Cast 3 votes", word: "Vote", body: "Three a year. You can't back everything, so what you back counts.", icon: "ballot", live: true, art: <ArtVotes /> },
   { title: "Sealed, with a Ballot ID", word: "Seal", body: "Your votes are sealed into a public ledger. Your Ballot ID is the receipt: check it any time.", icon: "ticket", live: true, art: <ArtBallotId /> },
   { title: "Public totals", word: "Rank", body: "Live counts rank what people want most.", icon: "bars", live: true, art: <ArtTotals /> },
-  { title: "Sent at 100 votes", word: "Send", body: "Once an ask crosses 100 votes, it goes to the officials it names, local first.", icon: "send", live: false, art: <ArtSent /> },
+  { title: `Sent at ${DELIVERY_THRESHOLD_LABEL} votes`, word: "Send", body: `Once an ask crosses ${DELIVERY_THRESHOLD_LABEL} votes, it goes to the officials it names, local first.`, icon: "send", live: false, art: <ArtSent /> },
   { title: "They respond", word: "Answer", body: "Endorse, decline or stay silent. Every answer is shown on the ask.", icon: "building", live: false, art: <ArtRespond /> },
   { title: "Delivery check", word: "Check", body: "On the deadline, the target is checked against official data. Yes or no.", icon: "inspect", live: false, art: <ArtCheck /> },
   { title: "Public tally", word: "Tally", body: "Delivered, missed, still running: one public record for the next election.", icon: "scales", live: false, art: <ArtTally /> },
-  { title: "Share, bring others", word: "Share", body: "Share your three. New voters push asks towards 100, and the loop goes round again.", icon: "userplus", live: true, art: <ArtShare /> },
+  { title: "Share, bring others", word: "Share", body: `Share your three. New voters push asks towards ${DELIVERY_THRESHOLD_LABEL}, and the loop goes round again.`, icon: "userplus", live: true, art: <ArtShare /> },
 ];
 
 const WC = 200, WR = 150;
@@ -512,7 +513,9 @@ function ArtSent() {
     <div className={cn(ART, "flex flex-col gap-2")}>
       <span className="flex justify-between gap-3">
         <span className="text-text-secondary">Fix potholes</span>
-        <span className="text-text tabular-nums font-semibold">100 / 100</span>
+        <span className="text-text tabular-nums font-semibold">
+          {DELIVERY_THRESHOLD.toLocaleString("en-IN")} / {DELIVERY_THRESHOLD.toLocaleString("en-IN")}
+        </span>
       </span>
       <span className="h-1.5 rounded-sm bg-paper overflow-hidden">
         <span className={cn("block h-full w-full bg-accent", GROW_X)} />
@@ -609,19 +612,19 @@ function ArtShare() {
 
 /*
   Literally "what happens to my vote": dots leave voters, pour into asks, and
-  the one that crosses the 100 line flows on to the officials it names, their
+  the one that crosses the threshold line (1 lakh) flows on to the officials it names, their
   answers, the deadline check and the tally. Runs top to bottom, so the same
   drawing works on a phone and a desktop. Numbers are made up and say so.
 */
 
 const SW = 320;
-// Three asks as buckets that fill with votes; the 100 line runs across them.
+// Three asks as buckets that fill with votes; the threshold line runs across them.
 const BUCKETS = [
-  { x: 60, lines: ["Pothole fix", "in 30 days"], votes: 142 },
-  { x: 160, lines: ["Double the", "bus fleet"], votes: 76 },
-  { x: 260, lines: ["Publish police", "complaint data"], votes: 31 },
+  { x: 60, lines: ["Pothole fix", "in 30 days"], votes: 142_000 },
+  { x: 160, lines: ["Double the", "bus fleet"], votes: 76_000 },
+  { x: 260, lines: ["Publish police", "complaint data"], votes: 31_000 },
 ];
-const B_TOP = 120, B_BOT = 250, B_W = 52, MAX = 150;
+const B_TOP = 120, B_BOT = 250, B_W = 52, MAX = 150_000;
 const level = (v: number) => B_BOT - ((B_BOT - B_TOP) * Math.min(v, MAX)) / MAX;
 const VOTERS = [24, 58, 92, 126, 160, 194, 228, 262, 296];
 // Which ask each voter's dot pours into: most go to the leader.
@@ -651,7 +654,7 @@ export function VoteStream() {
   const toCheck = (ox: number) => `M${ox} ${ANS_Y + 13} C${ox} ${CHK_Y - 30} ${SW / 2} ${CHK_Y - 40} ${SW / 2} ${CHK_Y - 17}`;
   const toOutcome = (ox: number) => `M${SW / 2} ${CHK_Y + 17} C${SW / 2} ${OUT_Y - 30} ${ox} ${OUT_Y - 40} ${ox} ${OUT_Y - 13}`;
   const DASH = "5 5";
-  const threshold = level(100);
+  const threshold = level(DELIVERY_THRESHOLD);
 
   return (
     <svg viewBox={`0 0 ${SW} 712`} className="w-full max-w-[440px] h-auto mx-auto" role="img" aria-label="Votes flowing from voters into asks, then to officials, a deadline check and a public tally">
@@ -666,26 +669,26 @@ export function VoteStream() {
       ))}
 
       {BUCKETS.map((b, i) => {
-        const sent = b.votes >= 100;
+        const sent = b.votes >= DELIVERY_THRESHOLD;
         return (
           <g key={b.x}>
             <rect x={b.x - B_W / 2} y={B_TOP} width={B_W} height={B_BOT - B_TOP} rx={3} className="fill-card stroke-border" />
             <rect x={b.x - B_W / 2} y={level(b.votes)} width={B_W} height={B_BOT - level(b.votes)} rx={3} className="fill-accent" />
             <text x={b.x} y={B_BOT - 8} textAnchor="middle" className="fill-paper text-[12px] font-semibold tabular-nums">
-              {b.votes}
+              {shortVotes(b.votes)}
             </text>
             {b.lines.map((l, j) => (
               <text key={l} x={b.x} y={268 + j * 14} textAnchor="middle" className="fill-text text-[11px] font-semibold">{l}</text>
             ))}
             <text x={b.x} y={300} textAnchor="middle" className={cn("text-[11px]", sent ? "fill-accent font-semibold" : "fill-text-muted")}>
-              {sent ? "Sent ↓" : `${100 - b.votes} to go`}
+              {sent ? "Sent ↓" : `${shortVotes(DELIVERY_THRESHOLD - b.votes)} to go`}
             </text>
-            <title>{`Ask ${i + 1}: ${b.votes} votes`}</title>
+            <title>{`Ask ${i + 1}: ${b.votes.toLocaleString("en-IN")} votes`}</title>
           </g>
         );
       })}
       <line x1={16} x2={SW - 16} y1={threshold} y2={threshold} className="stroke-text" strokeWidth={1.25} strokeDasharray="3 3" />
-      <text x={SW - 16} y={threshold - 5} textAnchor="end" className="fill-text text-[10px] font-semibold">100 votes</text>
+      <text x={SW - 16} y={threshold - 5} textAnchor="end" className="fill-text text-[10px] font-semibold">{DELIVERY_THRESHOLD_LABEL} votes</text>
 
       {/* Planned from here down: dashed */}
       {OFFICES.map((o) => (
